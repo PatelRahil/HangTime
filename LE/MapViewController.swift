@@ -88,17 +88,17 @@ class MapViewController: UIViewController, CLLocationManagerDelegate{
         childRef.observe(.value, with: { snapshot in
             // 2
             var newEvents: [Event] = []
-            
+            print("----------------------------------")
             // 3
             for item in snapshot.children {
                 // 4
-                
+                print(item)
                 let event = Event(snapshot: item as! FIRDataSnapshot)
-                
-                if (self.isThirtyPastCurrentTime(date: NSDate(), hour: Int(event.hour)!, minute: Int(event.minute)!)) {
+                print(!(self.isThirtyPastCurrentTime(date: NSDate(), hour: Int(event.hour)!, minute: Int(event.minute)!, day: Int(event.day)!, month: Int(event.month)!, year: Int(event.year)!)))
+                if !(self.isThirtyPastCurrentTime(date: NSDate(), hour: Int(event.hour)!, minute: Int(event.minute)!, day: Int(event.day)!, month: Int(event.month)!, year: Int(event.year)!)) {
 
                 newEvents.append(event)
-                
+                print(event.eventID)
                 self.createMarker(hour:event.hour, minute:event.minute, address:event.address, latitude:event.latitude, longitude:event.longitude, description:event.description, day:event.day, month:event.month, year:event.year)
                 }
             }
@@ -157,24 +157,71 @@ class MapViewController: UIViewController, CLLocationManagerDelegate{
         //self.dataLabel!.text = dataObject
     }
     
-    private func isThirtyPastCurrentTime(date: NSDate, hour: Int, minute: Int) -> Bool {
-        var tempMin = 0
+    private func isThirtyPastCurrentTime(date: NSDate, hour: Int, minute: Int, day: Int, month:Int, year:Int) -> Bool {
+        var tempMin = minute
         var tempHr = hour
+        var tempDay = day
+        var tempMonth = month
+        var tempYear = year
+        
+        
+        let thisYear = Calendar.current.component(.year, from: date as Date)
+        let thisMonth =  Calendar.current.component(.month, from: date as Date)
+        let thisDay =  Calendar.current.component(.day, from: date as Date)
+        
+        //print(thisMonth + "/" + thisDay + "/" + thisYear)
+        print("\(date.hour()) : \(date.minute())")
         if ((minute + 30) >= 60) {
             tempMin = minute - 30
             tempHr += 1
         }
-        if (tempHr > 12) {
+        if (tempHr > 24) {
             tempHr = 1
+            tempDay += 1
         }
-        if (tempHr > date.hour()) {
-            return true
+        if (month == 1||month == 3||month == 5||month == 7||month == 8||month == 10||month == 12) {
+            if (day == 31) {
+                tempMonth += 1
+            }
         }
-        else if (tempHr == date.hour() && tempMin > date.minute()) {
-            return true
+        else if (month == 2){
+            if (year-2000 % 4 == 0) {
+                if (day == 29) {
+                    tempMonth += 1
+                }
+            }
+            else {
+                if (day == 28) {
+                    tempMonth += 1
+                }
+            }
         }
         else {
+            if (day == 30) {
+                tempMonth += 1
+            }
+        }
+        if (tempMonth > 12) {
+            tempYear += 1
+        }
+        
+        if (tempYear > thisYear) {
             return false
+        }
+        else if (tempYear == thisYear && tempMonth > thisMonth) {
+            return false
+        }
+        else if (tempYear == thisYear && tempMonth == thisMonth && tempDay > thisDay){
+            return false
+        }
+        else if (tempYear == thisYear && tempMonth == thisMonth && tempDay == thisDay && tempHr > date.hour()) {
+            return false
+        }
+        else if (tempYear == thisYear && tempMonth == thisMonth && tempDay == thisDay && tempHr == date.hour() && tempMin > date.minute()) {
+            return false
+        }
+        else {
+            return true
         }
     }
     
