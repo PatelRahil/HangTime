@@ -135,8 +135,14 @@ class MapViewController: UIViewController, CLLocationManagerDelegate{
     }
     
     func createMarker(hour:String, minute:String, address:String, latitude:Double, longitude:Double, description:String, day:String, month:String, year:String) {
-        
-            let timeStr = hour + ":" + minute
+        var newHr:Int = Int(hour)!
+        if newHr == 0 {
+            newHr = 12
+        }
+        else if newHr > 12 {
+            newHr -= 12
+        }
+            let timeStr = String(newHr) + ":" + minute
         
             let marker = GMSMarker()
         
