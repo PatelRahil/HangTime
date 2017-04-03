@@ -10,7 +10,7 @@ import UIKit
 import Firebase
 import GoogleMaps
 
-class DataViewController: UIViewController {
+class DataViewController: UIViewController, UITextFieldDelegate {
     var isTrue = true
     let locationManager = CLLocationManager()
 
@@ -47,7 +47,8 @@ class DataViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        
+        self.passwordTextBox.delegate = self;
+        self.usernameTextBox.delegate = self;
     }
     
 
@@ -62,6 +63,10 @@ class DataViewController: UIViewController {
         //self.dataLabel!.text = dataObject
     }
 
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        return false
+    }
 
 }
 
