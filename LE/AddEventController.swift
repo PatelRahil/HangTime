@@ -117,26 +117,7 @@ class AddEventController: UIViewController, UITextFieldDelegate {
         }
         
         calculateID(sender:sender)
-        
-        /*let event = Event(description: DescriptionTextbox.text!,
-            day: DayTextbox.text!,
-            month: MonthTextbox.text!,
-            year: YearTextbox.text!,
-            hour: HourTextbox.text!,
-            minute: MinuteTextbox.text!,
-            address: AddressTextbox.text!,
-            latitude: EventVariables.latitude,
-            longitude: EventVariables.longitude,
-            eventID: Int(calculateID())//eventID
-            
-        )
-        
-                
-        let eventRef = self.childRef.child("Event ID: " + String(calculateID()/*eventID*/))
-        eventRef.setValue(event.toAnyObject())
-        
-        performSegue(withIdentifier: "CreateEventSegue", sender: sender)
-         */
+
     }
     
     func createEvent(sender: Any, eventID: Int) {
