@@ -71,7 +71,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate{
     var events: [Event] = []
 
     
-    var mapView: GMSMapView = GMSMapView.map(withFrame: CGRect.zero, camera: GMSCameraPosition.camera(withLatitude: -33.868,longitude:151.2086, zoom:6))
+    var mapView: GMSMapView = GMSMapView.map(withFrame: CGRect.zero, camera: GMSCameraPosition.camera(withLatitude: 0,longitude:0, zoom:6))
     
     let locationManager = CLLocationManager()
     //let mapView: GMSMapView?
