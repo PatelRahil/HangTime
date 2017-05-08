@@ -34,28 +34,13 @@ class AddEventController: UIViewController, UITextFieldDelegate {
     var minute = 0
     var hour = 0
     @IBAction func datePicker(_ sender: Any) {
-        let currentDate = Date()
         let components = myDatePicker.calendar.dateComponents([.year, .month, .day, .minute, .hour], from: myDatePicker.date)
-        /*if components.day == nil || components.month == nil || components.year == nil || components.minute == nil || components.hour == nil {
-            let curHour = NSCalendar.current.component(.hour, from: currentDate as Date)
-            let curMinutes = NSCalendar.current.component(.minute, from: currentDate as Date)
 
-            let curDay = NSCalendar.current.component(.day, from: currentDate as Date)
-            let curMonth = NSCalendar.current.component(.month, from: currentDate as Date)
-            let curYear = NSCalendar.current.component(.year, from: currentDate as Date)
-            day = curDay
-            month = curMonth
-            year = curYear
-            minute = curMinutes
-            hour = curHour
-        }
-        else { */
         day = components.day!
         month = components.month!
         year = components.year!
         minute = components.minute!
         hour = components.hour!
-        //}
     }
     @IBAction func CreateEventButton(_ sender: Any, forEvent event: UIEvent) {
         validEntries = false

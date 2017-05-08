@@ -77,6 +77,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate{
     //let mapView: GMSMapView?
     @IBOutlet weak var addButton: UIImageView!
     
+    //just the image of the button
     @IBOutlet weak var PressButton: UIButton!
     @IBAction func PushButton(_ sender: Any, forEvent event: UIEvent) {
         //self.performSegue(withIdentifier: "CreateEventSegue", sender: sender)
