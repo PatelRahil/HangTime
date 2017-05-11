@@ -65,7 +65,7 @@ extension NSDate
 }
 
 
-class MapViewController: UIViewController, CLLocationManagerDelegate{
+class MapViewController: UIViewController, CLLocationManagerDelegate {
     
     let childRef = FIRDatabase.database().reference(withPath: "Events")
     var events: [Event] = []
@@ -79,6 +79,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate{
     
     //just the image of the button
     @IBOutlet weak var PressButton: UIButton!
+    @IBOutlet weak var OpenSideBar: UIButton!
     @IBAction func PushButton(_ sender: Any, forEvent event: UIEvent) {
         //self.performSegue(withIdentifier: "CreateEventSegue", sender: sender)
     }
@@ -93,14 +94,10 @@ class MapViewController: UIViewController, CLLocationManagerDelegate{
             // 3
             for item in snapshot.children {
                 // 4
-                print(item)
                 let event = Event(snapshot: item as! FIRDataSnapshot)
-                print(!(self.isThirtyPastCurrentTime(date: NSDate(), hour: Int(event.hour)!, minute: Int(event.minute)!, day: Int(event.day)!, month: Int(event.month)!, year: Int(event.year)!)))
                 if !(self.isThirtyPastCurrentTime(date: NSDate(), hour: Int(event.hour)!, minute: Int(event.minute)!, day: Int(event.day)!, month: Int(event.month)!, year: Int(event.year)!)) {
-
-                newEvents.append(event)
-                print(event.eventID)
-                self.createMarker(hour:event.hour, minute:event.minute, address:event.address, latitude:event.latitude, longitude:event.longitude, description:event.description, day:event.day, month:event.month, year:event.year)
+                    newEvents.append(event)
+                    self.createMarker(hour:event.hour, minute:event.minute, address:event.address, latitude:event.latitude, longitude:event.longitude, description:event.description, day:event.day, month:event.month, year:event.year)
                 }
             }
             
@@ -130,9 +127,12 @@ class MapViewController: UIViewController, CLLocationManagerDelegate{
             view = mapView
             
         }
-        
+        self.navigationController?.isNavigationBarHidden = true
         view.addSubview(self.addButton)
         view.addSubview(self.PressButton)
+        view.addSubview(self.OpenSideBar)
+        OpenSideBar.addTarget(self.revealViewController(), action: #selector(SWRevealViewController.revealToggle(_:)), for: .touchUpInside)
+
     }
     
     func createMarker(hour:String, minute:String, address:String, latitude:Double, longitude:Double, description:String, day:String, month:String, year:String) {
