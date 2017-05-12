@@ -71,12 +71,13 @@ class MapViewController: UIViewController, CLLocationManagerDelegate{
     var events: [Event] = []
 
     
-    var mapView: GMSMapView = GMSMapView.map(withFrame: CGRect.zero, camera: GMSCameraPosition.camera(withLatitude: -33.868,longitude:151.2086, zoom:6))
+    var mapView: GMSMapView = GMSMapView.map(withFrame: CGRect.zero, camera: GMSCameraPosition.camera(withLatitude: 0,longitude:0, zoom:6))
     
     let locationManager = CLLocationManager()
     //let mapView: GMSMapView?
     @IBOutlet weak var addButton: UIImageView!
     
+    //just the image of the button
     @IBOutlet weak var PressButton: UIButton!
     @IBAction func PushButton(_ sender: Any, forEvent event: UIEvent) {
         //self.performSegue(withIdentifier: "CreateEventSegue", sender: sender)
@@ -135,8 +136,18 @@ class MapViewController: UIViewController, CLLocationManagerDelegate{
     }
     
     func createMarker(hour:String, minute:String, address:String, latitude:Double, longitude:Double, description:String, day:String, month:String, year:String) {
-        
-            let timeStr = hour + ":" + minute
+        var newHr:Int = Int(hour)!
+        var newMin = minute
+        if newHr == 0 {
+            newHr = 12
+        }
+        else if newHr > 12 {
+            newHr -= 12
+        }
+        if Int(newMin)! < 10 {
+            newMin = "0" + newMin
+        }
+            let timeStr = String(newHr) + ":" + newMin
         
             let marker = GMSMarker()
         

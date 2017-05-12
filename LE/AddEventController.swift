@@ -13,13 +13,9 @@ import FirebaseDatabase
 
 class AddEventController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var DescriptionTextbox: UITextField!
-    @IBOutlet weak var HourTextbox: UITextField!
-    @IBOutlet weak var MinuteTextbox: UITextField!
-    @IBOutlet weak var DayTextbox: UITextField!
-    @IBOutlet weak var YearTextbox: UITextField!
-    @IBOutlet weak var MonthTextbox: UITextField!
     @IBOutlet weak var AddressTextbox:
     UITextField!
+    @IBOutlet weak var myDatePicker: UIDatePicker!
     
     @IBOutlet weak var AddressInvalid: UILabel!
     @IBOutlet weak var DateInvalid: UILabel!
@@ -32,70 +28,31 @@ class AddEventController: UIViewController, UITextFieldDelegate {
     let childRef = FIRDatabase.database().reference(withPath: "Events")
 
     var validEntries = false
-    
+    var day = 0
+    var month = 0
+    var year = 0
+    var minute = 0
+    var hour = 0
+    @IBAction func datePicker(_ sender: Any) {
+        let components = myDatePicker.calendar.dateComponents([.year, .month, .day, .minute, .hour], from: myDatePicker.date)
+
+        day = components.day!
+        month = components.month!
+        year = components.year!
+        minute = components.minute!
+        hour = components.hour!
+    }
     @IBAction func CreateEventButton(_ sender: Any, forEvent event: UIEvent) {
         validEntries = false
 
-        let date = NSDate()
-        let calendar = NSCalendar.current
-        let day = calendar.component(.day, from: date as Date)
-        let month = calendar.component(.month, from: date as Date)
-        let year = calendar.component(.year, from: date as Date)
-        
         if (AddressTextbox.text?.isEmpty)! {
             AddressInvalid.text = "Please enter a valid address"
         }
-        if ((HourTextbox.text?.isEmpty)! || (MinuteTextbox.text?.isEmpty)!) {
-            TimeInvalid.text = "Please enter a valid time"
-        }
-        if ((MonthTextbox.text?.isEmpty)! || (DayTextbox.text?.isEmpty)! || (YearTextbox.text?.isEmpty)!) {
-            DateInvalid.text = "Please enter a valid date"
-        }
-        if (!(AddressTextbox.text?.isEmpty)! && !(HourTextbox.text?.isEmpty)! && !(MinuteTextbox.text?.isEmpty)! && !(DayTextbox.text?.isEmpty)! && !(MonthTextbox.text?.isEmpty)! && !(YearTextbox.text?.isEmpty)!) {
-            var everythingIsFine = true
-            var validMin = true
-            var validHour = true
-            var validDay = true
-            var validMonth = true
-            var validYear = true
-            if Int(MinuteTextbox.text!)! >= 60 {
-                TimeInvalid.text = "Please enter a valid time"
-                everythingIsFine = false
-                validMin = false
-            }
-            if Int(HourTextbox.text!)! > 12{
-                TimeInvalid.text = "Please enter a valid time"
-                everythingIsFine = false
-                validHour = false
-            }
-            if (Int(DayTextbox.text!)! < day) && (Int(MonthTextbox.text!)! == month) && (Int(YearTextbox.text!)! == year) {
-                DateInvalid.text = "Please enter a valid date"
-                everythingIsFine = false
-                validDay = false
-            }
-            if (Int(MonthTextbox.text!)! > 12 || (Int(MonthTextbox.text!)! < month && Int(YearTextbox.text!)! == year)) {
-                DateInvalid.text = "Please enter a valid date"
-                everythingIsFine = false
-                validMonth = false
-            }
-            if Int(YearTextbox.text!)! < year {
-                DateInvalid.text = "Please enter a valid date"
-                everythingIsFine = false
-                validYear = false
-            }
-            if validMin && validHour {
-                TimeInvalid.text = ""
-            }
-            if validDay && validMonth && validYear {
-                DateInvalid.text = ""
-            }
-            
-            if everythingIsFine {
+
+        //makes sure there isn't an empty textbox for address
+        if (!(AddressTextbox.text?.isEmpty)!) {
             validEntries = true
             AddressInvalid.text = ""
-            TimeInvalid.text = ""
-            DateInvalid.text = ""
-            }
         }
         if (validEntries==true) {
             EventVariables.eventIsCreated = true
@@ -105,11 +62,11 @@ class AddEventController: UIViewController, UITextFieldDelegate {
                 tempDesc = ""
             }
             EventVariables.description = tempDesc!
-            EventVariables.dateDay = Int(DayTextbox.text!)!
-            EventVariables.dateMonth = Int(MonthTextbox.text!)!
-            EventVariables.dateYear = Int(YearTextbox.text!)!
-            EventVariables.timeHr = Int(HourTextbox.text!)!
-            EventVariables.timeMin = Int(MinuteTextbox.text!)!
+            EventVariables.dateDay = day
+            EventVariables.dateMonth = month
+            EventVariables.dateYear = year
+            EventVariables.timeHr = hour
+            EventVariables.timeMin = minute
             EventVariables.address = address!
         
 
@@ -145,35 +102,16 @@ class AddEventController: UIViewController, UITextFieldDelegate {
         }
         
         calculateID(sender:sender)
-        
-        /*let event = Event(description: DescriptionTextbox.text!,
-            day: DayTextbox.text!,
-            month: MonthTextbox.text!,
-            year: YearTextbox.text!,
-            hour: HourTextbox.text!,
-            minute: MinuteTextbox.text!,
-            address: AddressTextbox.text!,
-            latitude: EventVariables.latitude,
-            longitude: EventVariables.longitude,
-            eventID: Int(calculateID())//eventID
-            
-        )
-        
-                
-        let eventRef = self.childRef.child("Event ID: " + String(calculateID()/*eventID*/))
-        eventRef.setValue(event.toAnyObject())
-        
-        performSegue(withIdentifier: "CreateEventSegue", sender: sender)
-         */
+
     }
     
     func createEvent(sender: Any, eventID: Int) {
         let event = Event(description: DescriptionTextbox.text!,
-                          day: DayTextbox.text!,
-                          month: MonthTextbox.text!,
-                          year: YearTextbox.text!,
-                          hour: HourTextbox.text!,
-                          minute: MinuteTextbox.text!,
+                          day: String(day),
+                          month: String(month),
+                          year: String(year),
+                          hour: String(hour),
+                          minute: String(minute),
                           address: AddressTextbox.text!,
                           latitude: EventVariables.latitude,
                           longitude: EventVariables.longitude,
@@ -205,6 +143,11 @@ class AddEventController: UIViewController, UITextFieldDelegate {
         })
     }
     
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        return false
+    }
+    
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
         if identifier == "CreateEventSegue" {
             if validEntries {
@@ -220,7 +163,12 @@ class AddEventController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-
+        let minDate:Date = Date()
+        print(minDate)
+        myDatePicker.minimumDate = minDate
+        
+        self.AddressTextbox.delegate = self;
+        self.DescriptionTextbox.delegate = self;
     }
     
     override func didReceiveMemoryWarning() {
