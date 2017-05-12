@@ -140,6 +140,7 @@
                                         <state key="normal" title="Login"/>
                                         <connections>
                                             <action selector="LoginButton:forEvent:" destination="S4R-Ja-viH" eventType="touchUpInside" id="Jc6-3j-yc1"/>
+                                            <segue destination="TqV-cV-dkA" kind="show" identifier="LoginSegue" id="cXe-TS-MRv"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -164,7 +165,6 @@
                         <outlet property="passwordTextBox" destination="cJy-Gb-PPT" id="ldO-nO-mjb"/>
                         <outlet property="usernameLabel" destination="2SN-6F-Tty" id="UDC-Tj-PaP"/>
                         <outlet property="usernameTextBox" destination="mT5-fq-B2m" id="SIs-hn-vq7"/>
-                        <segue destination="GTi-bD-Wta" kind="show" identifier="LoginSegue" id="avX-mz-gLT"/>
                         <segue destination="exr-63-aMy" kind="show" identifier="NewAccountSegue" id="xYg-fW-zc2"/>
                     </connections>
                 </viewController>
@@ -253,6 +253,7 @@
                                 <state key="normal" title="Create Account"/>
                                 <connections>
                                     <action selector="CreateAccountButton:forEvent:" destination="exr-63-aMy" eventType="touchUpInside" id="yfZ-f3-lBU"/>
+                                    <segue destination="TqV-cV-dkA" kind="show" identifier="CreateEventSegue" id="aXK-TB-ByX"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xwK-6W-t8L">
@@ -272,12 +273,33 @@
                         <outlet property="PasswordTextbox" destination="B9D-G8-3i5" id="drY-Dj-CNx"/>
                         <outlet property="UsernameTextBox" destination="327-cQ-Hae" id="ozD-zI-0eb"/>
                         <outlet property="emailButton" destination="iFW-cR-aCe" id="qC4-bZ-7Z6"/>
-                        <segue destination="GTi-bD-Wta" kind="show" identifier="CreateAccountSegue" id="dBf-5z-dCe"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EwP-YT-ek8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1140" y="-956"/>
+            <point key="canvasLocation" x="1161" y="-1119"/>
+        </scene>
+        <!--Reveal View Controller-->
+        <scene sceneID="Xlc-is-k1S">
+            <objects>
+                <viewController id="TqV-cV-dkA" customClass="SWRevealViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Lnd-oz-7bx"/>
+                        <viewControllerLayoutGuide type="bottom" id="WSa-Mr-ygO"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="glH-UU-FMK">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <connections>
+                        <segue destination="Trd-zb-gSc" kind="custom" identifier="sw_rear" customClass="SWRevealViewControllerSegueSetController" id="j1M-YF-a3e"/>
+                        <segue destination="MRL-5m-xYO" kind="custom" identifier="sw_front" customClass="SWRevealViewControllerSegueSetController" id="KGm-Qc-CXq"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="v98-zf-ZyD" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1662" y="-243"/>
         </scene>
         <!--Map View Controller-->
         <scene sceneID="vPg-T2-N1e">
@@ -307,20 +329,34 @@
                                         <rect key="frame" x="253" y="-27" width="192" height="140"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3CY-SI-jzx">
+                                        <rect key="frame" x="8" y="31" width="24" height="24"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <state key="normal" image="SlideMenuIcon"/>
+                                        <connections>
+                                            <action selector="OpenSideBar:" destination="GTi-bD-Wta" eventType="touchUpInside" id="3Lq-fG-e2J"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
+                    <navigationItem key="navigationItem" id="0an-MZ-kaS"/>
                     <connections>
+                        <outlet property="OpenSideBar" destination="3CY-SI-jzx" id="dTY-1S-tbO"/>
                         <outlet property="PressButton" destination="ohX-oO-kJl" id="uyQ-4d-Iu3"/>
                         <outlet property="addButton" destination="NFa-iR-WFT" id="oBm-Xy-hQY"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wrB-Hb-xhv" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
+<<<<<<< HEAD
             <point key="canvasLocation" x="2561" y="-242"/>
+=======
+            <point key="canvasLocation" x="4005.5999999999999" y="-251.42428785607197"/>
+>>>>>>> 7385216381a81933bc24d9d94c7a4cf96eb0f34b
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="yCf-6s-pJ3">
@@ -329,11 +365,23 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="9HW-si-DRr">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+<<<<<<< HEAD
                     </navigationBar>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3uw-Pm-EAD" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="3817" y="-1083"/>
+=======
+                        <edgeInsets key="layoutMargins" top="8" left="8" bottom="8" right="8"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="GTi-bD-Wta" kind="relationship" relationship="rootViewController" id="HUk-2O-SDm"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="3uw-Pm-EAD" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2708" y="-243"/>
+>>>>>>> 7385216381a81933bc24d9d94c7a4cf96eb0f34b
         </scene>
         <!--Add Event Controller-->
         <scene sceneID="had-tI-0wO">
@@ -424,13 +472,23 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="z2W-1u-6Fi" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
+<<<<<<< HEAD
             <point key="canvasLocation" x="3817" y="-243"/>
+=======
+            <point key="canvasLocation" x="5225" y="-242"/>
+>>>>>>> 7385216381a81933bc24d9d94c7a4cf96eb0f34b
         </scene>
     </scenes>
     <resources>
         <image name="PlusImg" width="720" height="512"/>
+        <image name="SlideMenuIcon" width="225" height="225"/>
     </resources>
     <inferredMetricsTieBreakers>
+<<<<<<< HEAD
         <segue reference="SRx-pc-3fR"/>
+=======
+        <segue reference="cXe-TS-MRv"/>
+        <segue reference="HUk-2O-SDm"/>
+>>>>>>> 7385216381a81933bc24d9d94c7a4cf96eb0f34b
     </inferredMetricsTieBreakers>
 </document>
