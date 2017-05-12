@@ -9,10 +9,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Table View Controller-->
+        <!--Side MenuVC-->
         <scene sceneID="71d-fL-gDC">
             <objects>
-                <tableViewController id="Trd-zb-gSc" sceneMemberID="viewController">
+                <tableViewController id="Trd-zb-gSc" customClass="SideMenuVC" customModule="LE" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="Cu6-dD-Lxv">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -469,6 +469,6 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="cXe-TS-MRv"/>
-        <segue reference="HUk-2O-SDm"/>
+        <segue reference="X3g-Pr-DO3"/>
     </inferredMetricsTieBreakers>
 </document>

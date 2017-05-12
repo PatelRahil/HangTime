@@ -21,6 +21,7 @@
 		5ACA67731DD7F5FB00A8CE5D /* NewAccountController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ACA67721DD7F5FB00A8CE5D /* NewAccountController.swift */; };
 		5ACA67771DD890CF00A8CE5D /* AddEventController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ACA67761DD890CF00A8CE5D /* AddEventController.swift */; };
 		5ADA4D8A1E3D23DD00063420 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ADA4D891E3D23DD00063420 /* Event.swift */; };
+		5AF1A07D1EC55FBA000A9E85 /* SideMenuVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AF1A07C1EC55FBA000A9E85 /* SideMenuVC.swift */; };
 		5AFFBF031DE3D5E600D399C7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5AFFBF011DE3D5E600D399C7 /* Main.storyboard */; };
 		749DEF7854013AD4B9EA5A1A /* Pods_LE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AB4618FB26CA5341C395A64 /* Pods_LE.framework */; };
 		7D6EEC4EBE67CC5836EC8100 /* Pods_LEUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B41127069F61D91A467059CD /* Pods_LEUITests.framework */; };
@@ -70,6 +71,7 @@
 		5ACA67721DD7F5FB00A8CE5D /* NewAccountController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewAccountController.swift; sourceTree = "<group>"; };
 		5ACA67761DD890CF00A8CE5D /* AddEventController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddEventController.swift; sourceTree = "<group>"; };
 		5ADA4D891E3D23DD00063420 /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
+		5AF1A07C1EC55FBA000A9E85 /* SideMenuVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SideMenuVC.swift; sourceTree = "<group>"; };
 		5AFFBF021DE3D5E600D399C7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		7667FE5D21E72152B829D052 /* Pods-LEUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LEUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-LEUITests/Pods-LEUITests.release.xcconfig"; sourceTree = "<group>"; };
 		B41127069F61D91A467059CD /* Pods_LEUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LEUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -141,6 +143,7 @@
 				5ADA4D891E3D23DD00063420 /* Event.swift */,
 				5ACA67721DD7F5FB00A8CE5D /* NewAccountController.swift */,
 				5ACA67701DD7EEA900A8CE5D /* MapViewController.swift */,
+				5AF1A07C1EC55FBA000A9E85 /* SideMenuVC.swift */,
 				5A56671B1EC0C8C3001F5B55 /* SWRevealViewController.h */,
 				5A56671C1EC0C8C3001F5B55 /* SWRevealViewController.m */,
 				5A76469E1DD7B5F300503F07 /* Assets.xcassets */,
@@ -481,6 +484,7 @@
 				5ACA67771DD890CF00A8CE5D /* AddEventController.swift in Sources */,
 				5ACA67731DD7F5FB00A8CE5D /* NewAccountController.swift in Sources */,
 				5A7646961DD7B5F300503F07 /* RootViewController.swift in Sources */,
+				5AF1A07D1EC55FBA000A9E85 /* SideMenuVC.swift in Sources */,
 				5ACA67711DD7EEA900A8CE5D /* MapViewController.swift in Sources */,
 				5A56671D1EC0C8C3001F5B55 /* SWRevealViewController.m in Sources */,
 				5A76469A1DD7B5F300503F07 /* ModelController.swift in Sources */,

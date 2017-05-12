@@ -131,7 +131,13 @@ class MapViewController: UIViewController, CLLocationManagerDelegate {
         view.addSubview(self.addButton)
         view.addSubview(self.PressButton)
         view.addSubview(self.OpenSideBar)
+        
         OpenSideBar.addTarget(self.revealViewController(), action: #selector(SWRevealViewController.revealToggle(_:)), for: .touchUpInside)
+        let canWork = revealViewController().responds(to: #selector(SWRevealViewController.revealToggle(_:)))
+        print("*********************************")
+        print(canWork)
+        print(SWRevealViewController())
+        print(revealViewController())
 
     }
     
@@ -181,7 +187,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate {
         let thisDay =  Calendar.current.component(.day, from: date as Date)
         
         //print(thisMonth + "/" + thisDay + "/" + thisYear)
-        print("\(date.hour()) : \(date.minute())")
+        //print("\(date.hour()) : \(date.minute())")
         if ((minute + 30) >= 60) {
             tempMin = minute - 30
             tempHr += 1
