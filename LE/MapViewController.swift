@@ -79,7 +79,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate {
     
     //just the image of the button
     @IBOutlet weak var PressButton: UIButton!
-    @IBOutlet weak var OpenSideBar: UIButton!
+    @IBOutlet var OpenSideBar: UIButton!
     @IBAction func PushButton(_ sender: Any, forEvent event: UIEvent) {
         //self.performSegue(withIdentifier: "CreateEventSegue", sender: sender)
     }
@@ -105,11 +105,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate {
             self.events = newEvents
         })
         
-        /*for event in events {
-            createMarker(hour:event.hour, minute:event.minute, address:event.address, latitude:event.latitude, longitude:event.longitude, description:event.description, day:event.day, month:event.month, year:event.year)
-        }*/
-        
-        
         view.addSubview(mapView)
         
         
@@ -133,6 +128,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate {
         view.addSubview(self.OpenSideBar)
         
         OpenSideBar.addTarget(self.revealViewController(), action: #selector(SWRevealViewController.revealToggle(_:)), for: .touchUpInside)
+        
         let canWork = revealViewController().responds(to: #selector(SWRevealViewController.revealToggle(_:)))
         print("*********************************")
         print(canWork)
@@ -201,7 +197,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate {
                 tempMonth += 1
             }
         }
-        else if (month == 2){
+        else if (month == 2){ // @saif
             if (year-2000 % 4 == 0) {
                 if (day == 29) {
                     tempMonth += 1

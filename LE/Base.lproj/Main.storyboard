@@ -140,7 +140,7 @@
                                         <state key="normal" title="Login"/>
                                         <connections>
                                             <action selector="LoginButton:forEvent:" destination="S4R-Ja-viH" eventType="touchUpInside" id="Jc6-3j-yc1"/>
-                                            <segue destination="TqV-cV-dkA" kind="show" identifier="LoginSegue" id="cXe-TS-MRv"/>
+                                            <segue destination="TqV-cV-dkA" kind="showDetail" identifier="LoginSegue" action="showViewController:sender:" id="cXe-TS-MRv"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -313,7 +313,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="I0h-P1-q6z" customClass="MapSubview" customModule="LE" customModuleProvider="target">
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="I0h-P1-q6z">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
