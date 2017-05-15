@@ -139,8 +139,7 @@
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <state key="normal" title="Login"/>
                                         <connections>
-                                            <action selector="LoginButton:forEvent:" destination="S4R-Ja-viH" eventType="touchUpInside" id="Jc6-3j-yc1"/>
-                                            <segue destination="TqV-cV-dkA" kind="showDetail" identifier="LoginSegue" action="showViewController:sender:" id="cXe-TS-MRv"/>
+                                            <action selector="LoginButton:" destination="S4R-Ja-viH" eventType="touchUpInside" id="NdN-hr-8AH"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -166,6 +165,7 @@
                         <outlet property="usernameLabel" destination="2SN-6F-Tty" id="UDC-Tj-PaP"/>
                         <outlet property="usernameTextBox" destination="mT5-fq-B2m" id="SIs-hn-vq7"/>
                         <segue destination="exr-63-aMy" kind="show" identifier="NewAccountSegue" id="xYg-fW-zc2"/>
+                        <segue destination="TqV-cV-dkA" kind="show" identifier="LoginSegue" id="Ydu-F7-dvg"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="GmD-Rr-ZGN" sceneMemberID="firstResponder"/>
@@ -333,9 +333,6 @@
                                         <rect key="frame" x="8" y="31" width="24" height="24"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <state key="normal" image="SlideMenuIcon"/>
-                                        <connections>
-                                            <action selector="OpenSideBar:" destination="GTi-bD-Wta" eventType="touchUpInside" id="3Lq-fG-e2J"/>
-                                        </connections>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -468,7 +465,7 @@
         <image name="SlideMenuIcon" width="225" height="225"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="cXe-TS-MRv"/>
         <segue reference="X3g-Pr-DO3"/>
+        <segue reference="Ydu-F7-dvg"/>
     </inferredMetricsTieBreakers>
 </document>
