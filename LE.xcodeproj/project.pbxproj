@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5A56671D1EC0C8C3001F5B55 /* SWRevealViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A56671C1EC0C8C3001F5B55 /* SWRevealViewController.m */; };
+		5A705DA61ECA1374006E13E4 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A705DA51ECA1374006E13E4 /* User.swift */; };
 		5A7646941DD7B5F300503F07 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7646931DD7B5F300503F07 /* AppDelegate.swift */; };
 		5A7646961DD7B5F300503F07 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7646951DD7B5F300503F07 /* RootViewController.swift */; };
 		5A7646981DD7B5F300503F07 /* DataViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7646971DD7B5F300503F07 /* DataViewController.swift */; };
@@ -17,11 +18,14 @@
 		5A7646AD1DD7B5F300503F07 /* LETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7646AC1DD7B5F300503F07 /* LETests.swift */; };
 		5A7646B81DD7B5F300503F07 /* LEUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7646B71DD7B5F300503F07 /* LEUITests.swift */; };
 		5A7646C61DD7C48000503F07 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5A7646C51DD7C48000503F07 /* GoogleService-Info.plist */; };
+		5ABA18111ECB5FEA005679E3 /* AddFriendsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ABA18101ECB5FEA005679E3 /* AddFriendsVC.swift */; };
+		5ABA18131ECB6DA9005679E3 /* BackTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ABA18121ECB6DA9005679E3 /* BackTableVC.swift */; };
 		5ACA67711DD7EEA900A8CE5D /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ACA67701DD7EEA900A8CE5D /* MapViewController.swift */; };
 		5ACA67731DD7F5FB00A8CE5D /* NewAccountController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ACA67721DD7F5FB00A8CE5D /* NewAccountController.swift */; };
 		5ACA67771DD890CF00A8CE5D /* AddEventController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ACA67761DD890CF00A8CE5D /* AddEventController.swift */; };
+		5AD642E51ED264EC001155AA /* ProfileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AD642E41ED264EC001155AA /* ProfileVC.swift */; };
+		5AD642E71ED26503001155AA /* SettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AD642E61ED26503001155AA /* SettingsVC.swift */; };
 		5ADA4D8A1E3D23DD00063420 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ADA4D891E3D23DD00063420 /* Event.swift */; };
-		5AF1A07D1EC55FBA000A9E85 /* SideMenuVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AF1A07C1EC55FBA000A9E85 /* SideMenuVC.swift */; };
 		5AFFBF031DE3D5E600D399C7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5AFFBF011DE3D5E600D399C7 /* Main.storyboard */; };
 		749DEF7854013AD4B9EA5A1A /* Pods_LE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AB4618FB26CA5341C395A64 /* Pods_LE.framework */; };
 		7D6EEC4EBE67CC5836EC8100 /* Pods_LEUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B41127069F61D91A467059CD /* Pods_LEUITests.framework */; };
@@ -52,6 +56,7 @@
 		5A56671A1EC0C8C3001F5B55 /* LE-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LE-Bridging-Header.h"; sourceTree = "<group>"; };
 		5A56671B1EC0C8C3001F5B55 /* SWRevealViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWRevealViewController.h; sourceTree = "<group>"; };
 		5A56671C1EC0C8C3001F5B55 /* SWRevealViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWRevealViewController.m; sourceTree = "<group>"; };
+		5A705DA51ECA1374006E13E4 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		5A7646901DD7B5F300503F07 /* LE.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LE.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5A7646931DD7B5F300503F07 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5A7646951DD7B5F300503F07 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
@@ -67,11 +72,14 @@
 		5A7646B71DD7B5F300503F07 /* LEUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LEUITests.swift; sourceTree = "<group>"; };
 		5A7646B91DD7B5F300503F07 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5A7646C51DD7C48000503F07 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		5ABA18101ECB5FEA005679E3 /* AddFriendsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFriendsVC.swift; sourceTree = "<group>"; };
+		5ABA18121ECB6DA9005679E3 /* BackTableVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackTableVC.swift; sourceTree = "<group>"; };
 		5ACA67701DD7EEA900A8CE5D /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		5ACA67721DD7F5FB00A8CE5D /* NewAccountController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewAccountController.swift; sourceTree = "<group>"; };
 		5ACA67761DD890CF00A8CE5D /* AddEventController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddEventController.swift; sourceTree = "<group>"; };
+		5AD642E41ED264EC001155AA /* ProfileVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileVC.swift; sourceTree = "<group>"; };
+		5AD642E61ED26503001155AA /* SettingsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsVC.swift; sourceTree = "<group>"; };
 		5ADA4D891E3D23DD00063420 /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
-		5AF1A07C1EC55FBA000A9E85 /* SideMenuVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SideMenuVC.swift; sourceTree = "<group>"; };
 		5AFFBF021DE3D5E600D399C7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		7667FE5D21E72152B829D052 /* Pods-LEUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LEUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-LEUITests/Pods-LEUITests.release.xcconfig"; sourceTree = "<group>"; };
 		B41127069F61D91A467059CD /* Pods_LEUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LEUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -137,13 +145,17 @@
 				5A7646931DD7B5F300503F07 /* AppDelegate.swift */,
 				5A7646951DD7B5F300503F07 /* RootViewController.swift */,
 				5A7646971DD7B5F300503F07 /* DataViewController.swift */,
+				5A705DA51ECA1374006E13E4 /* User.swift */,
 				5A7646991DD7B5F300503F07 /* ModelController.swift */,
 				5AFFBF011DE3D5E600D399C7 /* Main.storyboard */,
+				5AD642E41ED264EC001155AA /* ProfileVC.swift */,
+				5AD642E61ED26503001155AA /* SettingsVC.swift */,
+				5ABA18121ECB6DA9005679E3 /* BackTableVC.swift */,
+				5ABA18101ECB5FEA005679E3 /* AddFriendsVC.swift */,
 				5ACA67761DD890CF00A8CE5D /* AddEventController.swift */,
 				5ADA4D891E3D23DD00063420 /* Event.swift */,
 				5ACA67721DD7F5FB00A8CE5D /* NewAccountController.swift */,
 				5ACA67701DD7EEA900A8CE5D /* MapViewController.swift */,
-				5AF1A07C1EC55FBA000A9E85 /* SideMenuVC.swift */,
 				5A56671B1EC0C8C3001F5B55 /* SWRevealViewController.h */,
 				5A56671C1EC0C8C3001F5B55 /* SWRevealViewController.m */,
 				5A76469E1DD7B5F300503F07 /* Assets.xcassets */,
@@ -273,7 +285,7 @@
 				TargetAttributes = {
 					5A76468F1DD7B5F300503F07 = {
 						CreatedOnToolsVersion = 8.1;
-						DevelopmentTeam = 5XC5483PFF;
+						DevelopmentTeam = 45ZJHP97X8;
 						LastSwiftMigration = 0820;
 						ProvisioningStyle = Automatic;
 					};
@@ -481,15 +493,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				5ADA4D8A1E3D23DD00063420 /* Event.swift in Sources */,
+				5ABA18111ECB5FEA005679E3 /* AddFriendsVC.swift in Sources */,
+				5ABA18131ECB6DA9005679E3 /* BackTableVC.swift in Sources */,
 				5ACA67771DD890CF00A8CE5D /* AddEventController.swift in Sources */,
 				5ACA67731DD7F5FB00A8CE5D /* NewAccountController.swift in Sources */,
 				5A7646961DD7B5F300503F07 /* RootViewController.swift in Sources */,
-				5AF1A07D1EC55FBA000A9E85 /* SideMenuVC.swift in Sources */,
 				5ACA67711DD7EEA900A8CE5D /* MapViewController.swift in Sources */,
 				5A56671D1EC0C8C3001F5B55 /* SWRevealViewController.m in Sources */,
+				5AD642E51ED264EC001155AA /* ProfileVC.swift in Sources */,
 				5A76469A1DD7B5F300503F07 /* ModelController.swift in Sources */,
 				5A7646981DD7B5F300503F07 /* DataViewController.swift in Sources */,
 				5A7646941DD7B5F300503F07 /* AppDelegate.swift in Sources */,
+				5A705DA61ECA1374006E13E4 /* User.swift in Sources */,
+				5AD642E71ED26503001155AA /* SettingsVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -585,7 +601,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -629,7 +645,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -643,7 +659,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				DEVELOPMENT_TEAM = 5XC5483PFF;
+				DEVELOPMENT_TEAM = 45ZJHP97X8;
 				INFOPLIST_FILE = LE/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = self.edu.Rahil.LE;
@@ -661,7 +677,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				DEVELOPMENT_TEAM = 5XC5483PFF;
+				DEVELOPMENT_TEAM = 45ZJHP97X8;
 				INFOPLIST_FILE = LE/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = self.edu.Rahil.LE;

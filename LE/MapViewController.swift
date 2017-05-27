@@ -6,6 +6,12 @@
 //  Copyright © 2016 Rahil. All rights reserved.
 //
 
+// things to add:
+// event title then separate description bar (click to see more details button)
+// change time of event disappearance to 30 minutes after event
+// or you can make an end time 
+// allow creator to edit event (will need to add an array of events created by a user under a specific profile
+
 import UIKit
 import Firebase
 import GooglePlacePicker
@@ -70,12 +76,11 @@ class MapViewController: UIViewController, CLLocationManagerDelegate {
     let childRef = FIRDatabase.database().reference(withPath: "Events")
     var events: [Event] = []
 
-    
+    var currentUser:User!
     var mapView: GMSMapView = GMSMapView.map(withFrame: CGRect.zero, camera: GMSCameraPosition.camera(withLatitude: 0,longitude:0, zoom:6))
     
     let locationManager = CLLocationManager()
     //let mapView: GMSMapView?
-    @IBOutlet weak var addButton: UIImageView!
     
     //just the image of the button
     @IBOutlet weak var PressButton: UIButton!
@@ -87,6 +92,10 @@ class MapViewController: UIViewController, CLLocationManagerDelegate {
         
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        print(currentUser)
+        
+        updateMap()
+        /*
         childRef.observe(.value, with: { snapshot in
             // 2
             var newEvents: [Event] = []
@@ -104,7 +113,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate {
             // 5
             self.events = newEvents
         })
-        
+        */
         view.addSubview(mapView)
         
         
@@ -123,33 +132,56 @@ class MapViewController: UIViewController, CLLocationManagerDelegate {
             
         }
         self.navigationController?.isNavigationBarHidden = true
-        view.addSubview(self.addButton)
+        PressButton.translatesAutoresizingMaskIntoConstraints = false
+        //PressButton.frame = CGRect(origin: CGPoint(x:50, y:50), size: CGSize(width: 50, height: 50))
+        print("\(UIScreen.main.bounds)")
+        PressButton.frame = CGRect(origin: CGPoint(x:5*UIScreen.main.bounds.width / 6, y:UIScreen.main.bounds.height / 25), size: CGSize(width: 7*UIScreen.main.bounds.width / 40, height: UIScreen.main.bounds.height / 11))
+        OpenSideBar.frame = CGRect(origin: CGPoint(x:7*UIScreen.main.bounds.width / 320, y:UIScreen.main.bounds.height / 25), size: CGSize(width: 7*UIScreen.main.bounds.width / 80, height: UIScreen.main.bounds.height / 22))
         view.addSubview(self.PressButton)
         view.addSubview(self.OpenSideBar)
         
         OpenSideBar.addTarget(self.revealViewController(), action: #selector(SWRevealViewController.revealToggle(_:)), for: .touchUpInside)
         
-        let canWork = revealViewController().responds(to: #selector(SWRevealViewController.revealToggle(_:)))
-        print("*********************************")
-        print(canWork)
-        print(SWRevealViewController())
-        print(revealViewController())
+        //self.revealViewController().rearViewRevealWidth = self.view.frame.width - 200
 
+    }
+    
+    func updateMap() {
+        childRef.observe(.value, with: { snapshot in
+            // 2
+            var newEvents: [Event] = []
+            print("----------------------------------")
+            // 3
+            for item in snapshot.children {
+                // 4
+                let event = Event(snapshot: item as! FIRDataSnapshot)
+                if !(self.isThirtyPastCurrentTime(date: NSDate(), hour: Int(event.hour)!, minute: Int(event.minute)!, day: Int(event.day)!, month: Int(event.month)!, year: Int(event.year)!)) {
+                    newEvents.append(event)
+                    self.createMarker(hour:event.hour, minute:event.minute, address:event.address, latitude:event.latitude, longitude:event.longitude, description:event.description, day:event.day, month:event.month, year:event.year)
+                }
+            }
+            
+            // 5
+            self.events = newEvents
+        })
+        
     }
     
     func createMarker(hour:String, minute:String, address:String, latitude:Double, longitude:Double, description:String, day:String, month:String, year:String) {
         var newHr:Int = Int(hour)!
         var newMin = minute
+        var AMPMstr = " AM"
         if newHr == 0 {
             newHr = 12
         }
         else if newHr > 12 {
             newHr -= 12
+            AMPMstr = " PM"
         }
         if Int(newMin)! < 10 {
             newMin = "0" + newMin
         }
-            let timeStr = String(newHr) + ":" + newMin
+            let timeStr = String(newHr) + ":" + newMin + AMPMstr
         
             let marker = GMSMarker()
         

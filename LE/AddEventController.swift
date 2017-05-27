@@ -33,6 +33,11 @@ class AddEventController: UIViewController, UITextFieldDelegate {
     var year = 0
     var minute = 0
     var hour = 0
+    
+
+    @IBAction func CancelButton(_ sender: Any) {
+        segueRightToLeft(storyboardIdentifier: "RevealViewController")
+    }
     @IBAction func datePicker(_ sender: Any) {
         let components = myDatePicker.calendar.dateComponents([.year, .month, .day, .minute, .hour], from: myDatePicker.date)
 
@@ -123,7 +128,8 @@ class AddEventController: UIViewController, UITextFieldDelegate {
         let eventRef = self.childRef.child("Event ID: " + String(eventID))
         eventRef.setValue(event.toAnyObject())
         
-        performSegue(withIdentifier: "CreateEventSegue", sender: sender)
+        //performSegue(withIdentifier: "CreateEventSegue", sender: sender)
+        segueRightToLeft(storyboardIdentifier: "RevealViewController")
     }
     
     func calculateID(sender:Any) {
@@ -146,6 +152,16 @@ class AddEventController: UIViewController, UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.view.endEditing(true)
         return false
+    }
+    
+    func segueRightToLeft(storyboardIdentifier: String) {
+        let transition = CATransition()
+        transition.duration = 0.5
+        transition.type = kCATransitionPush
+        transition.subtype = kCATransitionFromLeft
+        view.window!.layer.add(transition, forKey: kCATransition)
+        let secVC = self.storyboard?.instantiateViewController(withIdentifier: "\(storyboardIdentifier)") as! SWRevealViewController
+        present(secVC, animated: false, completion: nil)
     }
     
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
