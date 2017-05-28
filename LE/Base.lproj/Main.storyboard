@@ -429,7 +429,7 @@
             <objects>
                 <navigationController id="MRL-5m-xYO" sceneMemberID="viewController">
                     <value key="contentSizeForViewInPopover" type="size" width="375" height="667"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="9HW-si-DRr">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="9HW-si-DRr">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <edgeInsets key="layoutMargins" top="8" left="8" bottom="8" right="8"/>
@@ -629,7 +629,7 @@
             </objects>
             <point key="canvasLocation" x="6108" y="-1853.5232383808097"/>
         </scene>
-        <!--Add Event-->
+        <!--Create Event-->
         <scene sceneID="had-tI-0wO">
             <objects>
                 <viewController id="PwQ-w3-1Qo" customClass="AddEventController" customModule="LE" sceneMemberID="viewController">
@@ -747,7 +747,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Add Event" id="VuU-Ed-NEn"/>
+                    <navigationItem key="navigationItem" title="Create Event" id="VuU-Ed-NEn"/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
                         <outlet property="AddFriendsBtn" destination="lMp-VH-LKd" id="0Ow-1b-Pxz"/>
@@ -766,7 +766,7 @@
             </objects>
             <point key="canvasLocation" x="5168.8000000000002" y="-242.42878560719643"/>
         </scene>
-        <!--Add Friends-->
+        <!--Invite Friends-->
         <scene sceneID="LpC-zW-3BK">
             <objects>
                 <viewController id="62x-NM-a7B" customClass="AddFriendsToEventVC" customModule="LE" customModuleProvider="target" sceneMemberID="viewController">
@@ -836,7 +836,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Add Friends" id="LCj-b8-KZd">
+                    <navigationItem key="navigationItem" title="Invite Friends" id="LCj-b8-KZd">
                         <barButtonItem key="rightBarButtonItem" style="plain" id="d6B-O0-W54">
                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="fiX-SK-Fao">
                                 <rect key="frame" x="276" y="7" width="83" height="30"/>
@@ -864,7 +864,7 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="rMj-ae-PVL" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="1p0-XK-Sgr">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="1p0-XK-Sgr">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -882,7 +882,7 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="q1P-JG-WpV" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="E3N-rx-cKV">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="E3N-rx-cKV">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -900,7 +900,7 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="X6e-ef-2N7" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="hSk-vy-wF4">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="hSk-vy-wF4">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>

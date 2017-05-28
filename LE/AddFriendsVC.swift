@@ -114,6 +114,7 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
             cell.AddFriendBtn.tag = indexPath.row
             cell.AddFriendBtn.addTarget(self, action: #selector(addFriend(sender:)), for: .touchUpInside)
         }
+        cell.selectionStyle = UITableViewCellSelectionStyle.none
         return cell
     }
     

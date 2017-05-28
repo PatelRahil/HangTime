@@ -86,7 +86,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     @IBOutlet weak var PressButton: UIButton!
     @IBOutlet var OpenSideBar: UIButton!
     @IBAction func PushButton(_ sender: Any, forEvent event: UIEvent) {
-        //self.performSegue(withIdentifier: "CreateEventSegue", sender: sender)
     }
     override func viewDidLoad() {
         
@@ -192,7 +191,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.isNavigationBarHidden = true
-        //self.dataLabel!.text = dataObject
+        updateMap()
     }
     private func isAllowedToViewEvent(isPublic:Bool, friendsAllowed:[String], tag:String) -> Bool {
         var isAllowed = false
