@@ -717,15 +717,61 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="EIv-rj-JWF">
+                                <rect key="frame" x="0.0" y="429" width="375" height="29"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <segments>
+                                    <segment title="Public"/>
+                                    <segment title="Private"/>
+                                </segments>
+                                <connections>
+                                    <action selector="indexChanged:" destination="PwQ-w3-1Qo" eventType="valueChanged" id="l4M-Jf-F8b"/>
+                                </connections>
+                            </segmentedControl>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="You haven't added any friends yet" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CE9-rg-aGM">
+                                <rect key="frame" x="16" y="465" width="271" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="l6t-6i-tmK">
+                                <rect key="frame" x="283" y="461" width="76" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Details"/>
+                                <connections>
+                                    <action selector="viewDetails:" destination="PwQ-w3-1Qo" eventType="touchUpInside" id="vhu-Wt-yRn"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lMp-VH-LKd">
+                                <rect key="frame" x="16" y="494" width="162" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="+ Add Friends"/>
+                                <connections>
+                                    <action selector="addFriendsToEvent:" destination="PwQ-w3-1Qo" eventType="touchUpInside" id="HLG-ss-fWL"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Anyone can view this event" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7Wb-ur-Apv">
+                                <rect key="frame" x="16" y="465" width="338" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="Add Event" id="VuU-Ed-NEn"/>
                     <connections>
+                        <outlet property="AddFriendsBtn" destination="lMp-VH-LKd" id="0Ow-1b-Pxz"/>
                         <outlet property="AddressInvalid" destination="04X-4U-Tnw" id="pkV-we-OpD"/>
                         <outlet property="AddressTextbox" destination="ZhE-cn-gck" id="uFO-xq-KJJ"/>
+                        <outlet property="AnyoneCanViewLbl" destination="7Wb-ur-Apv" id="gMc-P1-CGO"/>
                         <outlet property="DescriptionTextbox" destination="kml-Qn-unM" id="Mvg-IS-fRf"/>
+                        <outlet property="DetailsBtn" destination="l6t-6i-tmK" id="X0p-Qo-KIb"/>
+                        <outlet property="FriendsLbl" destination="CE9-rg-aGM" id="rPa-B5-In0"/>
                         <outlet property="myDatePicker" destination="9zK-21-qru" id="fKe-Wh-RGc"/>
+                        <outlet property="segmentedControl" destination="EIv-rj-JWF" id="bb0-Pm-Sg4"/>
                         <segue destination="TqV-cV-dkA" kind="show" identifier="CreateEventSegue" id="baM-Ze-IdE"/>
                     </connections>
                 </viewController>

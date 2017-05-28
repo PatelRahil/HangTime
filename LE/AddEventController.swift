@@ -49,9 +49,13 @@ class AddEventController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var myDatePicker: UIDatePicker!
     
     @IBOutlet weak var AddressInvalid: UILabel!
-    @IBOutlet weak var DateInvalid: UILabel!
-    @IBOutlet weak var TimeInvalid: UILabel!
+    @IBOutlet weak var segmentedControl: UISegmentedControl!
     
+    @IBOutlet weak var AnyoneCanViewLbl: UILabel!
+    @IBOutlet weak var FriendsLbl: UILabel!
+    @IBOutlet weak var DetailsBtn: UIButton!
+    @IBOutlet weak var AddFriendsBtn: UIButton!
+
     
     lazy var geocoder = CLGeocoder()
     
@@ -81,6 +85,30 @@ class AddEventController: UIViewController, UITextFieldDelegate {
         minute = components.minute!
         hour = components.hour!
     }
+    @IBAction func indexChanged(_ sender: UISegmentedControl) {
+        switch segmentedControl.selectedSegmentIndex
+        {
+        case 0:
+            DetailsBtn.isHidden = true
+            AddFriendsBtn.isHidden = true
+            FriendsLbl.isHidden = true
+            AnyoneCanViewLbl.isHidden = false
+        case 1:
+            DetailsBtn.isHidden = false
+            AddFriendsBtn.isHidden = false
+            FriendsLbl.isHidden = false
+            AnyoneCanViewLbl.isHidden = true
+        default:
+            break
+        }
+    }
+    @IBAction func viewDetails(_ sender: Any) {
+    }
+    @IBAction func addFriendsToEvent(_ sender: Any) {
+    }
+    
+    
+    
     @IBAction func CreateEventButton(_ sender: Any, forEvent event: UIEvent) {
         validEntries = false
 
@@ -238,8 +266,13 @@ class AddEventController: UIViewController, UITextFieldDelegate {
         print(minDate)
         myDatePicker.minimumDate = minDate
         
-        self.AddressTextbox.delegate = self;
-        self.DescriptionTextbox.delegate = self;
+        self.AddressTextbox.delegate = self
+        self.DescriptionTextbox.delegate = self
+        
+        DetailsBtn.isHidden = true
+        AddFriendsBtn.isHidden = true
+        FriendsLbl.isHidden = true
+        AnyoneCanViewLbl.isHidden = false
     }
     
     override func didReceiveMemoryWarning() {
