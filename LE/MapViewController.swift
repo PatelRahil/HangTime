@@ -178,7 +178,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     
     func mapView(_ mapView: GMSMapView, didTapInfoWindowOf marker: GMSMarker) {
         //perform segue depending on the event
-    }
+    } 
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
