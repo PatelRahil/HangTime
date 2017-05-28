@@ -28,6 +28,7 @@ class BackTableVC: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        //profile option
         if (indexPath.row == 0) {
             let cell = tableView.dequeueReusableCell(withIdentifier: " ", for: indexPath) as! CustomSideTableViewCell
             cell.UsernameLbl.text = currentUser?.username

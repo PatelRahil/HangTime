@@ -102,6 +102,8 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = AddFriendListTblView.dequeueReusableCell(withIdentifier: "friendCell", for: indexPath) as! CustomTableViewCell
+        cell.AddFriendBtn.removeTarget(nil, action: nil, for: .allEvents)
+
         cell.UsernameLbl.text = TableArray[indexPath.row + 1]
         index = indexPath.row
         if (isAlreadyFriend(userID: allUserID[indexPath.row])) {
@@ -112,7 +114,7 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
             cell.AddFriendBtn.setTitle("Add", for: .normal)
             cell.AddFriendBtn.setTitleColor(UIColor.blue, for: .normal)
             cell.AddFriendBtn.tag = indexPath.row
-            cell.AddFriendBtn.addTarget(self, action: #selector(addFriend(sender:)), for: .touchUpInside)
+            cell.AddFriendBtn.addTarget(self, action: #selector(addFriend(_:)), for: .touchUpInside)
         }
         cell.selectionStyle = UITableViewCellSelectionStyle.none
         return cell
@@ -132,7 +134,7 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
         return isFriend
     }
     
-    func addFriend(sender:UIButton) {
+    func addFriend(_ sender:UIButton) {
         let pickedUserID = allUserID[sender.tag]
         if (!isAlreadyFriend(userID: pickedUserID)) {
         currentUser?.addFriend(uid: pickedUserID)
@@ -181,7 +183,7 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
                 self.AddFriendListTblView.reloadData()
                 for (index,_) in self.allUserID.enumerated() {
                     print(index)
-                    self.AddFriendListTblView.insertRows(at: [IndexPath(row: /*self.TableArray.count-2+*/index, section: 0)], with: .automatic)
+                    self.AddFriendListTblView.insertRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
                     print(index)
                 }
                 self.AddFriendListTblView.endUpdates()

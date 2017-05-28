@@ -113,7 +113,7 @@ class ProfileVC: UIViewController , UITextFieldDelegate, UITableViewDataSource, 
                         self.currentUser = User(snapshot: item)
                         var counter = 0;
                         for (key,str) in dict {
-                            if (key != "friends" && key != "UserID") {
+                            if (key != "friends" && key != "UserID" && key != "createdEvents") {
                                 counter += 1
                                 print("~~~~~~~~~~~~~~~~\n\(str)")
                                 self.userInfoArray[counter] = str as! String

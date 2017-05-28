@@ -124,7 +124,7 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
             cell.AddFriendBtn.setTitle("Add", for: .normal)
             cell.AddFriendBtn.setTitleColor(UIColor.blue, for: .normal)
             cell.AddFriendBtn.tag = indexPath.row
-            cell.AddFriendBtn.addTarget(self, action: #selector(addFriend(sender:)), for: .touchUpInside)
+            cell.AddFriendBtn.addTarget(self, action: #selector(addFriendToEvent(_:)), for: .touchUpInside)
         }
         cell.selectionStyle = UITableViewCellSelectionStyle.none
         return cell
@@ -142,7 +142,7 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
         return isAlreadyAdded
     }
     
-    func addFriend(sender:UIButton) {
+    func addFriendToEvent(_ sender:UIButton) {
         let pickedUserID = allUserID[sender.tag]
         print("\(isAlreadyAdded(userID: pickedUserID)) ++++ \(pickedUserID)")
         if (!isAlreadyAdded(userID: pickedUserID)) {
