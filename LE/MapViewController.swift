@@ -139,9 +139,13 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
                 let snap = item as! FIRDataSnapshot
                 print("\(snap.key)\n\(item)")
                 let event = Event(snapshot: snap)
-                if !(self.isThirtyPastCurrentTime(date: NSDate(), hour: Int(event.hour)!, minute: Int(event.minute)!, day: Int(event.day)!, month: Int(event.month)!, year: Int(event.year)!)) {
+                if !(self.isThirtyPastCurrentTime(date: NSDate(), hour: Int(event.hour)!, minute: Int(event.minute)!, day: Int(event.day)!, month: Int(event.month)!, year: Int(event.year)!)) && self.isAllowedToViewEvent(isPublic:event.isPublic, friendsAllowed: event.invitedFriends, tag:snap.key)  {
+                    
                     newEvents.append(event)
                     self.createMarker(hour:event.hour, minute:event.minute, address:event.address, latitude:event.latitude, longitude:event.longitude, description:event.description, day:event.day, month:event.month, year:event.year, tag:snap.key)
+                    
+                    
+                    
                 }
             }
             
@@ -187,9 +191,26 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.navigationController?.isNavigationBarHidden = true
         //self.dataLabel!.text = dataObject
     }
-    
+    private func isAllowedToViewEvent(isPublic:Bool, friendsAllowed:[String], tag:String) -> Bool {
+        var isAllowed = false
+        var userCreatedThisEvent = false
+        for friend in friendsAllowed {
+            if isPublic && friend == currentUser.getUserID() {
+                isAllowed = true
+            }
+        }
+        
+        for event in currentUser.createdEvents {
+            if event == tag {
+                userCreatedThisEvent == true
+            }
+        }
+        
+        return isAllowed || userCreatedThisEvent
+    }
     private func isThirtyPastCurrentTime(date: NSDate, hour: Int, minute: Int, day: Int, month:Int, year:Int) -> Bool {
         var tempMin = minute
         var tempHr = hour
@@ -202,10 +223,9 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         let thisMonth =  Calendar.current.component(.month, from: date as Date)
         let thisDay =  Calendar.current.component(.day, from: date as Date)
         
-        //print(thisMonth + "/" + thisDay + "/" + thisYear)
-        //print("\(date.hour()) : \(date.minute())")
-        if ((minute + 30) >= 60) {
-            tempMin = minute - 30
+        //can replace 30 with a variable for how long after the start time you want the event to be visible
+        while ((tempMin + 30) >= 60) {
+            tempMin = minute + 30 - 60
             tempHr += 1
         }
         if (tempHr > 24) {

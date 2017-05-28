@@ -21,6 +21,8 @@ struct Event {
     var longitude: Double
     let ref: FIRDatabaseReference?
     var eventID: Int
+    var isPublic: Bool
+    var invitedFriends: [String]
     
     init (description: String,
           day: String,
@@ -31,7 +33,9 @@ struct Event {
           address: String,
           latitude: Double,
           longitude: Double,
-          eventID: Int) {
+          eventID: Int,
+          isPublic: Bool,
+          invitedFriends: [String]) {
         self.description = description
         self.day = day
         self.month = month
@@ -43,6 +47,8 @@ struct Event {
         self.longitude = longitude
         self.ref = nil
         self.eventID = eventID
+        self.isPublic = isPublic
+        self.invitedFriends = invitedFriends
     }
     
     init (snapshot: FIRDataSnapshot) {
@@ -58,9 +64,17 @@ struct Event {
         longitude = snapshotValue["longitude"] as! Double
         eventID = snapshotValue["eventID"] as! Int
         ref = snapshot.ref
+        isPublic = snapshotValue["isPublic"] as! Bool
+        let invitedFriendsStringRep = snapshotValue["invitedFriends"] as! String
+        invitedFriends = invitedFriendsStringRep.characters.split{$0 == ","}.map(String.init)
+    }
+    
+    mutating func addFriendToEvent(withID: String) {
+        invitedFriends.append(withID)
     }
     
     func toAnyObject() -> Any {
+        let invitedFriendsStringRep = invitedFriends.joined(separator: ",")
         return [
             "description": description,
             "day": day,
@@ -71,7 +85,9 @@ struct Event {
             "address": address,
             "latitude": latitude,
             "longitude": longitude,
-            "eventID": eventID
+            "eventID": eventID,
+            "isPublic": isPublic,
+            "invitedFriends": invitedFriendsStringRep
         ]
     }
 }

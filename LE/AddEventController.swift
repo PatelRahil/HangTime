@@ -72,10 +72,16 @@ class AddEventController: UIViewController, UITextFieldDelegate {
     var minute = 0
     var hour = 0
     
-
+    var invitedFriendsUIDs:[String] = []
+    var invitedFriendsUsernames:[String] = []
+    var isPublic = true
+    
+    /*
     @IBAction func CancelButton(_ sender: Any) {
         segueRightToLeft(storyboardIdentifier: "RevealViewController")
     }
+     */
+    
     @IBAction func datePicker(_ sender: Any) {
         let components = myDatePicker.calendar.dateComponents([.year, .month, .day, .minute, .hour], from: myDatePicker.date)
 
@@ -93,11 +99,13 @@ class AddEventController: UIViewController, UITextFieldDelegate {
             AddFriendsBtn.isHidden = true
             FriendsLbl.isHidden = true
             AnyoneCanViewLbl.isHidden = false
+            isPublic = true
         case 1:
             DetailsBtn.isHidden = false
             AddFriendsBtn.isHidden = false
             FriendsLbl.isHidden = false
             AnyoneCanViewLbl.isHidden = true
+            isPublic = false
         default:
             break
         }
@@ -105,6 +113,7 @@ class AddEventController: UIViewController, UITextFieldDelegate {
     @IBAction func viewDetails(_ sender: Any) {
     }
     @IBAction func addFriendsToEvent(_ sender: Any) {
+        //self.performSegue(withIdentifier: "AddFriendsToEventSegue", sender: sender)
     }
     
     
@@ -173,27 +182,52 @@ class AddEventController: UIViewController, UITextFieldDelegate {
     }
     
     func createEvent(sender: Any, eventID: Int) {
-        let event = Event(description: DescriptionTextbox.text!,
-                          day: String(day),
-                          month: String(month),
-                          year: String(year),
-                          hour: String(hour),
-                          minute: String(minute),
-                          address: AddressTextbox.text!,
-                          latitude: EventVariables.latitude,
-                          longitude: EventVariables.longitude,
-                          eventID: eventID
+        if isPublic {
+            let event = Event(description: DescriptionTextbox.text!,
+                              day: String(day),
+                              month: String(month),
+                              year: String(year),
+                              hour: String(hour),
+                              minute: String(minute),
+                              address: AddressTextbox.text!,
+                              latitude: EventVariables.latitude,
+                              longitude: EventVariables.longitude,
+                              eventID: eventID,
+                              isPublic: isPublic,
+                              invitedFriends: []
+                
+            )
             
-        )
-        
-        let eventRefID = childRef.childByAutoId()
-        currentUser?.addEvent(eventID: eventRefID.key)
-        let userRef = self.userRef.child("User: \(currentUser!.userID)")
-        userRef.setValue(currentUser!.toAnyObject())
-        //let eventRef = self.childRef.child("Event ID: " + String(eventID))
-        //eventRef.setValue(event.toAnyObject())
-        eventRefID.setValue(event.toAnyObject())
-        //performSegue(withIdentifier: "CreateEventSegue", sender: sender)
+            let eventRefID = childRef.childByAutoId()
+            currentUser?.addEvent(eventID: eventRefID.key)
+            let userRef = self.userRef.child("User: \(currentUser!.userID)")
+            userRef.setValue(currentUser!.toAnyObject())
+            
+            eventRefID.setValue(event.toAnyObject())
+        }
+        else {
+            let event = Event(description: DescriptionTextbox.text!,
+                              day: String(day),
+                              month: String(month),
+                              year: String(year),
+                              hour: String(hour),
+                              minute: String(minute),
+                              address: AddressTextbox.text!,
+                              latitude: EventVariables.latitude,
+                              longitude: EventVariables.longitude,
+                              eventID: eventID,
+                              isPublic: isPublic,
+                              invitedFriends: invitedFriendsUIDs
+            
+            )
+            let eventRefID = childRef.childByAutoId()
+            currentUser?.addEvent(eventID: eventRefID.key)
+            let userRef = self.userRef.child("User: \(currentUser!.userID)")
+            userRef.setValue(currentUser!.toAnyObject())
+            
+            eventRefID.setValue(event.toAnyObject())
+        }
+
         segueRightToLeft(storyboardIdentifier: "RevealViewController")
     }
     
@@ -262,6 +296,8 @@ class AddEventController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         loadUser()
         // Do any additional setup after loading the view, typically from a nib.
+        self.navigationController?.isNavigationBarHidden = false
+
         let minDate:Date = Date()
         print(minDate)
         myDatePicker.minimumDate = minDate
@@ -275,6 +311,17 @@ class AddEventController: UIViewController, UITextFieldDelegate {
         AnyoneCanViewLbl.isHidden = false
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "AddFriendsToEventSegue" {
+            let nextController = (segue.destination as! AddFriendsToEventVC)
+            nextController.addedFriends = invitedFriendsUIDs
+            
+            let backItem = UIBarButtonItem()
+            backItem.title = "Cancel"
+            navigationItem.backBarButtonItem = backItem
+        }
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -282,7 +329,15 @@ class AddEventController: UIViewController, UITextFieldDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        //self.dataLabel!.text = dataObject
+        print("$$$$$$$$$$$$$$$$$$$$$$$$\n\(invitedFriendsUsernames)")
+        let invitedFriendsStringRep:String = invitedFriendsUsernames.joined(separator: ", ")
+        if invitedFriendsUIDs.count == 0 {
+            FriendsLbl.text = "You haven't added any friends yet"
+        }
+        else {
+            FriendsLbl.textColor = UIColor.black
+            FriendsLbl.text = invitedFriendsStringRep
+        }
     }
 }
 
