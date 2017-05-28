@@ -71,7 +71,7 @@ extension NSDate
 }
 
 
-class MapViewController: UIViewController, CLLocationManagerDelegate {
+class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDelegate {
     
     let childRef = FIRDatabase.database().reference(withPath: "Events")
     var events: [Event] = []
@@ -95,25 +95,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate {
         print(currentUser)
         
         updateMap()
-        /*
-        childRef.observe(.value, with: { snapshot in
-            // 2
-            var newEvents: [Event] = []
-            print("----------------------------------")
-            // 3
-            for item in snapshot.children {
-                // 4
-                let event = Event(snapshot: item as! FIRDataSnapshot)
-                if !(self.isThirtyPastCurrentTime(date: NSDate(), hour: Int(event.hour)!, minute: Int(event.minute)!, day: Int(event.day)!, month: Int(event.month)!, year: Int(event.year)!)) {
-                    newEvents.append(event)
-                    self.createMarker(hour:event.hour, minute:event.minute, address:event.address, latitude:event.latitude, longitude:event.longitude, description:event.description, day:event.day, month:event.month, year:event.year)
-                }
-            }
-            
-            // 5
-            self.events = newEvents
-        })
-        */
+        mapView.delegate = self
         view.addSubview(mapView)
         
         
@@ -154,10 +136,12 @@ class MapViewController: UIViewController, CLLocationManagerDelegate {
             // 3
             for item in snapshot.children {
                 // 4
-                let event = Event(snapshot: item as! FIRDataSnapshot)
+                let snap = item as! FIRDataSnapshot
+                print("\(snap.key)\n\(item)")
+                let event = Event(snapshot: snap)
                 if !(self.isThirtyPastCurrentTime(date: NSDate(), hour: Int(event.hour)!, minute: Int(event.minute)!, day: Int(event.day)!, month: Int(event.month)!, year: Int(event.year)!)) {
                     newEvents.append(event)
-                    self.createMarker(hour:event.hour, minute:event.minute, address:event.address, latitude:event.latitude, longitude:event.longitude, description:event.description, day:event.day, month:event.month, year:event.year)
+                    self.createMarker(hour:event.hour, minute:event.minute, address:event.address, latitude:event.latitude, longitude:event.longitude, description:event.description, day:event.day, month:event.month, year:event.year, tag:snap.key)
                 }
             }
             
@@ -167,7 +151,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate {
         
     }
     
-    func createMarker(hour:String, minute:String, address:String, latitude:Double, longitude:Double, description:String, day:String, month:String, year:String) {
+    func createMarker(hour:String, minute:String, address:String, latitude:Double, longitude:Double, description:String, day:String, month:String, year:String, tag:String) {
         var newHr:Int = Int(hour)!
         var newMin = minute
         var AMPMstr = " AM"
@@ -187,9 +171,13 @@ class MapViewController: UIViewController, CLLocationManagerDelegate {
         
             marker.position = GMSCameraPosition.camera(withLatitude: CLLocationDegrees(latitude),longitude:CLLocationDegrees(longitude), zoom:6).target
             marker.snippet = description + "\nDate: " + month + "/" + day + "/" + year + "\nTime: " + timeStr + "\nLocation: " + address
+            marker.userData = tag
             marker.appearAnimation = kGMSMarkerAnimationPop
             marker.map = mapView
-
+    }
+    
+    func mapView(_ mapView: GMSMapView, didTapInfoWindowOf marker: GMSMarker) {
+        //perform segue depending on the event
     }
     
     override func didReceiveMemoryWarning() {

@@ -10,6 +10,7 @@ import UIKit
 import GoogleMaps
 import CoreLocation
 import FirebaseDatabase
+import Firebase
 
 class AddEventController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var DescriptionTextbox: UITextField!
@@ -26,7 +27,10 @@ class AddEventController: UIViewController, UITextFieldDelegate {
     
     let rootRef = FIRDatabase.database().reference()
     let childRef = FIRDatabase.database().reference(withPath: "Events")
+    let userRef = FIRDatabase.database().reference(withPath: "Users")
 
+    var currentUser: User? = nil
+    
     var validEntries = false
     var day = 0
     var month = 0
@@ -124,10 +128,13 @@ class AddEventController: UIViewController, UITextFieldDelegate {
             
         )
         
-        
-        let eventRef = self.childRef.child("Event ID: " + String(eventID))
-        eventRef.setValue(event.toAnyObject())
-        
+        let eventRefID = childRef.childByAutoId()
+        currentUser?.addEvent(eventID: eventRefID.key)
+        let userRef = self.userRef.child("User: \(currentUser!.userID)")
+        userRef.setValue(currentUser!.toAnyObject())
+        //let eventRef = self.childRef.child("Event ID: " + String(eventID))
+        //eventRef.setValue(event.toAnyObject())
+        eventRefID.setValue(event.toAnyObject())
         //performSegue(withIdentifier: "CreateEventSegue", sender: sender)
         segueRightToLeft(storyboardIdentifier: "RevealViewController")
     }
@@ -176,8 +183,26 @@ class AddEventController: UIViewController, UITextFieldDelegate {
         return true
     }
     
+    func loadUser() {
+        if let currentUser = FIRAuth.auth()?.currentUser {
+            let userID = currentUser.uid
+            let userRef = FIRDatabase.database().reference(withPath: "Users")
+            userRef.observe(.value, with: { snapshot in
+                for item in snapshot.children.allObjects as! [FIRDataSnapshot] {
+                    let dict = item.value as! Dictionary<String,Any>
+                    if (dict["UserID"] as? String == userID) {
+                        self.currentUser = User(snapshot: item)
+                    }
+                    print("\(dict)\n\(dict["UserID"] as? String) ==? \(userID)")
+                }
+                print("~~~~~~~~~~~~~~~~~~~~~~~~~~\(self.currentUser)")
+            })
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        loadUser()
         // Do any additional setup after loading the view, typically from a nib.
         let minDate:Date = Date()
         print(minDate)
