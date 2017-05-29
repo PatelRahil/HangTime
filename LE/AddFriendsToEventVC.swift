@@ -103,7 +103,6 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
         return TableArray.count - 1
     }
     
@@ -137,7 +136,6 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
             if (friend == userID) {
                 isAlreadyAdded = true
             }
-            print("friend:\(friend)     userID: \(userID)      index:\(index)")
         }
         return isAlreadyAdded
     }
@@ -180,7 +178,6 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
                     for (key,value) in dataDic {
                         //determines if the uid is a friend
                         //adds the username to the table array if the username is not the current user and is a friend
-                        print("\(key) + \(value as? String) ==? \(self.currentUser?.username) + \(isFriend)")
                         if key == "username" && value as? String != self.currentUser?.username && isFriend {
                             self.TableArray.append(value as! String)
                         }
@@ -200,13 +197,10 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
                 print(self.TableArray)
                 print(self.TableArray.count)
                 //self.AddFriendListTblView.reloadData()
-                print(self.AddFriendListTblView.numberOfRows(inSection: 0))
                 self.AddFriendListTblView.beginUpdates()
                 self.AddFriendListTblView.reloadData()
                 for (index,_) in self.allUserID.enumerated() {
-                    print(index)
                     self.AddFriendListTblView.insertRows(at: [IndexPath(row: /*self.TableArray.count-2+*/index, section: 0)], with: .automatic)
-                    print(index)
                 }
                 self.AddFriendListTblView.endUpdates()
                 print(self.AddFriendListTblView.numberOfRows(inSection: 0))

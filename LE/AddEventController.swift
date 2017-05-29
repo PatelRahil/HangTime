@@ -74,7 +74,7 @@ class AddEventController: UIViewController, UITextFieldDelegate {
     
     var invitedFriendsUIDs:[String] = []
     var invitedFriendsUsernames:[String] = []
-    var isPublic = true
+    var isPublic:Bool = true
     
     /*
     @IBAction func CancelButton(_ sender: Any) {
@@ -92,6 +92,7 @@ class AddEventController: UIViewController, UITextFieldDelegate {
         hour = components.hour!
     }
     @IBAction func indexChanged(_ sender: UISegmentedControl) {
+        print("Switched to: \(segmentedControl.selectedSegmentIndex)")
         switch segmentedControl.selectedSegmentIndex
         {
         case 0:
@@ -109,6 +110,7 @@ class AddEventController: UIViewController, UITextFieldDelegate {
         default:
             break
         }
+        print("IS PUBLIC \(isPublic)")
     }
     @IBAction func viewDetails(_ sender: Any) {
     }
@@ -146,7 +148,7 @@ class AddEventController: UIViewController, UITextFieldDelegate {
             EventVariables.address = address!
         
 
-        
+            print("ADDRESS:::::::::::::::\(address)")
             geocoder.geocodeAddressString(address!) { (placemarks, error) in
                 // Process Response
                 self.processResponse(withPlacemarks: placemarks, error: error, sender: sender)
@@ -172,7 +174,7 @@ class AddEventController: UIViewController, UITextFieldDelegate {
                 let coordinate = location.coordinate
                 EventVariables.latitude = Double(coordinate.latitude)
                 EventVariables.longitude = Double(coordinate.longitude)
-                print(coordinate.latitude)
+                print("**********Latitude: \(coordinate.latitude)")
             } else {
             }
         }
@@ -181,8 +183,26 @@ class AddEventController: UIViewController, UITextFieldDelegate {
 
     }
     
+    func calculateID(sender:Any) {
+        childRef.observeSingleEvent(of:.value, with: { (snapshot: FIRDataSnapshot!) in
+            var eventID = 0;
+            for item in snapshot.children {
+                let event = Event(snapshot: item as! FIRDataSnapshot)
+                if event.eventID >= eventID {
+                    eventID = event.eventID + 1
+                    print(eventID)
+                }
+            }
+            
+            
+            self.createEvent(sender: sender, eventID: Int(eventID))
+            
+        })
+    }
+    
     func createEvent(sender: Any, eventID: Int) {
         if isPublic {
+            print(AddressTextbox.text ?? "OOPS")
             let event = Event(description: DescriptionTextbox.text!,
                               day: String(day),
                               month: String(month),
@@ -197,7 +217,10 @@ class AddEventController: UIViewController, UITextFieldDelegate {
                               invitedFriends: []
                 
             )
-            
+            print("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+            print(event)
+            print(isPublic)
+            print(EventVariables())
             let eventRefID = childRef.childByAutoId()
             currentUser?.addEvent(eventID: eventRefID.key)
             let userRef = self.userRef.child("User: \(currentUser!.userID)")
@@ -231,22 +254,7 @@ class AddEventController: UIViewController, UITextFieldDelegate {
         segueRightToLeft(storyboardIdentifier: "RevealViewController")
     }
     
-    func calculateID(sender:Any) {
-        childRef.observeSingleEvent(of:.value, with: { (snapshot: FIRDataSnapshot!) in
-            var eventID = 0;
-            for item in snapshot.children {
-                let event = Event(snapshot: item as! FIRDataSnapshot)
-                if event.eventID >= eventID {
-                    eventID = event.eventID + 1
-                    print(eventID)
-                }
-            }
-            
-            
-            self.createEvent(sender: sender, eventID: Int(eventID))
-            
-        })
-    }
+
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.view.endEditing(true)
@@ -285,9 +293,7 @@ class AddEventController: UIViewController, UITextFieldDelegate {
                     if (dict["UserID"] as? String == userID) {
                         self.currentUser = User(snapshot: item)
                     }
-                    print("\(dict)\n\(dict["UserID"] as? String) ==? \(userID)")
                 }
-                print("~~~~~~~~~~~~~~~~~~~~~~~~~~\(self.currentUser)")
             })
         }
     }

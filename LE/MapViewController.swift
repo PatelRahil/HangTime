@@ -74,6 +74,7 @@ extension NSDate
 class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDelegate {
     
     let childRef = FIRDatabase.database().reference(withPath: "Events")
+    let userRef = FIRDatabase.database().reference(withPath: "Users")
     var events: [Event] = []
 
     var currentUser:User!
@@ -91,9 +92,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        print(currentUser)
-        
-        updateMap()
+        loadUser()
         mapView.delegate = self
         view.addSubview(mapView)
         
@@ -113,16 +112,13 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
             
         }
         self.navigationController?.isNavigationBarHidden = true
-        PressButton.translatesAutoresizingMaskIntoConstraints = false
-        //PressButton.frame = CGRect(origin: CGPoint(x:50, y:50), size: CGSize(width: 50, height: 50))
-        print("\(UIScreen.main.bounds)")
         PressButton.frame = CGRect(origin: CGPoint(x:5*UIScreen.main.bounds.width / 6, y:UIScreen.main.bounds.height / 25), size: CGSize(width: 7*UIScreen.main.bounds.width / 40, height: UIScreen.main.bounds.height / 11))
         OpenSideBar.frame = CGRect(origin: CGPoint(x:7*UIScreen.main.bounds.width / 320, y:UIScreen.main.bounds.height / 25), size: CGSize(width: 7*UIScreen.main.bounds.width / 80, height: UIScreen.main.bounds.height / 22))
         view.addSubview(self.PressButton)
         view.addSubview(self.OpenSideBar)
         
         OpenSideBar.addTarget(self.revealViewController(), action: #selector(SWRevealViewController.revealToggle(_:)), for: .touchUpInside)
-        
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\nButton Position:::  (\(PressButton.frame.midX),\(PressButton.frame.midY)")
         //self.revealViewController().rearViewRevealWidth = self.view.frame.width - 200
 
     }
@@ -138,6 +134,9 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
                 let snap = item as! FIRDataSnapshot
                 print("\(snap.key)\n\(item)")
                 let event = Event(snapshot: snap)
+                print("Is Thirty Past:\(!(self.isThirtyPastCurrentTime(date: NSDate(), hour: Int(event.hour)!, minute: Int(event.minute)!, day: Int(event.day)!, month: Int(event.month)!, year: Int(event.year)!)))")
+                print("Is a friend or creator: \(self.isAllowedToViewEvent(isPublic:event.isPublic, friendsAllowed: event.invitedFriends, tag:snap.key))")
+                
                 if !(self.isThirtyPastCurrentTime(date: NSDate(), hour: Int(event.hour)!, minute: Int(event.minute)!, day: Int(event.day)!, month: Int(event.month)!, year: Int(event.year)!)) && self.isAllowedToViewEvent(isPublic:event.isPublic, friendsAllowed: event.invitedFriends, tag:snap.key)  {
                     
                     newEvents.append(event)
@@ -190,24 +189,27 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        print("________________________________________________MAP APPEARED")
         self.navigationController?.isNavigationBarHidden = true
         updateMap()
+        print("Button Position:::  (\(PressButton.frame.midX),\(PressButton.frame.midY)")
     }
     private func isAllowedToViewEvent(isPublic:Bool, friendsAllowed:[String], tag:String) -> Bool {
         var isAllowed = false
         var userCreatedThisEvent = false
         for friend in friendsAllowed {
-            if isPublic && friend == currentUser.getUserID() {
+            print("\(friend) ==? \(currentUser.getUserID())")
+            if isPublic || friend == currentUser.getUserID() {
                 isAllowed = true
             }
         }
         
         for event in currentUser.createdEvents {
             if event == tag {
-                userCreatedThisEvent == true
+                userCreatedThisEvent = true
             }
         }
-        
+        print("Is allowed?:::: \(isAllowed)")
         return isAllowed || userCreatedThisEvent
     }
     private func isThirtyPastCurrentTime(date: NSDate, hour: Int, minute: Int, day: Int, month:Int, year:Int) -> Bool {
@@ -217,7 +219,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         var tempMonth = month
         var tempYear = year
         
-        
         let thisYear = Calendar.current.component(.year, from: date as Date)
         let thisMonth =  Calendar.current.component(.month, from: date as Date)
         let thisDay =  Calendar.current.component(.day, from: date as Date)
@@ -226,6 +227,8 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         while ((tempMin + 30) >= 60) {
             tempMin = minute + 30 - 60
             tempHr += 1
+            print(tempMin)
+            print(tempHr)
         }
         if (tempHr > 24) {
             tempHr = 1
@@ -257,6 +260,11 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
             tempYear += 1
         }
         
+        
+        let expireTime = "\(tempHr):\(tempMin)"
+        let expireDate = "\(tempMonth)/\(tempDay)/\(tempYear)"
+        print("Time: \(expireTime)\n\(expireDate)")
+        
         if (tempYear > thisYear) {
             return false
         }
@@ -274,6 +282,22 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         }
         else {
             return true
+        }
+    }
+    
+    func loadUser() {
+        if let currentUser = FIRAuth.auth()?.currentUser {
+            let userID = currentUser.uid
+            
+            self.userRef.observe(.value, with: { snapshot in
+                for item in snapshot.children.allObjects as! [FIRDataSnapshot] {
+                    let dict = item.value as! Dictionary<String,Any>
+                    if (dict["UserID"] as? String == userID) {
+                        self.currentUser = User(snapshot: item)
+                    }
+                }
+                self.updateMap()
+            })
         }
     }
     

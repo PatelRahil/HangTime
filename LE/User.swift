@@ -28,17 +28,23 @@ struct User {
         let snapshotValue = snapshot.value as! [String: AnyObject]
         username = snapshotValue["username"] as! String
         userID = snapshotValue["UserID"] as! String
-        
+        print("\n\n\nIN THE USER%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
         if let friendsStringRep = snapshotValue["friends"] as? String {
+            
             friends = friendsStringRep.characters.split{$0 == ","}.map(String.init)
             if let eventsStringRep = snapshotValue["createdEvents"] as? String {
                 createdEvents = eventsStringRep.characters.split{$0 == ","}.map(String.init)
+                print(1)
+                print(eventsStringRep.characters.split{$0 == ","}.map(String.init))
+                print(createdEvents)
+                print("\n\n\n\n")
             }
             else {
                 createdEvents = []
                 let childRef = FIRDatabase.database().reference(withPath: "Users")
                 let userRef = childRef.child("User: \(self.userID)")
                 userRef.setValue(self.toAnyObject())
+                print(2)
             }
         }
         else {
@@ -47,12 +53,14 @@ struct User {
             let userRef = childRef.child("User: \(self.userID)")
             if let eventsStringRep = snapshotValue["createdEvents"] as? String {
                 createdEvents = eventsStringRep.characters.split{$0 == ","}.map(String.init)
+                print(3)
             }
             else {
                 createdEvents = []
                 let childRef = FIRDatabase.database().reference(withPath: "Users")
                 let userRef = childRef.child("User: \(self.userID)")
                 userRef.setValue(self.toAnyObject())
+                print(4)
             }
             userRef.setValue(self.toAnyObject())
         }
