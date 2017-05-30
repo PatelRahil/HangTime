@@ -205,7 +205,6 @@ class CustomTableViewCell: UITableViewCell {
     
     @IBOutlet weak var ProfileImg: UIImageView!
     @IBOutlet weak var AddFriendBtn: UIButton!
-    
 
     override func prepareForReuse() {
         if (AddFriendBtn.titleLabel?.text == "Added") {

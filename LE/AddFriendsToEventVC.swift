@@ -37,7 +37,7 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
         })
         
         let createEventVC = self.navigationController?.viewControllers[vcIndex!] as! AddEventController
-        createEventVC.invitedFriendsUIDs = addedFriends
+        //createEventVC.invitedFriendsUIDs = addedFriends
         
         self.childRef.observe(.value, with: { snapshot in
             
@@ -49,7 +49,9 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
                     }
                 }
             }
-            createEventVC.invitedFriendsUsernames = self.addedFriendsUsernames
+            //createEventVC.invitedFriendsUsernames = self.addedFriendsUsernames
+            InvitedFriends.invitedFriendsUIDs = self.addedFriends
+            InvitedFriends.invitedFriendsUsernames = self.addedFriendsUsernames
             self.navigationController?.popToViewController(createEventVC, animated: true)
         })
     }

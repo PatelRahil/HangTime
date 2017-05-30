@@ -326,6 +326,16 @@ class AddEventController: UIViewController, UITextFieldDelegate {
             backItem.title = "Cancel"
             navigationItem.backBarButtonItem = backItem
         }
+        if segue.identifier == "DetailsSegue" {
+            let nextController = (segue.destination as! EventFriendListVC)
+            nextController.invitedFriendsUIDs = invitedFriendsUIDs
+            nextController.invitedFriendsUsernames = invitedFriendsUsernames
+            nextController.currentUser = currentUser
+            
+            let backItem = UIBarButtonItem()
+            backItem.title = "Create Event"
+            navigationItem.backBarButtonItem = backItem
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -336,6 +346,8 @@ class AddEventController: UIViewController, UITextFieldDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         print("$$$$$$$$$$$$$$$$$$$$$$$$\n\(invitedFriendsUsernames)")
+        invitedFriendsUsernames = InvitedFriends.invitedFriendsUsernames
+        invitedFriendsUIDs = InvitedFriends.invitedFriendsUIDs
         let invitedFriendsStringRep:String = invitedFriendsUsernames.joined(separator: ", ")
         if invitedFriendsUIDs.count == 0 {
             FriendsLbl.text = "You haven't added any friends yet"

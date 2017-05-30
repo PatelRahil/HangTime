@@ -19,6 +19,7 @@
 		5A7646AD1DD7B5F300503F07 /* LETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7646AC1DD7B5F300503F07 /* LETests.swift */; };
 		5A7646B81DD7B5F300503F07 /* LEUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7646B71DD7B5F300503F07 /* LEUITests.swift */; };
 		5A7646C61DD7C48000503F07 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5A7646C51DD7C48000503F07 /* GoogleService-Info.plist */; };
+		5AA516BB1EDCE18700686A65 /* EventFriendListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA516BA1EDCE18700686A65 /* EventFriendListVC.swift */; };
 		5ABA18111ECB5FEA005679E3 /* AddFriendsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ABA18101ECB5FEA005679E3 /* AddFriendsVC.swift */; };
 		5ABA18131ECB6DA9005679E3 /* BackTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ABA18121ECB6DA9005679E3 /* BackTableVC.swift */; };
 		5ACA67711DD7EEA900A8CE5D /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ACA67701DD7EEA900A8CE5D /* MapViewController.swift */; };
@@ -74,6 +75,7 @@
 		5A7646B71DD7B5F300503F07 /* LEUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LEUITests.swift; sourceTree = "<group>"; };
 		5A7646B91DD7B5F300503F07 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5A7646C51DD7C48000503F07 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		5AA516BA1EDCE18700686A65 /* EventFriendListVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventFriendListVC.swift; sourceTree = "<group>"; };
 		5ABA18101ECB5FEA005679E3 /* AddFriendsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFriendsVC.swift; sourceTree = "<group>"; };
 		5ABA18121ECB6DA9005679E3 /* BackTableVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackTableVC.swift; sourceTree = "<group>"; };
 		5ACA67701DD7EEA900A8CE5D /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
@@ -150,6 +152,7 @@
 				5A705DA51ECA1374006E13E4 /* User.swift */,
 				5A7646991DD7B5F300503F07 /* ModelController.swift */,
 				5AFFBF011DE3D5E600D399C7 /* Main.storyboard */,
+				5AA516BA1EDCE18700686A65 /* EventFriendListVC.swift */,
 				5AD642E41ED264EC001155AA /* ProfileVC.swift */,
 				5AD642E61ED26503001155AA /* SettingsVC.swift */,
 				5ABA18121ECB6DA9005679E3 /* BackTableVC.swift */,
@@ -496,6 +499,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5ADA4D8A1E3D23DD00063420 /* Event.swift in Sources */,
+				5AA516BB1EDCE18700686A65 /* EventFriendListVC.swift in Sources */,
 				5ABA18111ECB5FEA005679E3 /* AddFriendsVC.swift in Sources */,
 				5ABA18131ECB6DA9005679E3 /* BackTableVC.swift in Sources */,
 				5ACA67771DD890CF00A8CE5D /* AddEventController.swift in Sources */,
