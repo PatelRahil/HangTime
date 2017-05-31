@@ -717,23 +717,14 @@
                                 </connections>
                             </segmentedControl>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="You haven't added any friends yet" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CE9-rg-aGM">
-                                <rect key="frame" x="16" y="465" width="271" height="21"/>
+                                <rect key="frame" x="16" y="505" width="271" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="l6t-6i-tmK">
-                                <rect key="frame" x="283" y="461" width="76" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Details"/>
-                                <connections>
-                                    <action selector="viewDetails:" destination="PwQ-w3-1Qo" eventType="touchUpInside" id="vhu-Wt-yRn"/>
-                                    <segue destination="ujB-1S-IQU" kind="show" identifier="DetailsSegue" id="81d-nb-Nx4"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lMp-VH-LKd">
-                                <rect key="frame" x="16" y="494" width="162" height="30"/>
+                                <rect key="frame" x="16" y="525" width="162" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="+ Add Friends"/>
                                 <connections>
@@ -742,12 +733,28 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Anyone can view this event" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7Wb-ur-Apv">
-                                <rect key="frame" x="16" y="465" width="338" height="21"/>
+                                <rect key="frame" x="16" y="505" width="338" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Invited Friends:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1zV-mO-lHh">
+                                <rect key="frame" x="16" y="476" width="126" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="l6t-6i-tmK">
+                                <rect key="frame" x="283" y="500" width="76" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Details"/>
+                                <connections>
+                                    <action selector="viewDetails:" destination="PwQ-w3-1Qo" eventType="touchUpInside" id="vhu-Wt-yRn"/>
+                                    <segue destination="ujB-1S-IQU" kind="show" identifier="DetailsSegue" id="81d-nb-Nx4"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -761,6 +768,7 @@
                         <outlet property="DescriptionTextbox" destination="kml-Qn-unM" id="Mvg-IS-fRf"/>
                         <outlet property="DetailsBtn" destination="l6t-6i-tmK" id="X0p-Qo-KIb"/>
                         <outlet property="FriendsLbl" destination="CE9-rg-aGM" id="rPa-B5-In0"/>
+                        <outlet property="InvitedFriendsLbl" destination="1zV-mO-lHh" id="r6e-d7-qoU"/>
                         <outlet property="myDatePicker" destination="9zK-21-qru" id="fKe-Wh-RGc"/>
                         <outlet property="segmentedControl" destination="EIv-rj-JWF" id="bb0-Pm-Sg4"/>
                         <segue destination="TqV-cV-dkA" kind="show" identifier="CreateEventSegue" id="baM-Ze-IdE"/>

@@ -27,9 +27,14 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
     @IBOutlet var editInvitedFriendsTableView: UITableView!
     
     @IBAction func SelectAllInvitedFriends(_ sender: Any) {
+        if invitedFriendsUIDs != [] {
+        DeleteButton.setTitleColor(UIColor.init(red:14.0/255, green:122.0/255, blue:254.0/255, alpha: 1), for: .normal)
+        }
+        selectedCellsIndex = []
         let numOfRows = editInvitedFriendsTableView.numberOfRows(inSection: 0)
         for i in 0..<numOfRows {
         editInvitedFriendsTableView.selectRow(at: IndexPath(row:i, section:0), animated: true, scrollPosition: .none)
+        selectedCellsIndex.append(i)
         }
     }
     @IBAction func DeleteFriends(_ sender: Any) {
@@ -39,6 +44,10 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
             invitedFriendsUIDs.remove(at: index)
             invitedFriendsUsernames.remove(at: index)
         }
+        if (invitedFriendsUIDs == []) {
+            EditButtonLbl.sendActions(for: .touchUpInside)
+        }
+        DeleteButton.setTitleColor(UIColor.lightGray, for: .normal)
         InvitedFriends.invitedFriendsUIDs = invitedFriendsUIDs
         InvitedFriends.invitedFriendsUsernames = invitedFriendsUsernames
         editInvitedFriendsTableView.reloadData()
@@ -46,6 +55,8 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
     }
     @IBAction func EditButton(_ sender: Any) {
         editIsSelected = !editIsSelected
+        selectedCellsIndex = []
+        DeleteButton.setTitleColor(UIColor.lightGray, for: .normal)
         if editIsSelected { //edit is tapped
             DeleteButton.isHidden = false
             SelectAllButton.isHidden = false
@@ -86,7 +97,7 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        DeleteButton.setTitleColor(UIColor.init(red:0.196, green:0.3098, blue:0.52, alpha: 1), for: .normal)
+        DeleteButton.setTitleColor(UIColor.init(red:14.0/255, green:122.0/255, blue:254.0/255, alpha: 1), for: .normal)
         selectedCellsIndex.append(indexPath.row)
     }
     
@@ -95,6 +106,9 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
             if element == indexPath.row {
                 selectedCellsIndex.remove(at: index)
             }
+        }
+        if selectedCellsIndex == [] {
+            DeleteButton.setTitleColor(UIColor.gray, for: .normal)
         }
         print(selectedCellsIndex)
     }
@@ -108,12 +122,6 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
         print(invitedFriendsUsernames)
         nextController.invitedFriendsUIDs = invitedFriendsUIDs
         nextController.invitedFriendsUsernames = invitedFriendsUsernames
-    }
-    
-    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
-        print(viewController)
-        (viewController as? AddEventController)?.invitedFriendsUIDs = invitedFriendsUIDs
-        (viewController as? AddEventController)?.invitedFriendsUsernames = invitedFriendsUsernames
     }
 }
 

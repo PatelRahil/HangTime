@@ -47,6 +47,7 @@ class AddEventController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var AddressTextbox:
     UITextField!
     @IBOutlet weak var myDatePicker: UIDatePicker!
+    @IBOutlet weak var InvitedFriendsLbl: UILabel!
     
     @IBOutlet weak var AddressInvalid: UILabel!
     @IBOutlet weak var segmentedControl: UISegmentedControl!
@@ -100,12 +101,14 @@ class AddEventController: UIViewController, UITextFieldDelegate {
             AddFriendsBtn.isHidden = true
             FriendsLbl.isHidden = true
             AnyoneCanViewLbl.isHidden = false
+            InvitedFriendsLbl.isHidden = true
             isPublic = true
         case 1:
             DetailsBtn.isHidden = false
             AddFriendsBtn.isHidden = false
             FriendsLbl.isHidden = false
             AnyoneCanViewLbl.isHidden = true
+            InvitedFriendsLbl.isHidden = false
             isPublic = false
         default:
             break
@@ -148,7 +151,6 @@ class AddEventController: UIViewController, UITextFieldDelegate {
             EventVariables.address = address!
         
 
-            print("ADDRESS:::::::::::::::\(address)")
             geocoder.geocodeAddressString(address!) { (placemarks, error) in
                 // Process Response
                 self.processResponse(withPlacemarks: placemarks, error: error, sender: sender)
@@ -315,6 +317,7 @@ class AddEventController: UIViewController, UITextFieldDelegate {
         AddFriendsBtn.isHidden = true
         FriendsLbl.isHidden = true
         AnyoneCanViewLbl.isHidden = false
+        InvitedFriendsLbl.isHidden = true
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
