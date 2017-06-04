@@ -14,9 +14,12 @@ class BackTableVC: UITableViewController {
     
     let rootRef = FIRDatabase.database().reference()
     let childRef = FIRDatabase.database().reference(withPath: "Users")
+    let storageRef = FIRStorage.storage().reference()
+
     var TableArray = [String]()
     var username:String = ""
     var currentUser:User? = nil
+    var profilePic: UIImage = #imageLiteral(resourceName: "DefaultProfileImg")
     
     override func viewDidLoad() {
         TableArray = [" ", "Map", "Add Friends", "Settings"]
@@ -33,7 +36,13 @@ class BackTableVC: UITableViewController {
             let cell = tableView.dequeueReusableCell(withIdentifier: " ", for: indexPath) as! CustomSideTableViewCell
             cell.UsernameLbl.text = currentUser?.username
             let prevHeightLbl = cell.UsernameLbl.frame.height
+            
+            cell.ProfilePic.image = profilePic
             cell.ProfilePic.frame.origin.y = 10
+            cell.ProfilePic.layoutIfNeeded()
+            cell.ProfilePic.clipsToBounds = true
+            cell.ProfilePic.layer.cornerRadius = cell.ProfilePic.bounds.size.width/2.0
+            
             cell.UsernameLbl.frame.origin.y = cell.ProfilePic.frame.maxY + prevHeightLbl/2
             //(90.0, 82.0, 77.0, 77.0)
             //(90.0, 164.0, 77.0, 77.0)
@@ -55,9 +64,35 @@ class BackTableVC: UITableViewController {
                 for item in snapshot.children.allObjects as! [FIRDataSnapshot] {
                     let dict = item.value as! Dictionary<String,Any>
                     if (dict["UserID"] as? String == userID) {
-                        self.currentUser = User(snapshot: item)
+                        self.currentUser = User(snapshot: item, completionHandler: {
+                            print("TABLEVIEW about to load")
+                            self.sideTableView.reloadData()
+                            print("TABLEVIEW should be loaded")
+                        })
+
                     }
                 }
+                
+                if self.currentUser!.profilePicDownloadLink == "" {
+                    self.profilePic = #imageLiteral(resourceName: "DefaultProfileImg")
+                    self.sideTableView.reloadData()
+                }
+                else {
+                    let filePath = "Users/User: \(self.currentUser!.getUserID())/\("profilePicture")"
+                    self.storageRef.child(filePath).data(withMaxSize: 10*1024*1024, completion: { (data, error) in
+                        if error == nil {
+                            let userPhoto = UIImage(data: data!)
+                            self.profilePic = userPhoto!
+                            self.sideTableView.reloadData()
+                        }
+                        else {
+                            print("\(error)")
+                            self.profilePic = #imageLiteral(resourceName: "DefaultProfileImg")
+                            self.sideTableView.reloadData()
+                        }
+                    })
+                }
+ 
             self.sideTableView.reloadData()
             })
         }

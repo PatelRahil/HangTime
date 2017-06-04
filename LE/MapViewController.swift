@@ -293,7 +293,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
                 for item in snapshot.children.allObjects as! [FIRDataSnapshot] {
                     let dict = item.value as! Dictionary<String,Any>
                     if (dict["UserID"] as? String == userID) {
-                        self.currentUser = User(snapshot: item)
+                        self.currentUser = User(snapshot: item, completionHandler: {})
                     }
                 }
                 self.updateMap()

@@ -48,7 +48,7 @@ class DataViewController: UIViewController, UITextFieldDelegate {
                             print("***************************")
                             let dict = item.value as! Dictionary<String,Any>
                             if (dict["UserID"] as? String == userID) {
-                                self.currentUser = User(snapshot: item)
+                                self.currentUser = User(snapshot: item, completionHandler: {})
                             }
                             //currentUser = User(snapshot: )
                             self.performSegue(withIdentifier: "LoginSegue", sender: sender)

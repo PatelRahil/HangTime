@@ -31,8 +31,10 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
         let vcIndex = self.navigationController?.viewControllers.index(where: { (viewController) -> Bool in
             
             if let _ = viewController as? AddEventController {
+                print("YES")
                 return true
             }
+            print("NO")
             return false
         })
         
@@ -52,6 +54,7 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
             //createEventVC.invitedFriendsUsernames = self.addedFriendsUsernames
             InvitedFriends.invitedFriendsUIDs = self.addedFriends
             InvitedFriends.invitedFriendsUsernames = self.addedFriendsUsernames
+            print(InvitedFriends())
             self.navigationController?.popToViewController(createEventVC, animated: true)
         })
     }
@@ -89,7 +92,7 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
                 for item in snapshot.children.allObjects as! [FIRDataSnapshot] {
                     let dict = item.value as! Dictionary<String,Any>
                     if (dict["UserID"] as? String == userID) {
-                        self.currentUser = User(snapshot: item)
+                        self.currentUser = User(snapshot: item, completionHandler: {})
                     }
                 }
             })

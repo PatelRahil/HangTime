@@ -8,18 +8,34 @@
 
 import Foundation
 import Firebase
+import FirebaseStorage
 import UIKit
 
-class ProfileVC: UIViewController , UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate {
+class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     let rootRef = FIRDatabase.database().reference()
     let childRef = FIRDatabase.database().reference(withPath: "Users")
+    let storageRef = FIRStorage.storage().reference()
     var currentUser:User? = nil
     var tableArray = [" ", "Username", "Email"]
     var userInfoArray = [" ", " "]
+    var profilePic: UIImage? = #imageLiteral(resourceName: "DefaultProfileImg")
     
     @IBOutlet weak var OpenSideBar: UIButton!
     @IBOutlet weak var ProfileTableView: UITableView!
     
+    func changeProfilePicture(tapGestureRecognizer: UITapGestureRecognizer) {
+        //let tappedImage = tapGestureRecognizer.view as! UIImageView
+        let ac = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        ac.addAction(UIAlertAction(title: "Take Photo", style: .default, handler: { (action) in
+            self.showPicker(withType: .camera)
+        }))
+        ac.addAction(UIAlertAction(title: "Choose Photo", style: .default, handler: { (action) in
+            self.showPicker(withType: .photoLibrary)
+        }))
+        ac.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        
+        self.present(ac, animated: true, completion: nil)
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         loadUser()
@@ -33,6 +49,16 @@ class ProfileVC: UIViewController , UITextFieldDelegate, UITableViewDataSource, 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row == 0 {
             let cell = ProfileTableView.dequeueReusableCell(withIdentifier: "ProfileCell", for: indexPath) as! CustomProfilePicCell
+            
+            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(changeProfilePicture(tapGestureRecognizer:)))
+            cell.ProfilePicture.image = profilePic
+            cell.ProfilePicture.isUserInteractionEnabled = true
+            cell.ProfilePicture.addGestureRecognizer(tapGestureRecognizer)
+            cell.ProfilePicture.layoutIfNeeded()
+            cell.ProfilePicture.clipsToBounds = true
+            cell.ProfilePicture.layer.cornerRadius = cell.ProfilePicture.bounds.size.width/2.0
+            
+            
             cell.selectionStyle = UITableViewCellSelectionStyle.none
 
             return cell
@@ -69,7 +95,6 @@ class ProfileVC: UIViewController , UITextFieldDelegate, UITableViewDataSource, 
     func updateProfile(cellRow:Int, textField: UITextField) {
         print(cellRow)
         if (cellRow == 0) {
-            
         }
         else if (cellRow == 1) {
             if let username = textField.text {
@@ -110,20 +135,97 @@ class ProfileVC: UIViewController , UITextFieldDelegate, UITableViewDataSource, 
                 for item in snapshot.children.allObjects as! [FIRDataSnapshot] {
                     let dict = item.value as! Dictionary<String,Any>
                     if (dict["UserID"] as? String == userID) {
-                        self.currentUser = User(snapshot: item)
+                        self.currentUser = User(snapshot: item, completionHandler: {
+                            print("TABLEVIEW about to load")
+                            self.ProfileTableView.reloadData()
+                            print("TABLEVIEW should be loaded")
+                        })
                         var counter = 0;
                         for (key,str) in dict {
-                            if (key != "friends" && key != "UserID" && key != "createdEvents") {
+                            if (key != "friends" && key != "UserID" && key != "createdEvents" && key != "profilePicture") {
                                 counter += 1
                                 print("~~~~~~~~~~~~~~~~\n\(str)")
                                 self.userInfoArray[counter] = str as! String
                             }
+                            else if key == "profilePicture" {
+                                self.userInfoArray[0] = str as! String
+                            }
                         }
                     }
                 }
+
                 self.ProfileTableView.reloadData()
+                
+                if self.userInfoArray[0] == "" {
+                    self.profilePic = #imageLiteral(resourceName: "DefaultProfileImg")
+                    self.ProfileTableView.reloadData()
+                }
+                else {
+                    let filePath = "Users/User: \(self.currentUser!.getUserID())/\("profilePicture")"
+                    print("FILEPATH:     \(filePath)")
+                    self.storageRef.child(filePath).data(withMaxSize: 10*1024*1024, completion: { (data, error) in
+                        if error == nil {
+                            let userPhoto = UIImage(data: data!)
+                            self.profilePic = userPhoto
+                            print(self.profilePic)
+                            self.ProfileTableView.reloadData()
+                        }
+                        else {
+                            print("\(error)")
+                            self.profilePic = #imageLiteral(resourceName: "DefaultProfileImg")
+                            self.ProfileTableView.reloadData()
+                        }
+                    })
+                }
+ 
             })
         }
+    }
+    
+    func showPicker(withType sourceType: UIImagePickerControllerSourceType) {
+        let picker = UIImagePickerController()
+        picker.delegate = self
+        picker.sourceType = sourceType
+        picker.allowsEditing = true
+        self.present(picker, animated: true, completion: nil)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        dismiss(animated: true, completion: nil)
+        if let profilePic = info[UIImagePickerControllerEditedImage] as? UIImage {
+            var data = NSData()
+            data = UIImageJPEGRepresentation(profilePic, 0.8)! as NSData
+            let filePath = "Users/User: \(currentUser!.getUserID())/\("profilePicture")"
+            let metaData = FIRStorageMetadata()
+            metaData.contentType = "image/jpg"
+            self.storageRef.child(filePath).put(data as Data, metadata: metaData){(metaData,error) in
+                if let error = error {
+                    print(error.localizedDescription)
+                    return
+                }else{
+                    //store downloadURL
+                    let downloadURL = metaData!.downloadURL()!.absoluteString
+                    //store downloadURL at database
+                    self.rootRef.child("Users").child("User: \(self.currentUser!.getUserID())").updateChildValues(["profilePicture": downloadURL])
+                }
+            }
+            
+            self.profilePic = profilePic
+            let cell = ProfileTableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! CustomProfilePicCell
+            cell.ProfilePicture.image = profilePic
+            print("IMAGE:        \(cell.ProfilePicture.image)")
+            ProfileTableView.reloadData()
+        }
+        else {
+            //not a UIImage or for some reason profilePic is nil
+            print(info)
+            profilePic = #imageLiteral(resourceName: "DefaultProfileImg")
+            let cell = ProfileTableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! CustomProfilePicCell
+            cell.ProfilePicture.image = profilePic
+            ProfileTableView.reloadData()
+        }
+        
+        
     }
     
     func respondToErrors(error: Error) {
@@ -133,7 +235,12 @@ class ProfileVC: UIViewController , UITextFieldDelegate, UITableViewDataSource, 
 }
 
 class CustomProfilePicCell: UITableViewCell {
-    @IBOutlet weak var ProfilePicButton: UIButton!
+    @IBOutlet weak var ProfilePicture: UIImageView!
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+    }
     
 }
 

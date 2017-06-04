@@ -2,8 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Allow access to the photo library for the profile picture?</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Allow access to camera for the profile picture?</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>&quot;Allow the app to access your location while running?&quot;</string>
+	<string>Allow the app to access your location while running?</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>
