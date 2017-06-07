@@ -8,34 +8,20 @@
 
 import UIKit
 import Firebase
+import FirebaseStorage
 import GoogleMaps
 
 class DataViewController: UIViewController, UITextFieldDelegate {
     var isTrue = true
     let locationManager = CLLocationManager()
     let childRef = FIRDatabase.database().reference(withPath: "Users")
+    let storageRef = FIRStorage.storage().reference()
     
     var currentUser:User? = nil
 
     @IBOutlet weak var passwordTextBox: UITextField!
     @IBOutlet weak var usernameTextBox: UITextField!
-
-   /*
-    @IBAction func LoginButton(_ sender: Any, forEvent event: UIEvent) {
-        print("HEY?")
-        FIRAuth.auth()?.signIn(withEmail: usernameTextBox.text!, password: passwordTextBox.text!) { (user, error) in
-            print("w_orked")
-            if error == nil {
-                self.performSegue(withIdentifier: "LoginSegue", sender: sender)
-                print("worked")
-            }
-            else {
-                print(error!)
-            }
-        }
-        
-    } 
-    */
+    
     @IBAction func LoginButton(_ sender: Any) {
             FIRAuth.auth()?.signIn(withEmail: usernameTextBox.text!, password: passwordTextBox.text!) { (user, error) in
                 if error == nil {
@@ -47,11 +33,34 @@ class DataViewController: UIViewController, UITextFieldDelegate {
                         for item in snapshot.children.allObjects as! [FIRDataSnapshot] {
                             print("***************************")
                             let dict = item.value as! Dictionary<String,Any>
+                            print("\(dict["UserID"]) ==? \(userID)")
                             if (dict["UserID"] as? String == userID) {
-                                self.currentUser = User(snapshot: item, completionHandler: {})
+                                print("ITEM: \(item)")
+                                self.currentUser = User(snapshot: item)
+                                
+                                var profilePic:UIImage = #imageLiteral(resourceName: "DefaultProfileImg")
+                                print("right before get profile pic ")
+                                if self.currentUser!.profilePicDownloadLink != "" {
+                                    print("ProfilePicDownloadLink is not nil")
+                                    let filePath = "Users/User: \(self.currentUser!.getUserID())/\("profilePicture")"
+                                    self.storageRef.child(filePath).data(withMaxSize: 10*1024*1024, completion: { (data, error) in
+                                        print("Storage Error: \(error)")
+                                        if error == nil {
+                                            let userPhoto = UIImage(data: data!)
+                                            profilePic = userPhoto!
+                                        }
+                                        else {
+                                            profilePic = #imageLiteral(resourceName: "DefaultProfileImg")
+                                        }
+                                        print(">>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<")
+                                        UserData.updateData(withUser: self.currentUser!, profilePic: profilePic)
+                                        print("<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>")
+                                        self.performSegue(withIdentifier: "LoginSegue", sender: sender)
+                                    })
+                                    
+                                }
                             }
-                            //currentUser = User(snapshot: )
-                            self.performSegue(withIdentifier: "LoginSegue", sender: sender)
+                            
                         }
                     })
                 
@@ -132,4 +141,3 @@ class DataViewController: UIViewController, UITextFieldDelegate {
     }
 
 }
-

@@ -286,19 +286,20 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     }
     
     func loadUser() {
-        if let currentUser = FIRAuth.auth()?.currentUser {
+        /*if let currentUser = FIRAuth.auth()?.currentUser {
             let userID = currentUser.uid
             
             self.userRef.observe(.value, with: { snapshot in
                 for item in snapshot.children.allObjects as! [FIRDataSnapshot] {
                     let dict = item.value as! Dictionary<String,Any>
                     if (dict["UserID"] as? String == userID) {
-                        self.currentUser = User(snapshot: item, completionHandler: {})
+                        self.currentUser = User(snapshot: item)
                     }
                 }
                 self.updateMap()
             })
-        }
+        }*/
+        currentUser = User(data: UserData())
     }
     
 //}

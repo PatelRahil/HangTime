@@ -85,6 +85,7 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
     }
     
     func loadUser() {
+        /*
         if let currentUser = FIRAuth.auth()?.currentUser {
             let userID = currentUser.uid
             
@@ -92,11 +93,13 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
                 for item in snapshot.children.allObjects as! [FIRDataSnapshot] {
                     let dict = item.value as! Dictionary<String,Any>
                     if (dict["UserID"] as? String == userID) {
-                        self.currentUser = User(snapshot: item, completionHandler: {})
+                        self.currentUser = User(snapshot: item)
                     }
                 }
             })
         }
+        */
+        currentUser = User(data: UserData())
     }
     
     func removeAllCells() {

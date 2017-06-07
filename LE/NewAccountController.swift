@@ -66,7 +66,8 @@ class NewAccountController: UIViewController, UITextFieldDelegate {
                     let currUser:User = User.init(uid: userID!, username: username!)
                     let eventRef = self.childRef.child("User: " + userID!)
                     eventRef.setValue(currUser.toAnyObject())
-                
+                    UserData.updateData(withUser: currUser)
+                    
                     self.performSegue(withIdentifier: "CreateAccountSegue", sender: sender)
                 }
                 else {

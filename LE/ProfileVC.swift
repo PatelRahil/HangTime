@@ -111,6 +111,8 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
         else if (cellRow == 2) {
             
         }
+        
+        UserData.updateData(withUser: currentUser!)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -128,6 +130,7 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
 
     
     func loadUser() {
+        /*
         if let currentUser = FIRAuth.auth()?.currentUser {
             let userID = currentUser.uid
             
@@ -135,11 +138,7 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
                 for item in snapshot.children.allObjects as! [FIRDataSnapshot] {
                     let dict = item.value as! Dictionary<String,Any>
                     if (dict["UserID"] as? String == userID) {
-                        self.currentUser = User(snapshot: item, completionHandler: {
-                            print("TABLEVIEW about to load")
-                            self.ProfileTableView.reloadData()
-                            print("TABLEVIEW should be loaded")
-                        })
+                        self.currentUser = User(snapshot: item)
                         var counter = 0;
                         for (key,str) in dict {
                             if (key != "friends" && key != "UserID" && key != "createdEvents" && key != "profilePicture") {
@@ -179,6 +178,20 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
                 }
  
             })
+        }
+        */
+        currentUser = User(data: UserData())
+        profilePic = currentUser!.profilePic
+        var counter = 0
+        for (key,str) in currentUser!.toAnyObject() as! Dictionary<String,Any> {
+            if (key != "friends" && key != "UserID" && key != "createdEvents" && key != "profilePicture") {
+                counter += 1
+                print("~~~~~~~~~~~~~~~~\n\(str)")
+                self.userInfoArray[counter] = str as! String
+            }
+            else if key == "profilePicture" {
+                self.userInfoArray[0] = str as! String
+            }
         }
     }
     
@@ -225,7 +238,7 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
             ProfileTableView.reloadData()
         }
         
-        
+        UserData.updateData(withUser: currentUser!, profilePic: profilePic!)
     }
     
     func respondToErrors(error: Error) {

@@ -8,6 +8,7 @@
 
 import Foundation
 import Firebase
+import FirebaseStorage
 
 class BackTableVC: UITableViewController {
     @IBOutlet var sideTableView: UITableView!
@@ -26,6 +27,9 @@ class BackTableVC: UITableViewController {
         loadUser()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        loadUser()
+    }
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return TableArray.count 
     }
@@ -57,6 +61,7 @@ class BackTableVC: UITableViewController {
     
     
     func loadUser() {
+        /*
         if let currentUser = FIRAuth.auth()?.currentUser {
             let userID = currentUser.uid
             
@@ -64,11 +69,7 @@ class BackTableVC: UITableViewController {
                 for item in snapshot.children.allObjects as! [FIRDataSnapshot] {
                     let dict = item.value as! Dictionary<String,Any>
                     if (dict["UserID"] as? String == userID) {
-                        self.currentUser = User(snapshot: item, completionHandler: {
-                            print("TABLEVIEW about to load")
-                            self.sideTableView.reloadData()
-                            print("TABLEVIEW should be loaded")
-                        })
+                        self.currentUser = User(snapshot: item)
 
                     }
                 }
@@ -96,6 +97,11 @@ class BackTableVC: UITableViewController {
             self.sideTableView.reloadData()
             })
         }
+        */
+        currentUser = User(data: UserData())
+        print(currentUser?.toAnyObject())
+        profilePic = currentUser!.profilePic!
+        sideTableView.reloadData()
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

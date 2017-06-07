@@ -249,7 +249,7 @@ class AddEventController: UIViewController, UITextFieldDelegate {
             currentUser?.addEvent(eventID: eventRefID.key)
             let userRef = self.userRef.child("User: \(currentUser!.userID)")
             userRef.setValue(currentUser!.toAnyObject())
-            
+            UserData.updateData(withUser: currentUser!)
             eventRefID.setValue(event.toAnyObject())
         }
 
@@ -286,6 +286,7 @@ class AddEventController: UIViewController, UITextFieldDelegate {
     }
     
     func loadUser() {
+        /*
         if let currentUser = FIRAuth.auth()?.currentUser {
             let userID = currentUser.uid
             let userRef = FIRDatabase.database().reference(withPath: "Users")
@@ -293,11 +294,13 @@ class AddEventController: UIViewController, UITextFieldDelegate {
                 for item in snapshot.children.allObjects as! [FIRDataSnapshot] {
                     let dict = item.value as! Dictionary<String,Any>
                     if (dict["UserID"] as? String == userID) {
-                        self.currentUser = User(snapshot: item, completionHandler: {})
+                        self.currentUser = User(snapshot: item)
                     }
                 }
             })
         }
+         */
+        currentUser = User(data: UserData())
     }
     
     override func viewDidLoad() {
