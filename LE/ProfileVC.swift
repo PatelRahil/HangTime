@@ -85,7 +85,6 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         //Following determines what occurs when someone taps return after editing any of the profile data
         updateProfile(cellRow: textField.tag, textField: textField)
-        print(textField.tag)
         
         
         self.view.endEditing(true)
@@ -93,7 +92,6 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
     }
     
     func updateProfile(cellRow:Int, textField: UITextField) {
-        print(cellRow)
         if (cellRow == 0) {
         }
         else if (cellRow == 1) {
@@ -130,63 +128,13 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
 
     
     func loadUser() {
-        /*
-        if let currentUser = FIRAuth.auth()?.currentUser {
-            let userID = currentUser.uid
-            
-            self.childRef.observe(.value, with: { snapshot in
-                for item in snapshot.children.allObjects as! [FIRDataSnapshot] {
-                    let dict = item.value as! Dictionary<String,Any>
-                    if (dict["UserID"] as? String == userID) {
-                        self.currentUser = User(snapshot: item)
-                        var counter = 0;
-                        for (key,str) in dict {
-                            if (key != "friends" && key != "UserID" && key != "createdEvents" && key != "profilePicture") {
-                                counter += 1
-                                print("~~~~~~~~~~~~~~~~\n\(str)")
-                                self.userInfoArray[counter] = str as! String
-                            }
-                            else if key == "profilePicture" {
-                                self.userInfoArray[0] = str as! String
-                            }
-                        }
-                    }
-                }
-
-                self.ProfileTableView.reloadData()
-                
-                if self.userInfoArray[0] == "" {
-                    self.profilePic = #imageLiteral(resourceName: "DefaultProfileImg")
-                    self.ProfileTableView.reloadData()
-                }
-                else {
-                    let filePath = "Users/User: \(self.currentUser!.getUserID())/\("profilePicture")"
-                    print("FILEPATH:     \(filePath)")
-                    self.storageRef.child(filePath).data(withMaxSize: 10*1024*1024, completion: { (data, error) in
-                        if error == nil {
-                            let userPhoto = UIImage(data: data!)
-                            self.profilePic = userPhoto
-                            print(self.profilePic)
-                            self.ProfileTableView.reloadData()
-                        }
-                        else {
-                            print("\(error)")
-                            self.profilePic = #imageLiteral(resourceName: "DefaultProfileImg")
-                            self.ProfileTableView.reloadData()
-                        }
-                    })
-                }
- 
-            })
-        }
-        */
+        
         currentUser = User(data: UserData())
         profilePic = currentUser!.profilePic
         var counter = 0
         for (key,str) in currentUser!.toAnyObject() as! Dictionary<String,Any> {
             if (key != "friends" && key != "UserID" && key != "createdEvents" && key != "profilePicture") {
                 counter += 1
-                print("~~~~~~~~~~~~~~~~\n\(str)")
                 self.userInfoArray[counter] = str as! String
             }
             else if key == "profilePicture" {
@@ -226,7 +174,6 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
             self.profilePic = profilePic
             let cell = ProfileTableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! CustomProfilePicCell
             cell.ProfilePicture.image = profilePic
-            print("IMAGE:        \(cell.ProfilePicture.image)")
             ProfileTableView.reloadData()
         }
         else {

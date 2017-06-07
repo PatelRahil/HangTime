@@ -61,45 +61,7 @@ class BackTableVC: UITableViewController {
     
     
     func loadUser() {
-        /*
-        if let currentUser = FIRAuth.auth()?.currentUser {
-            let userID = currentUser.uid
-            
-            self.childRef.observe(.value, with: { snapshot in
-                for item in snapshot.children.allObjects as! [FIRDataSnapshot] {
-                    let dict = item.value as! Dictionary<String,Any>
-                    if (dict["UserID"] as? String == userID) {
-                        self.currentUser = User(snapshot: item)
-
-                    }
-                }
-                
-                if self.currentUser!.profilePicDownloadLink == "" {
-                    self.profilePic = #imageLiteral(resourceName: "DefaultProfileImg")
-                    self.sideTableView.reloadData()
-                }
-                else {
-                    let filePath = "Users/User: \(self.currentUser!.getUserID())/\("profilePicture")"
-                    self.storageRef.child(filePath).data(withMaxSize: 10*1024*1024, completion: { (data, error) in
-                        if error == nil {
-                            let userPhoto = UIImage(data: data!)
-                            self.profilePic = userPhoto!
-                            self.sideTableView.reloadData()
-                        }
-                        else {
-                            print("\(error)")
-                            self.profilePic = #imageLiteral(resourceName: "DefaultProfileImg")
-                            self.sideTableView.reloadData()
-                        }
-                    })
-                }
- 
-            self.sideTableView.reloadData()
-            })
-        }
-        */
         currentUser = User(data: UserData())
-        print(currentUser?.toAnyObject())
         profilePic = currentUser!.profilePic!
         sideTableView.reloadData()
     }

@@ -127,15 +127,11 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         childRef.observe(.value, with: { snapshot in
             // 2
             var newEvents: [Event] = []
-            print("----------------------------------")
             // 3
             for item in snapshot.children {
                 // 4
                 let snap = item as! FIRDataSnapshot
-                print("\(snap.key)\n\(item)")
                 let event = Event(snapshot: snap)
-                print("Is Thirty Past:\(!(self.isThirtyPastCurrentTime(date: NSDate(), hour: Int(event.hour)!, minute: Int(event.minute)!, day: Int(event.day)!, month: Int(event.month)!, year: Int(event.year)!)))")
-                print("Is a friend or creator: \(self.isAllowedToViewEvent(isPublic:event.isPublic, friendsAllowed: event.invitedFriends, tag:snap.key))")
                 
                 if !(self.isThirtyPastCurrentTime(date: NSDate(), hour: Int(event.hour)!, minute: Int(event.minute)!, day: Int(event.day)!, month: Int(event.month)!, year: Int(event.year)!)) && self.isAllowedToViewEvent(isPublic:event.isPublic, friendsAllowed: event.invitedFriends, tag:snap.key)  {
                     
@@ -189,7 +185,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        print("________________________________________________MAP APPEARED")
         self.navigationController?.isNavigationBarHidden = true
         updateMap()
         print("Button Position:::  (\(PressButton.frame.midX),\(PressButton.frame.midY)")
@@ -198,7 +193,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         var isAllowed = false
         var userCreatedThisEvent = false
         for friend in friendsAllowed {
-            print("\(friend) ==? \(currentUser.getUserID())")
             if isPublic || friend == currentUser.getUserID() {
                 isAllowed = true
             }
@@ -209,7 +203,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
                 userCreatedThisEvent = true
             }
         }
-        print("Is allowed?:::: \(isAllowed)")
         return isAllowed || userCreatedThisEvent
     }
     private func isThirtyPastCurrentTime(date: NSDate, hour: Int, minute: Int, day: Int, month:Int, year:Int) -> Bool {
@@ -286,47 +279,23 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     }
     
     func loadUser() {
-        /*if let currentUser = FIRAuth.auth()?.currentUser {
-            let userID = currentUser.uid
-            
-            self.userRef.observe(.value, with: { snapshot in
-                for item in snapshot.children.allObjects as! [FIRDataSnapshot] {
-                    let dict = item.value as! Dictionary<String,Any>
-                    if (dict["UserID"] as? String == userID) {
-                        self.currentUser = User(snapshot: item)
-                    }
-                }
-                self.updateMap()
-            })
-        }*/
+        
         currentUser = User(data: UserData())
     }
     
-//}
-
-//extension MapViewController: CLLocationManagerDelegate {
-    // 2
     private func locationManager1(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
-        // 3
         if status == .authorizedWhenInUse {
             
-            // 4
             locationManager.startUpdatingLocation()
             
-            //5
-            //mapView!.isMyLocationEnabled = true
-            //mapView!.settings.myLocationButton = true
         }
     }
     
-    // 6
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.first {
             
-            // 7
             mapView.camera = GMSCameraPosition(target: location.coordinate, zoom: 15, bearing: 0, viewingAngle: 0)
             
-            // 8
             locationManager.stopUpdatingLocation()
         }
         

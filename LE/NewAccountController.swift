@@ -49,7 +49,6 @@ class NewAccountController: UIViewController, UITextFieldDelegate {
             
         if (isTaken || username == "") {
             self.usernameTakenLbl.text = "Sorry, that username is already taken."
-            print("#######################")
         }
         else if (username!.rangeOfCharacter(from: CharacterSet.alphanumerics.inverted) != nil) {
             let alertController = UIAlertController(title: "Invalid Username", message:
@@ -71,7 +70,6 @@ class NewAccountController: UIViewController, UITextFieldDelegate {
                     self.performSegue(withIdentifier: "CreateAccountSegue", sender: sender)
                 }
                 else {
-                    print("**********************************")
                     print(error!)
                     self.respondToError(error: error!)
                 }

@@ -54,7 +54,6 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
             //createEventVC.invitedFriendsUsernames = self.addedFriendsUsernames
             InvitedFriends.invitedFriendsUIDs = self.addedFriends
             InvitedFriends.invitedFriendsUsernames = self.addedFriendsUsernames
-            print(InvitedFriends())
             self.navigationController?.popToViewController(createEventVC, animated: true)
         })
     }
@@ -85,20 +84,6 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
     }
     
     func loadUser() {
-        /*
-        if let currentUser = FIRAuth.auth()?.currentUser {
-            let userID = currentUser.uid
-            
-            self.childRef.observe(.value, with: { snapshot in
-                for item in snapshot.children.allObjects as! [FIRDataSnapshot] {
-                    let dict = item.value as! Dictionary<String,Any>
-                    if (dict["UserID"] as? String == userID) {
-                        self.currentUser = User(snapshot: item)
-                    }
-                }
-            })
-        }
-        */
         currentUser = User(data: UserData())
     }
     
@@ -120,7 +105,6 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = AddFriendListTblView.dequeueReusableCell(withIdentifier: "eventFriendCell", for: indexPath) as! CustomAddFriendTableViewCell
-        print("\(cell)")
         cell.UsernameLbl.text = TableArray[indexPath.row + 1]
         index = indexPath.row
         if (isAlreadyAdded(userID: allUserID[indexPath.row])) {
@@ -150,7 +134,6 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
     
     func addFriendToEvent(_ sender:UIButton) {
         let pickedUserID = allUserID[sender.tag]
-        print("\(isAlreadyAdded(userID: pickedUserID)) ++++ \(pickedUserID)")
         if (!isAlreadyAdded(userID: pickedUserID)) {
             addedFriends.append(pickedUserID)
             AddFriendListTblView.reloadData()
@@ -201,9 +184,7 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
                     //and interate through that to find profile pic
                     //and make an array of the images to iterate through
                 }
-                print(self.allUserID)
-                print(self.TableArray)
-                print(self.TableArray.count)
+
                 //self.AddFriendListTblView.reloadData()
                 self.AddFriendListTblView.beginUpdates()
                 self.AddFriendListTblView.reloadData()
@@ -211,7 +192,6 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
                     self.AddFriendListTblView.insertRows(at: [IndexPath(row: /*self.TableArray.count-2+*/index, section: 0)], with: .automatic)
                 }
                 self.AddFriendListTblView.endUpdates()
-                print(self.AddFriendListTblView.numberOfRows(inSection: 0))
 
             }
             
