@@ -63,6 +63,7 @@ class BackTableVC: UITableViewController {
     func loadUser() {
         currentUser = User(data: UserData())
         profilePic = currentUser!.profilePic!
+        print(currentUser?.username)
         sideTableView.reloadData()
     }
     

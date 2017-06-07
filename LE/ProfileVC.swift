@@ -38,6 +38,7 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
     }
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.automaticallyAdjustsScrollViewInsets = false
         loadUser()
         ProfileTableView.dataSource = self
         ProfileTableView.delegate = self
@@ -91,14 +92,62 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
         return false
     }
     
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        textField.text = ""
+    }
+    
     func updateProfile(cellRow:Int, textField: UITextField) {
+        //Profile Picture
         if (cellRow == 0) {
         }
+        //Username
         else if (cellRow == 1) {
-            if let username = textField.text {
-                currentUser?.changeUsername(username: username)
-                let userRef = self.childRef.child("User: \(currentUser!.userID)")
-                userRef.setValue(currentUser!.toAnyObject())
+            
+            if let _username = textField.text {
+                var username = _username
+                username = username.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+                if username == "" {
+                    textField.text = currentUser!.username
+                }
+                else {
+                    var isTaken = false
+                    _ = self.rootRef.child("Users").queryOrdered(byChild: "username").queryEqual(toValue:username).observeSingleEvent(of: .value, with:{ (snapshot) in
+                        if ( snapshot.value is NSNull ) {
+                            // No user
+                        }
+                        else {
+                            let user: Dictionary<String,Any> = snapshot.value as! Dictionary<String,Any>
+                            for (_,data) in user {
+                                let dataDic:Dictionary<String,Any> = data as! Dictionary<String,Any>
+                                for (key,value) in dataDic {
+                                    if key == "username" && value as? String == username {
+                                        isTaken = true
+                                    }
+                                }
+                            }
+                        }
+                    
+                        if !isTaken {
+                            //is adding a space before the username for some reason
+                            self.currentUser?.changeUsername(username: username)
+                            UserData.updateData(withUser: self.currentUser!)
+                            let userRef = self.childRef.child("User: \(self.currentUser!.userID)")
+                            userRef.setValue(self.currentUser!.toAnyObject())
+                            textField.text = self.currentUser?.username
+
+                        }
+                        else {
+                            print("USERNAME IS ALREADY TAKEN")
+                            let alertController = UIAlertController(title: "That username is already taken", message:
+                            "", preferredStyle: UIAlertControllerStyle.alert)
+                            alertController.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
+                            self.present(alertController, animated: true, completion: nil)
+                            textField.text = self.currentUser?.username
+                        }
+                    })
+                }
+                
+                
                 //ProfileTableView.reloadData()
             }
             else {
@@ -106,6 +155,7 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
                 ProfileTableView.reloadData()
             }
         }
+        //...
         else if (cellRow == 2) {
             
         }
@@ -217,6 +267,7 @@ class CustomProfileInfoCell: UITableViewCell {
     
 }
 
+//for email and password
 class CustomSecureProfileInfoCell: UITableViewCell {
     
     

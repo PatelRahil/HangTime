@@ -9,6 +9,7 @@
 import Foundation
 import FirebaseDatabase
 import Firebase
+import FirebaseStorage
 
 //for shrinking the size of the magnifying glass image
 extension UIImage {
@@ -31,6 +32,8 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
     
     let rootRef = FIRDatabase.database().reference()
     let childRef = FIRDatabase.database().reference(withPath: "Users")
+    let storageRef = FIRStorage.storage().reference()
+
     var TableArray = [""]
     var allUserID = [String]()
     //uses index path to identify which userID was selected
@@ -162,10 +165,8 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
                     var uidStr = uid.replacingOccurrences(of: "User: ", with: "")
                     let uidStrArr:[String] = uidStr.characters.split{$0 == ","}.map(String.init)
                     let dataDic:Dictionary<String,Any> = data as! Dictionary<String,Any>
-                    for (key,value) in dataDic {
-                        if key == "username" && value as? String != self.currentUser?.username {
-                            self.TableArray.append(value as! String)
-                        }
+                    if dataDic["username"] as! String != self.currentUser?.username {
+                        self.TableArray.append(dataDic["username"] as! String)
                     }
                     
                     for str in uidStrArr {
