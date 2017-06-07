@@ -132,7 +132,7 @@ struct UserData {
     static var username:String? = nil
     static var createdEvents:[String]? = nil
     static var profilePicDownloadLink:String? = nil
-    static var profilePic:UIImage? = nil
+    static var profilePic:UIImage? = #imageLiteral(resourceName: "DefaultProfileImg")
     
     var _userID:String? = nil
     var _friends:[String]? = nil

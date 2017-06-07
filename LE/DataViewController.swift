@@ -39,7 +39,6 @@ class DataViewController: UIViewController, UITextFieldDelegate {
                                 self.currentUser = User(snapshot: item)
                                 
                                 var profilePic:UIImage = #imageLiteral(resourceName: "DefaultProfileImg")
-                                print("right before get profile pic ")
                                 if self.currentUser!.profilePicDownloadLink != "" {
                                     print("ProfilePicDownloadLink is not nil")
                                     let filePath = "Users/User: \(self.currentUser!.getUserID())/\("profilePicture")"
@@ -58,6 +57,11 @@ class DataViewController: UIViewController, UITextFieldDelegate {
                                         self.performSegue(withIdentifier: "LoginSegue", sender: sender)
                                     })
                                     
+                                }
+                                else {
+                                    UserData.updateData(withUser: self.currentUser!, profilePic: profilePic)
+                                    print(UserData()._userID)
+                                    self.performSegue(withIdentifier: "LoginSegue", sender: sender)
                                 }
                             }
                             

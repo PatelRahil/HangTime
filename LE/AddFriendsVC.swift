@@ -36,6 +36,7 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
 
     var TableArray = [""]
     var allUserID = [String]()
+    var profilePicArray = [UIImage]()
     //uses index path to identify which userID was selected
     var index = 0;
     
@@ -106,7 +107,10 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = AddFriendListTblView.dequeueReusableCell(withIdentifier: "friendCell", for: indexPath) as! CustomTableViewCell
         cell.AddFriendBtn.removeTarget(nil, action: nil, for: .allEvents)
-
+        cell.ProfileImg.layoutIfNeeded()
+        cell.ProfileImg.clipsToBounds = true
+        cell.ProfileImg.layer.cornerRadius = cell.ProfileImg.bounds.size.width/2.0
+        cell.ProfileImg.image = profilePicArray[indexPath.row]
         cell.UsernameLbl.text = TableArray[indexPath.row + 1]
         index = indexPath.row
         if (isAlreadyFriend(userID: allUserID[indexPath.row])) {
@@ -127,12 +131,9 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
         var isFriend = false
         
         for friend in (currentUser?.friends)! {
-            //for friend in friends {
-                if (friend == userID) {
-                    isFriend = true
-                }
-                print("friend:\(friend)     userID: \(userID)      index:\(index)")
-            //}
+            if (friend == userID) {
+                isFriend = true
+            }
         }
         return isFriend
     }
@@ -165,10 +166,38 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
                     var uidStr = uid.replacingOccurrences(of: "User: ", with: "")
                     let uidStrArr:[String] = uidStr.characters.split{$0 == ","}.map(String.init)
                     let dataDic:Dictionary<String,Any> = data as! Dictionary<String,Any>
+                    for _ in uidStrArr {
+                        self.profilePicArray.append(#imageLiteral(resourceName: "DefaultProfileImg"))
+                    }
                     if dataDic["username"] as! String != self.currentUser?.username {
                         self.TableArray.append(dataDic["username"] as! String)
                     }
-                    
+                    if let link = dataDic["profilePicture"] as? String {
+                        print("LINK: \(link)")
+                        if link != self.currentUser?.profilePicDownloadLink {
+                        
+                        var profilePic:UIImage = #imageLiteral(resourceName: "DefaultProfileImg")
+                        var photoIndex = self.allUserID.count
+                        if self.currentUser!.profilePicDownloadLink != "" {
+
+                            let filePath = "Users/User: \(dataDic["UserID"]!)/\("profilePicture")"
+                            self.storageRef.child(filePath).data(withMaxSize: 10*1024*1024, completion: { (data, error) in
+                                if error == nil {
+                                    let userPhoto = UIImage(data: data!)
+                                    profilePic = userPhoto!
+                                }
+                                else {
+                                    print("ERROR: \(error)")
+                                    profilePic = #imageLiteral(resourceName: "DefaultProfileImg")
+                                }
+                                self.profilePicArray[photoIndex] = profilePic
+                                print("\(link)    array: \(self.profilePicArray)")
+                                self.AddFriendListTblView.reloadData()
+                            })
+                            
+                        }
+                        }
+                    }
                     for str in uidStrArr {
                         if str != self.currentUser!.userID {
                             self.allUserID.append(str)
