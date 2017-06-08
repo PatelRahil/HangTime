@@ -191,8 +191,7 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
                             
                             var profilePic:UIImage = #imageLiteral(resourceName: "DefaultProfileImg")
                             let photoIndex = self.allUserID.count
-                            if self.currentUser!.profilePicDownloadLink != "" {
-                                
+                            
                                 let filePath = "Users/User: \(dataDic["UserID"]!)/\("profilePicture")"
                                 self.storageRef.child(filePath).data(withMaxSize: 10*1024*1024, completion: { (data, error) in
                                     if error == nil {
@@ -207,8 +206,7 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
                                     print("\(link)    array: \(self.profilePicArray)")
                                     self.AddFriendListTblView.reloadData()
                                 })
-                                
-                            }
+                            
                         }
                     }
                     
