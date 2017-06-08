@@ -169,15 +169,14 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
                     for _ in uidStrArr {
                         self.profilePicArray.append(#imageLiteral(resourceName: "DefaultProfileImg"))
                     }
-                    if dataDic["username"] as! String != self.currentUser?.username {
+                    if dataDic["username"] as? String != self.currentUser?.username {
                         self.TableArray.append(dataDic["username"] as! String)
                     }
                     if let link = dataDic["profilePicture"] as? String {
-                        print("LINK: \(link)")
                         if link != self.currentUser?.profilePicDownloadLink {
                         
                         var profilePic:UIImage = #imageLiteral(resourceName: "DefaultProfileImg")
-                        var photoIndex = self.allUserID.count
+                        let photoIndex = self.allUserID.count
                         if self.currentUser!.profilePicDownloadLink != "" {
 
                             let filePath = "Users/User: \(dataDic["UserID"]!)/\("profilePicture")"
@@ -187,11 +186,10 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
                                     profilePic = userPhoto!
                                 }
                                 else {
-                                    print("ERROR: \(error)")
+                                    print("ERROR: \(String(describing: error))")
                                     profilePic = #imageLiteral(resourceName: "DefaultProfileImg")
                                 }
                                 self.profilePicArray[photoIndex] = profilePic
-                                print("\(link)    array: \(self.profilePicArray)")
                                 self.AddFriendListTblView.reloadData()
                             })
                             

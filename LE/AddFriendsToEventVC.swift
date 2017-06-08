@@ -9,14 +9,19 @@
 import Foundation
 import FirebaseDatabase
 import Firebase
+import FirebaseStorage
 
 class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource {
     let rootRef = FIRDatabase.database().reference()
     let childRef = FIRDatabase.database().reference(withPath: "Users")
+    let storageRef = FIRStorage.storage().reference()
+
     var TableArray = [""]
     var allUserID = [String]()
     var addedFriends: [String] = []
     var addedFriendsUsernames: [String] = []
+    var profilePicArray = [UIImage]()
+
     //uses index path to identify which userID was selected
     var index = 0;
     
@@ -105,6 +110,10 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = AddFriendListTblView.dequeueReusableCell(withIdentifier: "eventFriendCell", for: indexPath) as! CustomAddFriendTableViewCell
+        cell.ProfileImg.layoutIfNeeded()
+        cell.ProfileImg.clipsToBounds = true
+        cell.ProfileImg.layer.cornerRadius = cell.ProfileImg.bounds.size.width/2.0
+        cell.ProfileImg.image = profilePicArray[indexPath.row]
         cell.UsernameLbl.text = TableArray[indexPath.row + 1]
         index = indexPath.row
         if (isAlreadyAdded(userID: allUserID[indexPath.row])) {
@@ -160,20 +169,50 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
                     var isFriend = false
                     var uidStr = uid.replacingOccurrences(of: "User: ", with: "")
                     let uidStrArr:[String] = uidStr.characters.split{$0 == ","}.map(String.init)
+                    
+                    //dictionary of the user's information
                     let dataDic:Dictionary<String,Any> = data as! Dictionary<String,Any>
+                    for _ in uidStrArr {
+                        self.profilePicArray.append(#imageLiteral(resourceName: "DefaultProfileImg"))
+                    }
                     for friend in (self.currentUser?.friends)! {
                         if friend == dataDic["UserID"] as! String {
                             isFriend = true
                         }
                     }
-                    for (key,value) in dataDic {
-                        //determines if the uid is a friend
-                        //adds the username to the table array if the username is not the current user and is a friend
-                        if key == "username" && value as? String != self.currentUser?.username && isFriend {
-                            self.TableArray.append(value as! String)
+                    
+                    if dataDic["username"] as? String != self.currentUser?.username && isFriend {
+                        self.TableArray.append(dataDic["username"] as! String)
+                    }
+                    
+                    if let link = dataDic["profilePicture"] as? String {
+                        print("LINK: \(link)")
+                        if link != self.currentUser?.profilePicDownloadLink {
+                            
+                            var profilePic:UIImage = #imageLiteral(resourceName: "DefaultProfileImg")
+                            let photoIndex = self.allUserID.count
+                            if self.currentUser!.profilePicDownloadLink != "" {
+                                
+                                let filePath = "Users/User: \(dataDic["UserID"]!)/\("profilePicture")"
+                                self.storageRef.child(filePath).data(withMaxSize: 10*1024*1024, completion: { (data, error) in
+                                    if error == nil {
+                                        let userPhoto = UIImage(data: data!)
+                                        profilePic = userPhoto!
+                                    }
+                                    else {
+                                        print("ERROR: \(String(describing: error))")
+                                        profilePic = #imageLiteral(resourceName: "DefaultProfileImg")
+                                    }
+                                    self.profilePicArray[photoIndex] = profilePic
+                                    print("\(link)    array: \(self.profilePicArray)")
+                                    self.AddFriendListTblView.reloadData()
+                                })
+                                
+                            }
                         }
                     }
-                        //adds the username's corresponding uid to the uid array if it is a friend
+                    
+                    //adds the username's corresponding uid to the uid array if it is a friend
                     
                     for str in uidStrArr {
                         if (str != self.currentUser!.userID) && isFriend {
