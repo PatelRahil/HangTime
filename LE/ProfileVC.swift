@@ -128,13 +128,20 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
                         }
                     
                         if !isTaken {
-                            //is adding a space before the username for some reason
-                            self.currentUser?.changeUsername(username: username)
-                            UserData.updateData(withUser: self.currentUser!)
-                            let userRef = self.childRef.child("User: \(self.currentUser!.userID)")
-                            userRef.setValue(self.currentUser!.toAnyObject())
-                            textField.text = self.currentUser?.username
-
+                            if username.rangeOfCharacter(from: CharacterSet.alphanumerics.inverted) == nil {
+                                self.currentUser?.changeUsername(username: username)
+                                UserData.updateData(withUser: self.currentUser!)
+                                let userRef = self.childRef.child("User: \(self.currentUser!.userID)")
+                                userRef.setValue(self.currentUser!.toAnyObject())
+                                textField.text = self.currentUser?.username
+                            }
+                            else {
+                                let alertController = UIAlertController(title: "Invalid Username", message:
+                                    "Usernames can only contain letters and digits", preferredStyle: UIAlertControllerStyle.alert)
+                                alertController.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
+                                self.present(alertController, animated: true, completion: nil)
+                                textField.text = self.currentUser?.username
+                            }
                         }
                         else {
                             print("USERNAME IS ALREADY TAKEN")
