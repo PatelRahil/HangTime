@@ -357,6 +357,7 @@ class AddEventController: UIViewController, UITextFieldDelegate {
         let invitedFriendsStringRep:String = invitedFriendsUsernames.joined(separator: ", ")
         if invitedFriendsUIDs.count == 0 {
             FriendsLbl.text = "You haven't added any friends yet"
+            FriendsLbl.textColor = UIColor.gray
         }
         else {
             FriendsLbl.textColor = UIColor.black

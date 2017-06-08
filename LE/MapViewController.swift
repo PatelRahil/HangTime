@@ -107,7 +107,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
 
             mapView.isMyLocationEnabled = true
             mapView.settings.myLocationButton = true
-            mapView.settings.compassButton = true
             view = mapView
             
         }
@@ -133,8 +132,11 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
                 let snap = item as! FIRDataSnapshot
                 let event = Event(snapshot: snap)
                 
+                print("##################################")
+                print(!(self.isThirtyPastCurrentTime(date: NSDate(), hour: Int(event.hour)!, minute: Int(event.minute)!, day: Int(event.day)!, month: Int(event.month)!, year: Int(event.year)!)))
+                print(self.isAllowedToViewEvent(isPublic:event.isPublic, friendsAllowed: event.invitedFriends, tag:snap.key))
+                print("##################################")
                 if !(self.isThirtyPastCurrentTime(date: NSDate(), hour: Int(event.hour)!, minute: Int(event.minute)!, day: Int(event.day)!, month: Int(event.month)!, year: Int(event.year)!)) && self.isAllowedToViewEvent(isPublic:event.isPublic, friendsAllowed: event.invitedFriends, tag:snap.key)  {
-                    
                     newEvents.append(event)
                     self.createMarker(hour:event.hour, minute:event.minute, address:event.address, latitude:event.latitude, longitude:event.longitude, description:event.description, day:event.day, month:event.month, year:event.year, tag:snap.key)
                     
@@ -163,15 +165,24 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         if Int(newMin)! < 10 {
             newMin = "0" + newMin
         }
-            let timeStr = String(newHr) + ":" + newMin + AMPMstr
+        let timeStr = String(newHr) + ":" + newMin + AMPMstr
         
-            let marker = GMSMarker()
+        let marker = GMSMarker()
         
-            marker.position = GMSCameraPosition.camera(withLatitude: CLLocationDegrees(latitude),longitude:CLLocationDegrees(longitude), zoom:6).target
-            marker.snippet = description + "\nDate: " + month + "/" + day + "/" + year + "\nTime: " + timeStr + "\nLocation: " + address
-            marker.userData = tag
-            marker.appearAnimation = kGMSMarkerAnimationPop
-            marker.map = mapView
+        if userCreatedEvent(withTag: tag) {
+            print("USER CREATED THIS \(tag)")
+            marker.icon = GMSMarker.markerImage(with: UIColor.blue)
+        }
+        else {
+            print("USER DIDN'T CREATE THIS \(tag)")
+            marker.icon = GMSMarker.markerImage(with: nil)
+        }
+ 
+        marker.position = GMSCameraPosition.camera(withLatitude: CLLocationDegrees(latitude),longitude:CLLocationDegrees(longitude), zoom:6).target
+        marker.snippet = description + "\nDate: " + month + "/" + day + "/" + year + "\nTime: " + timeStr + "\nLocation: " + address
+        marker.userData = tag
+        marker.appearAnimation = kGMSMarkerAnimationPop
+        marker.map = mapView
     }
     
     func mapView(_ mapView: GMSMapView, didTapInfoWindowOf marker: GMSMarker) {
@@ -193,17 +204,23 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         var isAllowed = false
         var userCreatedThisEvent = false
         for friend in friendsAllowed {
-            if isPublic || friend == currentUser.getUserID() {
+            if friend == currentUser.getUserID() {
                 isAllowed = true
             }
         }
         
+        userCreatedThisEvent = userCreatedEvent(withTag: tag)
+        print("Public: \(isPublic)   Allowed: \(isAllowed)   User Created This: \(userCreatedThisEvent)")
+        return isPublic || isAllowed || userCreatedThisEvent
+    }
+    private func userCreatedEvent(withTag tag:String) -> Bool {
+        var userCreatedThisEvent = false
         for event in currentUser.createdEvents {
             if event == tag {
                 userCreatedThisEvent = true
             }
         }
-        return isAllowed || userCreatedThisEvent
+        return userCreatedThisEvent
     }
     private func isThirtyPastCurrentTime(date: NSDate, hour: Int, minute: Int, day: Int, month:Int, year:Int) -> Bool {
         var tempMin = minute
