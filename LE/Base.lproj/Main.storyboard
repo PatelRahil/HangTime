@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="703-4V-yAM">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="S4R-Ja-viH">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -138,7 +138,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Q3h-pU-vEd" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-101" y="-243"/>
+            <point key="canvasLocation" x="-393" y="-243"/>
         </scene>
         <!--Data View Controller-->
         <scene sceneID="snT-py-3hH">
@@ -432,7 +432,7 @@
             <objects>
                 <navigationController id="MRL-5m-xYO" sceneMemberID="viewController">
                     <value key="contentSizeForViewInPopover" type="size" width="375" height="667"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="9HW-si-DRr">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="9HW-si-DRr">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <edgeInsets key="layoutMargins" top="8" left="8" bottom="8" right="8"/>
@@ -963,7 +963,7 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="rMj-ae-PVL" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="1p0-XK-Sgr">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="1p0-XK-Sgr">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -981,7 +981,7 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="q1P-JG-WpV" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="E3N-rx-cKV">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="E3N-rx-cKV">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -999,7 +999,7 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="X6e-ef-2N7" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="hSk-vy-wF4">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="hSk-vy-wF4">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -1020,6 +1020,6 @@
         <image name="arrowRight" width="170" height="303"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="baM-Ze-IdE"/>
+        <segue reference="8kf-ku-17t"/>
     </inferredMetricsTieBreakers>
 </document>

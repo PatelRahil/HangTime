@@ -14,8 +14,8 @@ import GoogleMaps
 class DataViewController: UIViewController, UITextFieldDelegate {
     var isTrue = true
     let locationManager = CLLocationManager()
-    let childRef = FIRDatabase.database().reference(withPath: "Users")
-    let storageRef = FIRStorage.storage().reference()
+    var childRef:FIRDatabaseReference?
+    var storageRef:FIRStorageReference?
     
     var currentUser:User? = nil
 
@@ -28,7 +28,7 @@ class DataViewController: UIViewController, UITextFieldDelegate {
                     //Valid Email and Password
                     let userID = FIRAuth.auth()?.currentUser?.uid
                 
-                    self.childRef.observe(.value, with: { snapshot in
+                    self.childRef!.observe(.value, with: { snapshot in
                         //print(snapshot.value as! Dictionary<String,Any>)
                         for item in snapshot.children.allObjects as! [FIRDataSnapshot] {
                             print("***************************")
@@ -42,7 +42,7 @@ class DataViewController: UIViewController, UITextFieldDelegate {
                                 if self.currentUser!.profilePicDownloadLink != "" {
                                     print("ProfilePicDownloadLink is not nil")
                                     let filePath = "Users/User: \(self.currentUser!.getUserID())/\("profilePicture")"
-                                    self.storageRef.child(filePath).data(withMaxSize: 10*1024*1024, completion: { (data, error) in
+                                    self.storageRef!.child(filePath).data(withMaxSize: 10*1024*1024, completion: { (data, error) in
                                         print("Storage Error: \(error)")
                                         if error == nil {
                                             let userPhoto = UIImage(data: data!)
@@ -94,8 +94,12 @@ class DataViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        self.passwordTextBox.delegate = self;
-        self.usernameTextBox.delegate = self;
+        self.passwordTextBox.delegate = self
+        self.usernameTextBox.delegate = self
+        
+        childRef = FIRDatabase.database().reference(withPath: "Users")
+        storageRef = FIRStorage.storage().reference()
+        
     }
     
 
