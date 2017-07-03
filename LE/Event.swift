@@ -20,9 +20,13 @@ struct Event {
     var latitude: Double
     var longitude: Double
     let ref: FIRDatabaseReference?
-    var eventID: Int
     var isPublic: Bool
     var invitedFriends: [String]
+    var createdByUID: String
+    
+    //now obsolete; need to delete it and all references to it
+    var eventID: Int
+
     
     init (description: String,
           day: String,
@@ -35,7 +39,8 @@ struct Event {
           longitude: Double,
           eventID: Int,
           isPublic: Bool,
-          invitedFriends: [String]) {
+          invitedFriends: [String],
+          createdByUID: String) {
         self.description = description
         self.day = day
         self.month = month
@@ -49,6 +54,7 @@ struct Event {
         self.eventID = eventID
         self.isPublic = isPublic
         self.invitedFriends = invitedFriends
+        self.createdByUID = createdByUID
     }
     
     init (snapshot: FIRDataSnapshot) {
@@ -67,6 +73,7 @@ struct Event {
         isPublic = snapshotValue["isPublic"] as! Bool
         let invitedFriendsStringRep = snapshotValue["invitedFriends"] as! String
         invitedFriends = invitedFriendsStringRep.characters.split{$0 == ","}.map(String.init)
+        createdByUID = snapshotValue["createdByUID"] as! String
     }
     
     mutating func addFriendToEvent(withID: String) {
@@ -87,7 +94,8 @@ struct Event {
             "longitude": longitude,
             "eventID": eventID,
             "isPublic": isPublic,
-            "invitedFriends": invitedFriendsStringRep
+            "invitedFriends": invitedFriendsStringRep,
+            "createdByUID": createdByUID
         ]
     }
 }

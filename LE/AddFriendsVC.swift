@@ -178,7 +178,7 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
                         var profilePic:UIImage = #imageLiteral(resourceName: "DefaultProfileImg")
                         let photoIndex = self.allUserID.count
 
-                            let filePath = "Users/User: \(dataDic["UserID"]!)/\("profilePicture")"
+                            let filePath = "Users/User: \(dataDic["UserID"]!)/profilePicture"
                             self.storageRef.child(filePath).data(withMaxSize: 10*1024*1024, completion: { (data, error) in
                                 if error == nil {
                                     let userPhoto = UIImage(data: data!)

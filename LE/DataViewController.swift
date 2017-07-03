@@ -19,6 +19,9 @@ class DataViewController: UIViewController, UITextFieldDelegate {
     
     var currentUser:User? = nil
 
+    @IBOutlet weak var loginView: UIView!
+    @IBOutlet weak var inputContainerView: UIView!
+    @IBOutlet weak var loginBtn: UIButton!
     @IBOutlet weak var passwordTextBox: UITextField!
     @IBOutlet weak var usernameTextBox: UITextField!
     
@@ -100,6 +103,12 @@ class DataViewController: UIViewController, UITextFieldDelegate {
         childRef = FIRDatabase.database().reference(withPath: "Users")
         storageRef = FIRStorage.storage().reference()
         
+        loginView.layer.cornerRadius = 5
+        inputContainerView.layer.cornerRadius = 5
+        loginBtn.backgroundColor = Colors.mintGreen
+        loginBtn.layer.cornerRadius = 5
+        loginBtn.setTitleColor(UIColor.white, for: .normal)
+        loginBtn.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
     }
     
 
@@ -148,4 +157,10 @@ class DataViewController: UIViewController, UITextFieldDelegate {
         }
     }
 
+}
+
+extension UIColor {
+    convenience init(r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat) {
+        self.init(red: r/255, green: g/255, blue: b/255, alpha: a)
+    }
 }

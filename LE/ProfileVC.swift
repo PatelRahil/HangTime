@@ -66,6 +66,7 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
         }
         else if indexPath.row == 2 {
             let cell = ProfileTableView.dequeueReusableCell(withIdentifier: "EmailCell", for: indexPath)
+            cell.accessoryType = .disclosureIndicator
             cell.textLabel?.text = "Email"
             return cell
         }

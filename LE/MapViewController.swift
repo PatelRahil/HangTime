@@ -19,19 +19,6 @@ import GoogleMaps
 import CoreLocation
 import FirebaseDatabase
 
-struct EventVariables {
-    static var eventIsCreated = false;
-    static var latitude = 0.0
-    static var longitude = 0.0
-    static var description = ""
-    static var address = "";
-    static var dateMonth = 00
-    static var dateDay = 00
-    static var dateYear = 0000
-    static var timeMin = 00
-    static var timeHr = 00
-}
-
 extension NSDate
 {
     func hour() -> Int
@@ -75,13 +62,14 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     
     let childRef = FIRDatabase.database().reference(withPath: "Events")
     let userRef = FIRDatabase.database().reference(withPath: "Users")
+    
     var events: [Event] = []
+    var pickedEventID:String = ""
 
     var currentUser:User!
     var mapView: GMSMapView = GMSMapView.map(withFrame: CGRect.zero, camera: GMSCameraPosition.camera(withLatitude: 0,longitude:0, zoom:6))
     
     let locationManager = CLLocationManager()
-    //let mapView: GMSMapView?
     
     //just the image of the button
     @IBOutlet weak var PressButton: UIButton!
@@ -110,6 +98,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
             view = mapView
             
         }
+
         self.navigationController?.isNavigationBarHidden = true
         PressButton.frame = CGRect(origin: CGPoint(x:5*UIScreen.main.bounds.width / 6, y:UIScreen.main.bounds.height / 25), size: CGSize(width: 7*UIScreen.main.bounds.width / 40, height: UIScreen.main.bounds.height / 11))
         OpenSideBar.frame = CGRect(origin: CGPoint(x:7*UIScreen.main.bounds.width / 320, y:UIScreen.main.bounds.height / 25), size: CGSize(width: 7*UIScreen.main.bounds.width / 80, height: UIScreen.main.bounds.height / 22))
@@ -117,12 +106,17 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         view.addSubview(self.OpenSideBar)
         
         OpenSideBar.addTarget(self.revealViewController(), action: #selector(SWRevealViewController.revealToggle(_:)), for: .touchUpInside)
-        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\nButton Position:::  (\(PressButton.frame.midX),\(PressButton.frame.midY)")
         //self.revealViewController().rearViewRevealWidth = self.view.frame.width - 200
 
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        updateMap()
+    }
+    
     func updateMap() {
+        
+        mapView.clear()
         childRef.observe(.value, with: { snapshot in
             // 2
             var newEvents: [Event] = []
@@ -132,10 +126,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
                 let snap = item as! FIRDataSnapshot
                 let event = Event(snapshot: snap)
                 
-                print("##################################")
-                print(!(self.isThirtyPastCurrentTime(date: NSDate(), hour: Int(event.hour)!, minute: Int(event.minute)!, day: Int(event.day)!, month: Int(event.month)!, year: Int(event.year)!)))
-                print(self.isAllowedToViewEvent(isPublic:event.isPublic, friendsAllowed: event.invitedFriends, tag:snap.key))
-                print("##################################")
                 if !(self.isThirtyPastCurrentTime(date: NSDate(), hour: Int(event.hour)!, minute: Int(event.minute)!, day: Int(event.day)!, month: Int(event.month)!, year: Int(event.year)!)) && self.isAllowedToViewEvent(isPublic:event.isPublic, friendsAllowed: event.invitedFriends, tag:snap.key)  {
                     newEvents.append(event)
                     self.createMarker(hour:event.hour, minute:event.minute, address:event.address, latitude:event.latitude, longitude:event.longitude, description:event.description, day:event.day, month:event.month, year:event.year, tag:snap.key)
@@ -170,11 +160,9 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         let marker = GMSMarker()
         
         if userCreatedEvent(withTag: tag) {
-            print("USER CREATED THIS \(tag)")
             marker.icon = GMSMarker.markerImage(with: UIColor.blue)
         }
         else {
-            print("USER DIDN'T CREATE THIS \(tag)")
             marker.icon = GMSMarker.markerImage(with: nil)
         }
  
@@ -187,6 +175,48 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     
     func mapView(_ mapView: GMSMapView, didTapInfoWindowOf marker: GMSMarker) {
         //perform segue depending on the event
+        pickedEventID = marker.userData as! String
+        performSegue(withIdentifier: "EventDetails", sender: marker)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        if segue.identifier == "EventDetails" {
+            let nextController = (segue.destination as! EventDetailsVC)
+            childRef.observeSingleEvent(of: .value, with: { snapshot in
+                for item in snapshot.children {
+                    let snap = item as! FIRDataSnapshot
+                    if snap.key == self.pickedEventID {
+                        let event:Event = Event(snapshot: snap)
+                        
+                        EventVariables.address = event.address
+                        EventVariables.dateDay = Int(event.day)!
+                        EventVariables.dateMonth = Int(event.month)!
+                        EventVariables.dateYear = Int(event.year)!
+                        EventVariables.description = event.description 
+                        EventVariables.latitude = event.latitude 
+                        EventVariables.longitude = event.longitude 
+                        EventVariables.timeHr = Int(event.hour)!
+                        EventVariables.timeMin = Int(event.minute)!
+                        EventVariables.eventID = self.pickedEventID
+                        EventVariables.createdByUID = event.createdByUID
+                        EventVariables.invitedFriends = event.invitedFriends
+                        EventVariables.isPublic = event.isPublic
+                        
+                        self.userRef.observeSingleEvent(of: .value,with: { snapshot in
+                            for user in snapshot.children {
+                                let userSnap = user as! FIRDataSnapshot
+                                if userSnap.key == "User: \(event.createdByUID)" {
+                                    nextController.eventCreator = User(snapshot: userSnap)
+                                }
+                            }
+                            nextController.setTitle() //This is what causes a switch to be added
+                        })
+                    }
+                }
+            })
+            
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -196,6 +226,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
         self.navigationController?.isNavigationBarHidden = true
         updateMap()
         print("Button Position:::  (\(PressButton.frame.midX),\(PressButton.frame.midY)")
@@ -210,7 +241,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         }
         
         userCreatedThisEvent = userCreatedEvent(withTag: tag)
-        print("Public: \(isPublic)   Allowed: \(isAllowed)   User Created This: \(userCreatedThisEvent)")
+        //print("Public: \(isPublic)   Allowed: \(isAllowed)   User Created This: \(userCreatedThisEvent)")
         return isPublic || isAllowed || userCreatedThisEvent
     }
     private func userCreatedEvent(withTag tag:String) -> Bool {
@@ -237,8 +268,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         while ((tempMin + 30) >= 60) {
             tempMin = minute + 30 - 60
             tempHr += 1
-            print(tempMin)
-            print(tempHr)
         }
         if (tempHr > 24) {
             tempHr = 1
@@ -273,7 +302,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         
         let expireTime = "\(tempHr):\(tempMin)"
         let expireDate = "\(tempMonth)/\(tempDay)/\(tempYear)"
-        print("Time: \(expireTime)\n\(expireDate)")
+        //print("Expire Time and Date: \(expireTime)\n\(expireDate)")
         
         if (tempYear > thisYear) {
             return false

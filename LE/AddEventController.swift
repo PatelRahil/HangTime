@@ -67,6 +67,9 @@ class AddEventController: UIViewController, UITextFieldDelegate {
     var currentUser: User? = nil
     
     var validEntries = false
+    var validAddress = false
+    
+    var address = ""
     var day = 0
     var month = 0
     var year = 0
@@ -135,13 +138,25 @@ class AddEventController: UIViewController, UITextFieldDelegate {
             validEntries = true
             AddressInvalid.text = ""
         }
-        if (validEntries==true) {
+        if validEntries {
             EventVariables.eventIsCreated = true
             let address = AddressTextbox.text
             var tempDesc = DescriptionTextbox.text
             if (tempDesc == " ") {
                 tempDesc = ""
             }
+            
+            //following conditional is for if the user didn't interact with the date picker at all
+            if year == 0 {
+                let minDate:Date = Date()
+                let calendar = Calendar.current
+                day = calendar.component(.day, from: minDate)
+                month = calendar.component(.month, from: minDate)
+                year = calendar.component(.year, from: minDate)
+                hour = calendar.component(.hour, from: minDate)
+                minute = calendar.component(.minute, from: minDate)
+            }
+            
             EventVariables.description = tempDesc!
             EventVariables.dateDay = day
             EventVariables.dateMonth = month
@@ -164,19 +179,35 @@ class AddEventController: UIViewController, UITextFieldDelegate {
 
         if let error = error {
             print("Unable to Forward Geocode Address (\(error))")
+            validAddress = false
             
         } else {
+            if let placemarks = placemarks, placemarks.count > 1 {
+                print("MULTIPLE ADDRESSES")
+                validAddress = false
+            }
+            else {
+                validAddress = true
+            }
+            
             var location: CLLocation?
             
             if let placemarks = placemarks, placemarks.count > 0 {
                 location = placemarks.first?.location
+                
+                var addressArr = placemarks.first!.addressDictionary!["FormattedAddressLines"] as! [String]
+                print(addressArr)
+                addressArr.removeLast()
+                let address = addressArr.joined(separator: ", ")
+                print(address)
+                self.address = address
+                
             }
             
             if let location = location {
                 let coordinate = location.coordinate
                 EventVariables.latitude = Double(coordinate.latitude)
                 EventVariables.longitude = Double(coordinate.longitude)
-                print("**********Latitude: \(coordinate.latitude)")
             } else {
             }
         }
@@ -206,43 +237,42 @@ class AddEventController: UIViewController, UITextFieldDelegate {
         if isPublic {
             print(AddressTextbox.text ?? "OOPS")
             let event = Event(description: DescriptionTextbox.text!,
-                              day: String(day),
-                              month: String(month),
-                              year: String(year),
-                              hour: String(hour),
-                              minute: String(minute),
-                              address: AddressTextbox.text!,
+                              day: String(self.day),
+                              month: String(self.month),
+                              year: String(self.year),
+                              hour: String(self.hour),
+                              minute: String(self.minute),
+                              address: self.address,
                               latitude: EventVariables.latitude,
                               longitude: EventVariables.longitude,
                               eventID: eventID,
-                              isPublic: isPublic,
-                              invitedFriends: []
+                              isPublic: self.isPublic,
+                              invitedFriends: [],
+                              createdByUID: self.currentUser!.userID
                 
             )
-            print("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
-            print(event)
-            print(isPublic)
-            print(EventVariables())
+            
             let eventRefID = childRef.childByAutoId()
             currentUser?.addEvent(eventID: eventRefID.key)
             let userRef = self.userRef.child("User: \(currentUser!.userID)")
             userRef.setValue(currentUser!.toAnyObject())
-            
+            UserData.updateData(withUser: currentUser!)
             eventRefID.setValue(event.toAnyObject())
         }
         else {
             let event = Event(description: DescriptionTextbox.text!,
-                              day: String(day),
-                              month: String(month),
-                              year: String(year),
-                              hour: String(hour),
-                              minute: String(minute),
-                              address: AddressTextbox.text!,
+                              day: String(self.day),
+                              month: String(self.month),
+                              year: String(self.year),
+                              hour: String(self.hour),
+                              minute: String(self.minute),
+                              address: self.address,
                               latitude: EventVariables.latitude,
                               longitude: EventVariables.longitude,
                               eventID: eventID,
-                              isPublic: isPublic,
-                              invitedFriends: invitedFriendsUIDs
+                              isPublic: self.isPublic,
+                              invitedFriends: self.invitedFriendsUIDs,
+                              createdByUID: self.currentUser!.userID
             
             )
             let eventRefID = childRef.childByAutoId()
@@ -275,7 +305,7 @@ class AddEventController: UIViewController, UITextFieldDelegate {
     
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
         if identifier == "CreateEventSegue" {
-            if validEntries {
+            if validEntries && validAddress {
                 return true
             }
             else {
@@ -305,13 +335,15 @@ class AddEventController: UIViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadUser()
         // Do any additional setup after loading the view, typically from a nib.
+        loadUser()
         self.navigationController?.isNavigationBarHidden = false
 
+        InvitedFriends.reset()
+        
         let minDate:Date = Date()
-        print(minDate)
         myDatePicker.minimumDate = minDate
+        
         
         self.AddressTextbox.delegate = self
         self.DescriptionTextbox.delegate = self
@@ -321,6 +353,7 @@ class AddEventController: UIViewController, UITextFieldDelegate {
         FriendsLbl.isHidden = true
         AnyoneCanViewLbl.isHidden = false
         InvitedFriendsLbl.isHidden = true
+
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -337,6 +370,8 @@ class AddEventController: UIViewController, UITextFieldDelegate {
             nextController.invitedFriendsUIDs = invitedFriendsUIDs
             nextController.invitedFriendsUsernames = invitedFriendsUsernames
             nextController.currentUser = currentUser
+            nextController.editable = true
+            nextController.cameFromEventDetailsVC = false
             
             let backItem = UIBarButtonItem()
             backItem.title = "Create Event"

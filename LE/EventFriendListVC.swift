@@ -13,16 +13,24 @@ import FirebaseStorage
 struct InvitedFriends {
     static var invitedFriendsUIDs: [String] = []
     static var invitedFriendsUsernames: [String] = []
+    
+    static func reset() {
+        invitedFriendsUIDs = []
+        invitedFriendsUsernames = []
+    }
 }
 
 class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
     
     let storageRef = FIRStorage.storage().reference()
+    let eventRef = FIRDatabase.database().reference(withPath: "Events")
 
     //Passed values from previous VC
     var invitedFriendsUIDs:[String] = []
     var invitedFriendsUsernames:[String] = []
     var currentUser:User? = nil
+    var editable:Bool? = nil
+    var cameFromEventDetailsVC = false
 
     //Not passed values from previous VC
     var selectedCellsIndex:[Int] = []
@@ -46,20 +54,53 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
         }
     }
     @IBAction func DeleteFriends(_ sender: Any) {
+        print("{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}")
         selectedCellsIndex = selectedCellsIndex.sorted(by: >)
         for index in selectedCellsIndex {
             print("index: \(index)\ninvitedFriendsUIDs: \(invitedFriendsUsernames)")
             invitedFriendsUIDs.remove(at: index)
             invitedFriendsUsernames.remove(at: index)
+            profilePicArray.remove(at: index)
         }
+        
         if (invitedFriendsUIDs == []) {
             EditButtonLbl.sendActions(for: .touchUpInside)
         }
+        
         DeleteButton.setTitleColor(UIColor.lightGray, for: .normal)
         InvitedFriends.invitedFriendsUIDs = invitedFriendsUIDs
         InvitedFriends.invitedFriendsUsernames = invitedFriendsUsernames
         editInvitedFriendsTableView.reloadData()
+        
         selectedCellsIndex = []
+        
+        if cameFromEventDetailsVC {
+            
+            EventVariables.invitedFriends = invitedFriendsUIDs
+            /*
+            eventsRef.observeSingleEvent(of: .value, with: { (snapshot) in
+                print("VALUE \n\(snapshot.value)")
+                var event = Event(snapshot: snapshot)
+                
+                //the line below is somehow calling the "Event Details" segue from map view controller to event details VC and in the process calling the corresponding code in MapViewController's prepare(for segue:)
+                //event.invitedFriends = self.invitedFriendsUIDs
+                //eventsRef.setValue(event.toAnyObject())
+
+                let invFriendsRef = eventsRef.child("invitedFriends")
+                let invitedFriendsStringRep = self.invitedFriendsUIDs.joined(separator: ",")
+                invFriendsRef.setValue(invitedFriendsStringRep)
+                
+            })
+            */
+            
+            
+            let invFriendsRef = self.eventRef.child(EventVariables.eventID).child("invitedFriends")
+            let invitedFriendsStringRep = self.invitedFriendsUIDs.joined(separator: ",")
+            invFriendsRef.setValue(invitedFriendsStringRep)
+            
+            //eventRef.setValue(invitedFriendsUIDs, forKey: "invitedFriends")
+        }
+ 
     }
     @IBAction func EditButton(_ sender: Any) {
         editIsSelected = !editIsSelected
@@ -85,6 +126,7 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
         loadProfilePictures()
         DeleteButton.isHidden = true
         SelectAllButton.isHidden = true
+        EditButtonLbl.isHidden = !editable!
         navigationController?.delegate = self
     }
     
@@ -97,7 +139,12 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
         cell.ProfileImg.layoutIfNeeded()
         cell.ProfileImg.clipsToBounds = true
         cell.ProfileImg.layer.cornerRadius = cell.ProfileImg.bounds.size.width/2.0
-        cell.ProfileImg.image = profilePicArray[indexPath.row]
+        if indexPath.row < profilePicArray.count {
+            cell.ProfileImg.image = profilePicArray[indexPath.row]
+        }
+        else {
+            cell.ProfileImg.image = #imageLiteral(resourceName: "DefaultProfileImg")
+        }
         cell.UsernameLbl.text = invitedFriendsUsernames[indexPath.row]
         if editIsSelected {
             cell.selectionStyle = UITableViewCellSelectionStyle.init(rawValue: 3)!
@@ -155,12 +202,14 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
                     print("ERROR: \(String(describing: error))")
                     profilePic = #imageLiteral(resourceName: "DefaultProfileImg")
                 }
+                
                 self.profilePicArray[index] = profilePic
                 self.editInvitedFriendsTableView.reloadData()
             })
         }
         
     }
+    
 }
 
 class CustomEventFriendListCell: UITableViewCell {

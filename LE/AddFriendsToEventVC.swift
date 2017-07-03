@@ -26,48 +26,81 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
     var index = 0;
     
     var currentUser:User? = nil
+    var eventDetailsWasPrevVC = false
+    var eventID:String?
+    var event:Event?
     
     @IBOutlet weak var UserNotFoundLbl: UILabel!
     @IBOutlet weak var AddFriendListTblView: UITableView!
     @IBOutlet weak var SearchBar: UITextField!
 
     @IBAction func DoneBtn(_ sender: Any) {
-        
-        let vcIndex = self.navigationController?.viewControllers.index(where: { (viewController) -> Bool in
+        if eventDetailsWasPrevVC {
+            EventVariables.invitedFriends = addedFriends
             
-            if let _ = viewController as? AddEventController {
-                print("YES")
-                return true
-            }
-            print("NO")
-            return false
-        })
-        
-        let createEventVC = self.navigationController?.viewControllers[vcIndex!] as! AddEventController
-        //createEventVC.invitedFriendsUIDs = addedFriends
-        
-        self.childRef.observe(.value, with: { snapshot in
+            let vcIndex = self.navigationController?.viewControllers.index(where: { (viewController) -> Bool in
+                
+                if let _ = viewController as? EventDetailsVC {
+                    return true
+                }
+                return false
+            })
             
-            for child in snapshot.children.allObjects as! [FIRDataSnapshot] {
-                for id in self.addedFriends {
-                    if child.key == "User: \(id)" {
-                        let dict = child.value as! Dictionary<String,Any>
-                        self.addedFriendsUsernames.append(dict["username"] as! String)
+            let eventDetailsVC = self.navigationController?.viewControllers[vcIndex!] as! EventDetailsVC
+            
+            let childRef = FIRDatabase.database().reference(withPath: "Events")
+            let invFriendsRef = childRef.child(EventVariables.eventID).child("invitedFriends")
+            let invitedFriendsStringRep = addedFriends.joined(separator: ",")
+            invFriendsRef.setValue(invitedFriendsStringRep)
+            self.navigationController?.popToViewController(eventDetailsVC, animated: true)
+        }
+            
+        else {
+            let vcIndex = self.navigationController?.viewControllers.index(where: { (viewController) -> Bool in
+            
+                if let _ = viewController as? AddEventController {
+                    return true
+                }
+                return false
+            })
+        
+            let createEventVC = self.navigationController?.viewControllers[vcIndex!] as! AddEventController
+            //createEventVC.invitedFriendsUIDs = addedFriends
+        
+            self.childRef.observe(.value, with: { snapshot in
+                /*
+                for child in snapshot.children.allObjects as! [FIRDataSnapshot] {
+                    for id in self.addedFriends {
+                        if child.key == "User: \(id)" {
+                            let dict = child.value as! Dictionary<String,Any>
+                            self.addedFriendsUsernames.append(dict["username"] as! String)
+                        }
                     }
                 }
-            }
-            //createEventVC.invitedFriendsUsernames = self.addedFriendsUsernames
-            InvitedFriends.invitedFriendsUIDs = self.addedFriends
-            InvitedFriends.invitedFriendsUsernames = self.addedFriendsUsernames
-            self.navigationController?.popToViewController(createEventVC, animated: true)
-        })
+                 */
+                for id in self.addedFriends {
+                    for child in snapshot.children.allObjects as! [FIRDataSnapshot] {
+                        if child.key == "User: \(id)" {
+                            let dict = child.value as! Dictionary<String,Any>
+                            self.addedFriendsUsernames.append(dict["username"] as! String)
+                        }
+                    }
+                }
+                
+                //createEventVC.invitedFriendsUsernames = self.addedFriendsUsernames
+                InvitedFriends.invitedFriendsUIDs = self.addedFriends
+                InvitedFriends.invitedFriendsUsernames = self.addedFriendsUsernames
+                self.navigationController?.popToViewController(createEventVC, animated: true)
+            })
+        }
     }
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         loadUser()
-        //self.view.addGestureRecognizer(revealViewController().panGestureRecognizer())
+        print("--------------------------------------------------")
+        print(addedFriends)
         let magnifyingGlassAttachment = NSTextAttachment(data: nil, ofType: nil)
         var magnifyingGlassImg = UIImage(named: "MagnifyingGlass")
         magnifyingGlassImg = magnifyingGlassImg?.imageResize(sizeChange: CGSize(width: 14, height: 12))
@@ -85,7 +118,6 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
         SearchBar.attributedPlaceholder = attributedText
         SearchBar.delegate = self
         SearchBar.addTarget(self, action: #selector(removeAllCells), for: .touchDown)
-        //OpenSideBar.addTarget(self.revealViewController(), action: #selector(SWRevealViewController.revealToggle(_:)), for: .touchUpInside)
     }
     
     func loadUser() {
