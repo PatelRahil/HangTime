@@ -105,10 +105,18 @@ class DataViewController: UIViewController, UITextFieldDelegate {
         
         loginView.layer.cornerRadius = 5
         inputContainerView.layer.cornerRadius = 5
-        loginBtn.backgroundColor = Colors.mintGreen
+        loginBtn.backgroundColor = Colors.blueGreen
         loginBtn.layer.cornerRadius = 5
         loginBtn.setTitleColor(UIColor.white, for: .normal)
         loginBtn.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+        
+        let gradient = CAGradientLayer()
+        gradient.frame =  CGRect(x: 0, y: 0, width: self.view.frame.width, height: loginView.frame.minY)
+        gradient.colors = [Colors.blueGreen.cgColor, Colors.yellow.cgColor]
+        gradient.startPoint = CGPoint(x: 0, y: 0)
+        gradient.endPoint = CGPoint(x: 1, y: loginView.frame.minY/view.frame.maxY)
+        gradient.locations = [0.0,2.0]
+        view.layer.insertSublayer(gradient, at: 0)
     }
     
 

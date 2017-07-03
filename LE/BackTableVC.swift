@@ -41,11 +41,7 @@ class BackTableVC: UITableViewController {
             cell.UsernameLbl.text = currentUser?.username
             let prevHeightLbl = cell.UsernameLbl.frame.height
             
-            cell.ProfilePic.image = profilePic
-            cell.ProfilePic.frame.origin.y = 10
-            cell.ProfilePic.layoutIfNeeded()
-            cell.ProfilePic.clipsToBounds = true
-            cell.ProfilePic.layer.cornerRadius = cell.ProfilePic.bounds.size.width/2.0
+            layoutProfilePics(with: cell)
             
             cell.UsernameLbl.frame.origin.y = cell.ProfilePic.frame.maxY + prevHeightLbl/2
             //(90.0, 82.0, 77.0, 77.0)
@@ -74,6 +70,29 @@ class BackTableVC: UITableViewController {
         else {
             return 50
         }
+    }
+    
+    private func layoutProfilePics(with cell:CustomSideTableViewCell) {
+        
+        let gradient = CAGradientLayer()
+        gradient.frame =  CGRect(origin: CGPoint.zero, size: cell.ProfilePic.frame.size)
+        gradient.colors = [Colors.blueGreen.cgColor, Colors.yellow.cgColor]
+        
+        let shape = CAShapeLayer()
+        shape.lineWidth = 4
+        shape.path = UIBezierPath(ovalIn: cell.ProfilePic.bounds).cgPath
+        shape.strokeColor = UIColor.black.cgColor
+        shape.fillColor = UIColor.clear.cgColor
+        gradient.mask = shape
+        
+        cell.ProfilePic.image = profilePic
+        cell.ProfilePic.frame.origin.y = 10
+        cell.ProfilePic.layoutIfNeeded()
+        cell.ProfilePic.clipsToBounds = true
+        cell.ProfilePic.layer.masksToBounds = true
+        cell.ProfilePic.layer.cornerRadius = cell.ProfilePic.bounds.size.width/2.0
+        cell.ProfilePic.layer.addSublayer(gradient)
+        
     }
 }
 

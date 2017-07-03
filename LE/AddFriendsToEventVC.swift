@@ -142,9 +142,7 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = AddFriendListTblView.dequeueReusableCell(withIdentifier: "eventFriendCell", for: indexPath) as! CustomAddFriendTableViewCell
-        cell.ProfileImg.layoutIfNeeded()
-        cell.ProfileImg.clipsToBounds = true
-        cell.ProfileImg.layer.cornerRadius = cell.ProfileImg.bounds.size.width/2.0
+        layoutProfilePics(with: cell)
         cell.ProfileImg.image = profilePicArray[indexPath.row]
         cell.UsernameLbl.text = TableArray[indexPath.row + 1]
         index = indexPath.row
@@ -271,6 +269,29 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
         })
         self.view.endEditing(true)
         return true
+    }
+    
+    private func layoutProfilePics(with cell:CustomAddFriendTableViewCell) {
+        
+        let gradient = CAGradientLayer()
+        gradient.frame =  CGRect(origin: CGPoint.zero, size: cell.ProfileImg.frame.size)
+        gradient.colors = [Colors.blueGreen.cgColor, Colors.yellow.cgColor]
+        
+        let shape = CAShapeLayer()
+        shape.lineWidth = 3
+        //shape.path = UIBezierPath(rect: cell.ProfileImg.bounds).cgPath
+        shape.path = UIBezierPath(ovalIn: cell.ProfileImg.bounds).cgPath
+        shape.strokeColor = UIColor.black.cgColor
+        shape.fillColor = UIColor.clear.cgColor
+        //shape.cornerRadius = cell.ProfileImg.bounds.size.width/2.0
+        gradient.mask = shape
+        
+        cell.ProfileImg.layoutIfNeeded()
+        cell.ProfileImg.clipsToBounds = true
+        cell.ProfileImg.layer.masksToBounds = true
+        cell.ProfileImg.layer.cornerRadius = cell.ProfileImg.bounds.size.width/2.0
+        cell.ProfileImg.layer.addSublayer(gradient)
+
     }
     
 }

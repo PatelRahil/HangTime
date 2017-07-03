@@ -127,8 +127,7 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
     
     override func viewDidLoad() {
         self.navigationController?.isNavigationBarHidden = false
-        self.navigationController?.navigationBar.barTintColor = UIColor.init(r: 189, g: 195, b: 199, a: 0.5)
-        //self.navigationController?.navigationBar.barTintColor = Colors.mintGreen
+        //self.navigationController?.navigationBar.barTintColor = UIColor.init(r: 189, g: 195, b: 199, a: 0.5)
         self.navigationController?.navigationBar.isTranslucent = false
                 
         currentUser = User(data: UserData())
@@ -179,8 +178,8 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        self.navigationController?.navigationBar.barTintColor = UIColor.init(r: 189, g: 195, b: 199, a: 0.5)
-        //self.navigationController?.navigationBar.barTintColor = Colors.mintGreen
+        //self.navigationController?.navigationBar.barTintColor = UIColor.init(r: 189, g: 195, b: 199, a: 0.5)
+        //self.navigationController?.navigationBar.barTintColor = Colors.newEvergreen
         self.navigationController?.navigationBar.isTranslucent = false
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -219,6 +218,7 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
             saveTextFieldInfo()
             performSegue(withIdentifier: "AddFriends", sender: indexPath)
         }
+        eventDetailsTableView.deselectRow(at: indexPath, animated: true)
     }
     
     
@@ -226,11 +226,10 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "Profile Picture Cell", for: indexPath) as! CustomEventCreatorProfilePicCell
-            cell.ProfilePicture.layoutIfNeeded()
-            cell.ProfilePicture.clipsToBounds = true
-            cell.ProfilePicture.layer.cornerRadius = cell.ProfilePicture.bounds.size.width/2.0
+            layoutProfilePic(with: cell)
             cell.selectionStyle = .none
-            cell.backgroundColor = Colors.evergreen
+            cell.backgroundColor = Colors.darkGray
+            //cell.backgroundColor = Colors.mintGreen
             return cell
         }
         else if indexPath.row == 1 {
@@ -274,7 +273,7 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         }
         else if TableArray[indexPath.row] == "Invited Friends" {
             let cell = tableView.dequeueReusableCell(withIdentifier: "Invited Friends", for: indexPath)
-            cell.selectionStyle = .none
+            //cell.selectionStyle = .none
             if EventVariables.isPublic {
                 cell.textLabel?.text = "This event is public"
                 cell.accessoryType = .none
@@ -292,7 +291,7 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
             let cell = tableView.dequeueReusableCell(withIdentifier: "Invited Friends", for: indexPath)
             cell.accessoryType = .disclosureIndicator
             cell.textLabel?.text = TableArray[indexPath.row]
-            cell.selectionStyle = .none
+            //cell.selectionStyle = .none
             cell.backgroundColor = UIColor.init(red: 238.0/255, green: 238.0/255, blue: 238.0/255, alpha: 1)
             return cell
         }
@@ -492,6 +491,27 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
                 let profilePicCell:CustomEventCreatorProfilePicCell = self.eventDetailsTableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! CustomEventCreatorProfilePicCell
                 profilePicCell.ProfilePicture.image = profilePic
         })
+    }
+    
+    private func layoutProfilePic(with cell:CustomEventCreatorProfilePicCell) {
+        
+        let gradient = CAGradientLayer()
+        gradient.frame =  CGRect(origin: CGPoint.zero, size: cell.ProfilePicture.frame.size)
+        gradient.colors = [Colors.blueGreen.cgColor, Colors.yellow.cgColor]
+        
+        let shape = CAShapeLayer()
+        shape.lineWidth = 3
+        shape.path = UIBezierPath(ovalIn: cell.ProfilePicture.bounds).cgPath
+        shape.strokeColor = UIColor.black.cgColor
+        shape.fillColor = UIColor.clear.cgColor
+        gradient.mask = shape
+        
+        cell.ProfilePicture.layoutIfNeeded()
+        cell.ProfilePicture.clipsToBounds = true
+        cell.ProfilePicture.layer.masksToBounds = true
+        cell.ProfilePicture.layer.cornerRadius = cell.ProfilePicture.bounds.size.width/2.0
+        cell.ProfilePicture.layer.addSublayer(gradient)
+
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

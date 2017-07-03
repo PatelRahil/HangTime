@@ -107,11 +107,13 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = AddFriendListTblView.dequeueReusableCell(withIdentifier: "friendCell", for: indexPath) as! CustomTableViewCell
         cell.AddFriendBtn.removeTarget(nil, action: nil, for: .allEvents)
-        cell.ProfileImg.layoutIfNeeded()
-        cell.ProfileImg.clipsToBounds = true
-        cell.ProfileImg.layer.cornerRadius = cell.ProfileImg.bounds.size.width/2.0
+        
+        layoutProfilePics(with: cell)
+        
         cell.ProfileImg.image = profilePicArray[indexPath.row]
+        
         cell.UsernameLbl.text = TableArray[indexPath.row + 1]
+        
         index = indexPath.row
         if (isAlreadyFriend(userID: allUserID[indexPath.row])) {
             cell.AddFriendBtn.setTitle("Added", for: .normal)
@@ -185,7 +187,6 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
                                     profilePic = userPhoto!
                                 }
                                 else {
-                                    print("ERROR: \(String(describing: error))")
                                     profilePic = #imageLiteral(resourceName: "DefaultProfileImg")
                                 }
                                 self.profilePicArray[photoIndex] = profilePic
@@ -222,6 +223,27 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
         })
         self.view.endEditing(true)
         return true
+    }
+    
+    private func layoutProfilePics(with cell:CustomTableViewCell) {
+        
+        let gradient = CAGradientLayer()
+        gradient.frame =  CGRect(origin: CGPoint.zero, size: cell.ProfileImg.frame.size)
+        gradient.colors = [Colors.blueGreen.cgColor, Colors.yellow.cgColor]
+        
+        let shape = CAShapeLayer()
+        shape.lineWidth = 3
+        shape.path = UIBezierPath(ovalIn: cell.ProfileImg.bounds).cgPath
+        shape.strokeColor = UIColor.black.cgColor
+        shape.fillColor = UIColor.clear.cgColor
+        gradient.mask = shape
+        
+        cell.ProfileImg.layoutIfNeeded()
+        cell.ProfileImg.clipsToBounds = true
+        cell.ProfileImg.layer.masksToBounds = true
+        cell.ProfileImg.layer.cornerRadius = cell.ProfileImg.bounds.size.width/2.0
+        cell.ProfileImg.layer.addSublayer(gradient)
+        
     }
     
 }

@@ -136,9 +136,9 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "eventFriendCell", for: indexPath) as! CustomEventFriendListCell
-        cell.ProfileImg.layoutIfNeeded()
-        cell.ProfileImg.clipsToBounds = true
-        cell.ProfileImg.layer.cornerRadius = cell.ProfileImg.bounds.size.width/2.0
+        
+        layoutProfilePics(with: cell)
+        
         if indexPath.row < profilePicArray.count {
             cell.ProfileImg.image = profilePicArray[indexPath.row]
         }
@@ -152,7 +152,7 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
         else {
             cell.selectionStyle = UITableViewCellSelectionStyle.none
         }
-        cell.tintColor = UIColor.blue
+        cell.tintColor = Colors.blueGreen
         return cell
     }
     
@@ -207,6 +207,27 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
                 self.editInvitedFriendsTableView.reloadData()
             })
         }
+        
+    }
+    
+    private func layoutProfilePics(with cell:CustomEventFriendListCell) {
+        
+        let gradient = CAGradientLayer()
+        gradient.frame =  CGRect(origin: CGPoint.zero, size: cell.ProfileImg.frame.size)
+        gradient.colors = [Colors.blueGreen.cgColor, Colors.yellow.cgColor]
+        
+        let shape = CAShapeLayer()
+        shape.lineWidth = 3
+        shape.path = UIBezierPath(ovalIn: cell.ProfileImg.bounds).cgPath
+        shape.strokeColor = UIColor.black.cgColor
+        shape.fillColor = UIColor.clear.cgColor
+        gradient.mask = shape
+        
+        cell.ProfileImg.layoutIfNeeded()
+        cell.ProfileImg.clipsToBounds = true
+        cell.ProfileImg.layer.masksToBounds = true
+        cell.ProfileImg.layer.cornerRadius = cell.ProfileImg.bounds.size.width/2.0
+        cell.ProfileImg.layer.addSublayer(gradient)
         
     }
     

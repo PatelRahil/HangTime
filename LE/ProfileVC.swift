@@ -51,13 +51,7 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
         if indexPath.row == 0 {
             let cell = ProfileTableView.dequeueReusableCell(withIdentifier: "ProfileCell", for: indexPath) as! CustomProfilePicCell
             
-            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(changeProfilePicture(tapGestureRecognizer:)))
-            cell.ProfilePicture.image = profilePic
-            cell.ProfilePicture.isUserInteractionEnabled = true
-            cell.ProfilePicture.addGestureRecognizer(tapGestureRecognizer)
-            cell.ProfilePicture.layoutIfNeeded()
-            cell.ProfilePicture.clipsToBounds = true
-            cell.ProfilePicture.layer.cornerRadius = cell.ProfilePicture.bounds.size.width/2.0
+            layoutProfilePic(with: cell)
             
             
             cell.selectionStyle = UITableViewCellSelectionStyle.none
@@ -244,6 +238,33 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
         }
         
         UserData.updateData(withUser: currentUser!, profilePic: profilePic!)
+    }
+    
+    private func layoutProfilePic(with cell:CustomProfilePicCell) {
+        
+        let gradient = CAGradientLayer()
+        gradient.frame =  CGRect(origin: CGPoint.zero, size: cell.ProfilePicture.frame.size)
+        gradient.colors = [Colors.blueGreen.cgColor, Colors.yellow.cgColor]
+        
+        let shape = CAShapeLayer()
+        shape.lineWidth = 6
+        shape.path = UIBezierPath(ovalIn: cell.ProfilePicture.bounds).cgPath
+        shape.strokeColor = UIColor.black.cgColor
+        shape.fillColor = UIColor.clear.cgColor
+        gradient.mask = shape
+        
+        
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(changeProfilePicture(tapGestureRecognizer:)))
+        
+        cell.ProfilePicture.isUserInteractionEnabled = true
+        cell.ProfilePicture.addGestureRecognizer(tapGestureRecognizer)
+        cell.ProfilePicture.image = profilePic
+        cell.ProfilePicture.layoutIfNeeded()
+        cell.ProfilePicture.clipsToBounds = true
+        cell.ProfilePicture.layer.masksToBounds = true
+        cell.ProfilePicture.layer.cornerRadius = cell.ProfilePicture.bounds.size.width/2.0
+        cell.ProfilePicture.layer.addSublayer(gradient)
+        
     }
     
     func respondToErrors(error: Error) {
