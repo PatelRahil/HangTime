@@ -267,6 +267,7 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
             cell.textLabel?.backgroundColor = UIColor.clear
             cell.backgroundColor = UIColor.init(red: 238.0/255, green: 238.0/255, blue: 238.0/255, alpha: 1)
 
+            cell.publicPrivateSwitch.onTintColor = Colors.blueGreen
             cell.publicPrivateSwitch.isOn = !EventVariables.isPublic
             
             return cell

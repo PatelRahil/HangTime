@@ -27,6 +27,8 @@ struct Colors {
     //used for profile pic cell in EventDetailsVC
     static let darkGray = UIColor.init(r: 189, g: 195, b: 199, a: 1)
 
+    //For section headers
+    static let lightGray = UIColor.init(r: 125, g: 125, b: 125, a: 0.2)
 
     //variation of green theme
     static let evergreen = UIColor.init(r: 38, g: 167, b: 92, a: 1)

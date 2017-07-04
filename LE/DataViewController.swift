@@ -29,48 +29,7 @@ class DataViewController: UIViewController, UITextFieldDelegate {
             FIRAuth.auth()?.signIn(withEmail: usernameTextBox.text!, password: passwordTextBox.text!) { (user, error) in
                 if error == nil {
                     //Valid Email and Password
-                    let userID = FIRAuth.auth()?.currentUser?.uid
-                
-                    self.childRef!.observe(.value, with: { snapshot in
-                        //print(snapshot.value as! Dictionary<String,Any>)
-                        for item in snapshot.children.allObjects as! [FIRDataSnapshot] {
-                            print("***************************")
-                            let dict = item.value as! Dictionary<String,Any>
-                            print("\(dict["UserID"]) ==? \(userID)")
-                            if (dict["UserID"] as? String == userID) {
-                                print("ITEM: \(item)")
-                                self.currentUser = User(snapshot: item)
-                                
-                                var profilePic:UIImage = #imageLiteral(resourceName: "DefaultProfileImg")
-                                if self.currentUser!.profilePicDownloadLink != "" {
-                                    print("ProfilePicDownloadLink is not nil")
-                                    let filePath = "Users/User: \(self.currentUser!.getUserID())/\("profilePicture")"
-                                    self.storageRef!.child(filePath).data(withMaxSize: 10*1024*1024, completion: { (data, error) in
-                                        print("Storage Error: \(error)")
-                                        if error == nil {
-                                            let userPhoto = UIImage(data: data!)
-                                            profilePic = userPhoto!
-                                        }
-                                        else {
-                                            profilePic = #imageLiteral(resourceName: "DefaultProfileImg")
-                                        }
-                                        print(">>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<")
-                                        UserData.updateData(withUser: self.currentUser!, profilePic: profilePic)
-                                        print("<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>")
-                                        self.performSegue(withIdentifier: "LoginSegue", sender: sender)
-                                    })
-                                    
-                                }
-                                else {
-                                    UserData.updateData(withUser: self.currentUser!, profilePic: profilePic)
-                                    print(UserData()._userID)
-                                    self.performSegue(withIdentifier: "LoginSegue", sender: sender)
-                                }
-                            }
-                            
-                        }
-                    })
-                
+                    self.loadUser(sender: sender)
                 }
                 else {
                 
@@ -97,6 +56,8 @@ class DataViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        checkIfUserIsLoggedIn()
+        
         self.passwordTextBox.delegate = self
         self.usernameTextBox.delegate = self
         
@@ -136,7 +97,7 @@ class DataViewController: UIViewController, UITextFieldDelegate {
         return false
     }
     
-    func respondToError(error:Error) {
+    private func respondToError(error:Error) {
         if (String(describing: error) == "Error Domain=FIRAuthErrorDomain Code=17009 \"The password is invalid or the user does not have a password.\" UserInfo={NSLocalizedDescription=The password is invalid or the user does not have a password., error_name=ERROR_WRONG_PASSWORD}" || String(describing: error) == "Error Domain=FIRAuthErrorDomain Code=17011 \"There is no user record corresponding to this identifier. The user may have been deleted.\" UserInfo={NSLocalizedDescription=There is no user record corresponding to this identifier. The user may have been deleted., error_name=ERROR_USER_NOT_FOUND}") {
             
             print("******************\nInvalid Password\n*******************")
@@ -162,6 +123,61 @@ class DataViewController: UIViewController, UITextFieldDelegate {
                 "", preferredStyle: UIAlertControllerStyle.alert)
             alertController.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
             self.present(alertController, animated: true, completion: nil)
+        }
+    }
+    
+    private func loadUser(sender: Any?) {
+        let userID = FIRAuth.auth()?.currentUser?.uid
+        
+        self.childRef!.observeSingleEvent(of: .value, with: { snapshot in
+            print(snapshot.value as! Dictionary<String,Any>)
+            for item in snapshot.children.allObjects as! [FIRDataSnapshot] {
+                print("***************************")
+                let dict = item.value as! Dictionary<String,Any>
+                if (dict["UserID"] as? String == userID) {
+                    print("ITEM: \(item)")
+                    self.currentUser = User(snapshot: item)
+                    
+                    var profilePic:UIImage = #imageLiteral(resourceName: "DefaultProfileImg")
+                    if self.currentUser!.profilePicDownloadLink != "" {
+                        print("ProfilePicDownloadLink is not nil")
+                        let filePath = "Users/User: \(self.currentUser!.getUserID())/\("profilePicture")"
+                        self.storageRef!.child(filePath).data(withMaxSize: 10*1024*1024, completion: { (data, error) in
+                            if error == nil {
+                                let userPhoto = UIImage(data: data!)
+                                profilePic = userPhoto!
+                            }
+                            else {
+                                profilePic = #imageLiteral(resourceName: "DefaultProfileImg")
+                            }
+                            print(">>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<")
+                            UserData.updateData(withUser: self.currentUser!, profilePic: profilePic)
+                            print("<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>")
+                            self.performSegue(withIdentifier: "LoginSegue", sender: sender)
+                        })
+                        
+                    }
+                    else {
+                        
+                        UserData.updateData(withUser: self.currentUser!, profilePic: profilePic)
+                        self.performSegue(withIdentifier: "LoginSegue", sender: sender)
+                    }
+                }
+                
+            }
+        })
+    }
+    
+    private func checkIfUserIsLoggedIn() {
+        FIRAuth.auth()?.addStateDidChangeListener { auth, user in
+            print("\n\n\n")
+            if let user = user {
+                // User is signed in.
+                self.loadUser(sender: nil)
+            } else {
+                // No user is signed in.
+                print("USER NOT LOGGED IN")
+            }
         }
     }
 
