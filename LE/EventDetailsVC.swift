@@ -56,7 +56,9 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
 
     
     var eventCreator:User? = nil
-    var TableArray = ["Created By", "Date", "Address", "Description","Invited Friends"]
+    //var TableArray = ["Created By", "Date", "Address", "Description","Invited Friends"]
+    var TableArray = ["Created By", "Date", "Address", "Description"]
+
     var invitedFriendsUsernames = [String]()
     var eventInfo = [String]()
     var isEditSelected = false
@@ -187,8 +189,13 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         if EventVariables.isPublic && TableArray.contains("Add More Friends") {
             // last element is "Add More Friends" because setTitle() appends it to the end of TableArray, and nothing else is appended to TableArray after that
             TableArray.removeLast()
+            //second to last is "Invited Friends"
+            TableArray.removeLast()
         }
             //if an event is switched from private to public, and then back to private again at any point, this occurs
+        else if (!TableArray.contains("Invited Friends") && !EventVariables.isPublic) {
+            TableArray.append("Invited Friends")
+        }
         else if (!TableArray.contains("Add More Friends") && !EventVariables.isPublic) {
             if let id = eventCreator?.userID {
                 if id == currentUser!.userID {
@@ -210,11 +217,11 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.row == 5 && !EventVariables.isPublic {
+        if TableArray[indexPath.row] == "Invited Friends" && !EventVariables.isPublic {
             saveTextFieldInfo()
             performSegue(withIdentifier: "invited friends", sender: indexPath)
         }
-        if indexPath.row == 6 {
+        if TableArray[indexPath.row] == "Add More Friends" {
             saveTextFieldInfo()
             performSegue(withIdentifier: "AddFriends", sender: indexPath)
         }
@@ -277,12 +284,14 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
             //cell.selectionStyle = .none
             if EventVariables.isPublic {
                 cell.textLabel?.text = "This event is public"
+                cell.selectionStyle = .none
                 cell.accessoryType = .none
                 cell.backgroundColor = UIColor.init(red: 238.0/255, green: 238.0/255, blue: 238.0/255, alpha: 1)
             }
             else {
                 cell.accessoryType = .disclosureIndicator
                 cell.textLabel?.text = TableArray[indexPath.row]
+                cell.selectionStyle = .default
                 cell.backgroundColor = UIColor.init(red: 238.0/255, green: 238.0/255, blue: 238.0/255, alpha: 1)
             }
             return cell
@@ -349,6 +358,9 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
     
     func setTitle() {
         self.title = "\(eventCreator!.username)'s Event"
+        if !EventVariables.isPublic {
+            TableArray.append("Invited Friends")
+        }
         if EventVariables.createdByUID == currentUser!.userID {
             EditEventInfo.isHidden = false
             print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
