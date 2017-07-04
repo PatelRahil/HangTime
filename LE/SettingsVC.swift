@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Firebase
 
 class SettingsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
@@ -15,7 +16,15 @@ class SettingsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet weak var settingsTableView: UITableView!
     
     @IBAction func LogOut(_ sender: Any) {
-        
+        do {
+            try? FIRAuth.auth()?.signOut()
+            
+            if FIRAuth.auth()?.currentUser == nil {
+                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "DataViewController") as! DataViewController
+                self.present(vc, animated: true, completion: nil)
+                
+            }
+        }
         
     }
     
