@@ -50,20 +50,24 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
     
     lazy var geocoder = CLGeocoder()
 
-    var currentUser:User? = nil
+    // MARK: - Firebase reference paths
     let userRef = FIRDatabase.database().reference(withPath: "Users")
     let storageRef = FIRStorage.storage().reference()
-
-    
+    // Mark: Users
+    var currentUser:User? = nil
     var eventCreator:User? = nil
+    
+    // MARK: Array for tables
     //var TableArray = ["Created By", "Date", "Address", "Description","Invited Friends"]
     var TableArray = ["Created By", "Date", "Address", "Description"]
 
+    // MARK: Other variables
     var invitedFriendsUsernames = [String]()
     var eventInfo = [String]()
     var isEditSelected = false
     var shouldChangeInfoText = true
-
+    
+    // MARK: IBOutlets
     @IBOutlet weak var datePickerDoneBtn: UIButton!
     @IBOutlet weak var datePicker: UIDatePicker!
     @IBOutlet weak var datePickerSubview: CustomDatePickerView!
@@ -71,7 +75,7 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
     @IBOutlet weak var eventDetailsTableView: UITableView!
     @IBOutlet var greySubview: UIView!
     
-    
+    // MARK: - Button methods
     @IBAction func EditInfo(_ sender: Any) {
         if !eventInfo.isEmpty {
             isEditSelected = !isEditSelected
@@ -126,7 +130,7 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         eventDetailsTableView.isUserInteractionEnabled = true
     }
     
-    
+    // MARK: - View setup methods
     override func viewDidLoad() {
         self.navigationController?.isNavigationBarHidden = false
         //self.navigationController?.navigationBar.barTintColor = UIColor.init(r: 189, g: 195, b: 199, a: 0.5)
@@ -184,9 +188,13 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         //self.navigationController?.navigationBar.barTintColor = Colors.newEvergreen
         self.navigationController?.navigationBar.isTranslucent = false
     }
+    
+    // MARK: - Table view methods
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
         //if an event is switched from private to public at any point, this occurs
         if EventVariables.isPublic && TableArray.contains("Add More Friends") {
+            
             // last element is "Add More Friends" because setTitle() appends it to the end of TableArray, and nothing else is appended to TableArray after that
             TableArray.removeLast()
             //second to last is "Invited Friends"
@@ -307,15 +315,23 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         }
         else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "Placeholder", for: indexPath) as! CustomEventDetailsCell
+            
             cell.selectionStyle = .none
             cell.textLabel?.text = TableArray[indexPath.row]
             cell.textLabel?.backgroundColor = UIColor.clear
-            cell.backgroundColor = UIColor.init(red: 238.0/255, green: 238.0/255, blue: 238.0/255, alpha: 1)
+            cell.backgroundColor = UIColor.init(r: 238, g: 238, b: 238, a: 1)
             
             cell.EventDataTextField.delegate = self
             cell.EventDataTextField.isUserInteractionEnabled = false
             cell.EventDataTextField.backgroundColor = UIColor.clear
-            cell.EventDataTextField.borderStyle = .none
+            cell.EventDataTextField.borderStyle = .line
+            cell.layoutIfNeeded()
+            //for testing
+            cell.textLabel?.backgroundColor = UIColor.red
+            print("\n\nIMPORTANT")
+            print(cell.EventDataTextField.frame.minX)
+            print(cell.textLabel?.frame)
+            print(cell.textLabel?.frame.maxX)
             if indexPath.row-2 < eventInfo.count && shouldChangeInfoText {
                 cell.EventDataTextField.text = eventInfo[indexPath.row-2]
                 cell.EventDataTextField.attributedPlaceholder = NSAttributedString(string: eventInfo[indexPath.row-2], attributes: [NSForegroundColorAttributeName:UIColor.black])
@@ -350,12 +366,12 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
             return cell
         }
     }
-    
+    // MARK: - Textfield delegate methods
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.view.endEditing(true)
         return false
     }
-    
+    // MARK: - Previous VC uses this to update values
     func setTitle() {
         self.title = "\(eventCreator!.username)'s Event"
         if !EventVariables.isPublic {
@@ -381,6 +397,7 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         eventDetailsTableView.reloadData()
     }
     
+    // MARK: - Private methods (Convenience methods for organization)
     //used for formatting the title label of the date button
     private func formatDate(day:Int, month:Int, year:Int, hour:Int, minute:Int) -> String {
         var dayStr = String(day)
@@ -526,7 +543,8 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         cell.ProfilePicture.layer.addSublayer(gradient)
 
     }
-    
+
+    // MARK: - Segue method
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
             invitedFriendsUsernames = []
         if segue.identifier == "invited friends" {
@@ -558,7 +576,7 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         }
     }
 }
-
+// MARK: - Custom tableview cells
 class CustomEventCreatorProfilePicCell: UITableViewCell {
     
     @IBOutlet weak var ProfilePicture: UIImageView!
@@ -571,7 +589,37 @@ class CustomEventCreatorProfilePicCell: UITableViewCell {
 }
 
 class CustomEventDetailsCell: UITableViewCell {
-    @IBOutlet weak var EventDataTextField: UITextField!
+    @IBOutlet weak var EventDataTextField: UITextField! {
+        willSet {
+            print("\nFRAME: \(newValue.frame)")
+        }
+        
+        didSet {
+            print("SET")
+        }
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        //self.textLabel?.frame = textFrame
+        self.textLabel?.sizeToFit()
+        var textFrame:CGRect = (self.textLabel?.frame)!
+        textFrame = CGRect(x: 12, y: 12, width: textFrame.width, height: textFrame.height)
+        self.textLabel?.frame = textFrame
+
+        let frame:CGRect = self.EventDataTextField.frame
+        let offset:CGFloat = 12
+        let newWidth: CGFloat = self.contentView.frame.width - (textFrame.width + 3 * offset)
+        let newFrame = CGRect(x: textFrame.maxX + offset, y: frame.minY, width: newWidth, height: frame.height)
+        print(newFrame)
+        EventDataTextField.frame = newFrame
+        
+        print("IN LAYOUT SUBVIEWS")
+        print(self.textLabel?.text)
+        print(self.textLabel?.frame.maxX)
+        print(self.textLabel?.frame)
+        print(EventDataTextField.frame)
+    }
 }
 
 class CustomDateTimeDetailsCell: UITableViewCell {
@@ -588,7 +636,7 @@ class CustomPublicPrivateCell: UITableViewCell {
     }
     
 }
-
+// MARK: - Misc
 class CustomDatePickerView: UIView {
     
 }

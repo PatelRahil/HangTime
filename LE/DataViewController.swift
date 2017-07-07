@@ -78,6 +78,9 @@ class DataViewController: UIViewController, UITextFieldDelegate {
         gradient.endPoint = CGPoint(x: 1, y: loginView.frame.minY/view.frame.maxY)
         gradient.locations = [0.0,2.0]
         view.layer.insertSublayer(gradient, at: 0)
+        print("FRAMES")
+        print(loginBtn.frame)
+        print(inputContainerView.frame)
     }
     
 
@@ -130,12 +133,10 @@ class DataViewController: UIViewController, UITextFieldDelegate {
         let userID = FIRAuth.auth()?.currentUser?.uid
         
         self.childRef!.observeSingleEvent(of: .value, with: { snapshot in
-            print(snapshot.value as! Dictionary<String,Any>)
+            print("\n\n\n\nLOGGING IN USER\n\n\n\n")
             for item in snapshot.children.allObjects as! [FIRDataSnapshot] {
-                print("***************************")
                 let dict = item.value as! Dictionary<String,Any>
                 if (dict["UserID"] as? String == userID) {
-                    print("ITEM: \(item)")
                     self.currentUser = User(snapshot: item)
                     
                     var profilePic:UIImage = #imageLiteral(resourceName: "DefaultProfileImg")
@@ -150,9 +151,7 @@ class DataViewController: UIViewController, UITextFieldDelegate {
                             else {
                                 profilePic = #imageLiteral(resourceName: "DefaultProfileImg")
                             }
-                            print(">>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<")
                             UserData.updateData(withUser: self.currentUser!, profilePic: profilePic)
-                            print("<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>")
                             self.performSegue(withIdentifier: "LoginSegue", sender: sender)
                         })
                         
@@ -171,7 +170,7 @@ class DataViewController: UIViewController, UITextFieldDelegate {
     private func checkIfUserIsLoggedIn() {
         FIRAuth.auth()?.addStateDidChangeListener { auth, user in
             print("\n\n\n")
-            if let user = user {
+            if let _ = user {
                 // User is signed in.
                 self.loadUser(sender: nil)
             } else {

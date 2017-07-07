@@ -16,6 +16,7 @@ class NewAccountController: UIViewController, UITextFieldDelegate {
     let childRef = FIRDatabase.database().reference(withPath: "Users")
     
     
+    @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var PasswordMismatchLbl: UILabel!
     @IBOutlet weak var EmailTextBox: UITextField!
     @IBOutlet weak var UsernameTextBox: UITextField!
@@ -87,11 +88,11 @@ class NewAccountController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        self.PasswordTextbox.delegate = self;
-        self.EmailTextBox.delegate = self;
-        self.ConfirmPasswordTextBox.delegate = self;
-        self.UsernameTextBox.delegate = self;
-
+        self.PasswordTextbox.delegate = self
+        self.EmailTextBox.delegate = self
+        self.ConfirmPasswordTextBox.delegate = self
+        self.UsernameTextBox.delegate = self
+        
     }
     
     override func didReceiveMemoryWarning() {

@@ -19,6 +19,7 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
     var tableArray = [" ", "Username", "Email"]
     var userInfoArray = [" ", " "]
     var profilePic: UIImage? = #imageLiteral(resourceName: "DefaultProfileImg")
+
     
     @IBOutlet weak var OpenSideBar: UIButton!
     @IBOutlet weak var ProfileTableView: UITableView!
@@ -45,6 +46,7 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
         self.view.addGestureRecognizer(revealViewController().panGestureRecognizer())
 
         OpenSideBar.addTarget(self.revealViewController(), action: #selector(SWRevealViewController.revealToggle(_:)), for: .touchUpInside)
+        
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

@@ -18,6 +18,7 @@ import GooglePlacePicker
 import GoogleMaps
 import CoreLocation
 import FirebaseDatabase
+import FirebaseStorage
 
 extension NSDate
 {
@@ -59,9 +60,11 @@ extension NSDate
 
 
 class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapViewDelegate {
+    //for debugging
     
     let childRef = FIRDatabase.database().reference(withPath: "Events")
     let userRef = FIRDatabase.database().reference(withPath: "Users")
+    let storageRef = FIRStorage.storage().reference()
     
     var events: [Event] = []
     var pickedEventID:String = ""
@@ -112,10 +115,20 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     
     override func viewDidAppear(_ animated: Bool) {
         updateMap()
+        
+        if CLLocationManager.locationServicesEnabled() {
+            // 4
+            locationManager.startUpdatingLocation()
+            //5
+            
+            mapView.isMyLocationEnabled = true
+            mapView.settings.myLocationButton = true
+            view = mapView
+            
+        }
     }
     
     func updateMap() {
-        
         mapView.clear()
         childRef.observe(.value, with: { snapshot in
             // 2
@@ -126,22 +139,24 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
                 let snap = item as! FIRDataSnapshot
                 let event = Event(snapshot: snap)
                 
-                if !(self.isThirtyPastCurrentTime(date: NSDate(), hour: Int(event.hour)!, minute: Int(event.minute)!, day: Int(event.day)!, month: Int(event.month)!, year: Int(event.year)!)) && self.isAllowedToViewEvent(isPublic:event.isPublic, friendsAllowed: event.invitedFriends, tag:snap.key)  {
+                let thirtyPast: Bool = self.isThirtyPastCurrentTime(date: NSDate(), hour: Int(event.hour)!, minute: Int(event.minute)!, day: Int(event.day)!, month: Int(event.month)!, year: Int(event.year)!)
+                let allowedToView: Bool = self.isAllowedToViewEvent(isPublic:event.isPublic, friendsAllowed: event.invitedFriends, tag:snap.key)
+                print("LMFAO \(event.address)")
+                if !thirtyPast && allowedToView {
                     newEvents.append(event)
-                    self.createMarker(hour:event.hour, minute:event.minute, address:event.address, latitude:event.latitude, longitude:event.longitude, description:event.description, day:event.day, month:event.month, year:event.year, tag:snap.key)
+                    self.createMarker(hour:event.hour, minute:event.minute, address:event.address, latitude:event.latitude, longitude:event.longitude, description:event.description, day:event.day, month:event.month, year:event.year, tag:snap.key, uid:event.createdByUID)
                     
                     
                     
                 }
             }
-            
             // 5
             self.events = newEvents
         })
         
     }
     
-    func createMarker(hour:String, minute:String, address:String, latitude:Double, longitude:Double, description:String, day:String, month:String, year:String, tag:String) {
+    func createMarker(hour:String, minute:String, address:String, latitude:Double, longitude:Double, description:String, day:String, month:String, year:String, tag:String, uid:String) {
         var newHr:Int = Int(hour)!
         var newMin = minute
         var AMPMstr = " AM"
@@ -171,6 +186,12 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         marker.userData = tag
         marker.appearAnimation = kGMSMarkerAnimationPop
         marker.map = mapView
+        //until the profile picture is loaded
+        marker.iconView = setupMarkerView(profilePic: #imageLiteral(resourceName: "DefaultProfileImg"))
+        marker.tracksViewChanges = true
+        marker.infoWindowAnchor = CGPoint(x: 0.5, y: 0.25)
+        updateMarkerView(uid: uid, marker: marker)
+        
     }
     
     func mapView(_ mapView: GMSMapView, didTapInfoWindowOf marker: GMSMarker) {
@@ -180,7 +201,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
+        locationManager.stopUpdatingLocation()
         if segue.identifier == "EventDetails" {
             let nextController = (segue.destination as! EventDetailsVC)
             childRef.observeSingleEvent(of: .value, with: { snapshot in
@@ -327,6 +348,52 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     func loadUser() {
         
         currentUser = User(data: UserData())
+    }
+    
+    private func setupMarkerView(profilePic: UIImage) -> UIImageView {
+        let markerOutline = UIImage(named: "CustomMarker.png")!
+        let markerView = UIImageView()
+
+        let size = CGSize(width: 60, height: 96)
+        UIGraphicsBeginImageContext(size)
+        let areaSize = CGRect(x: 0, y: 0, width: size.width, height: size.height)
+        markerOutline.draw(in: areaSize)
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        markerView.frame = areaSize
+        markerView.image = newImage
+        
+        let imgView = UIImageView()
+        markerView.addSubview(imgView)
+        let xPos: CGFloat = imgView.superview!.frame.width / 4.0
+        let yPos: CGFloat = imgView.superview!.frame.height / 3.878787878787
+        let width: CGFloat = imgView.superview!.frame.width / 2
+        let height: CGFloat = width
+        let frame = CGRect(x: xPos, y: yPos, width: width, height: height)
+        imgView.frame = frame
+        imgView.image = profilePic
+        imgView.layer.masksToBounds = true
+        imgView.clipsToBounds = true
+        imgView.layer.cornerRadius = imgView.layer.bounds.width/2.0
+        
+        return markerView
+    }
+    
+    private func updateMarkerView(uid:String, marker:GMSMarker) {
+        
+        let filePath = "Users/User: \(uid)/\("profilePicture")"
+        self.storageRef.child(filePath).data(withMaxSize: 10*1024*1024, completion: { (data, error) in
+            if error == nil {
+                let userPhoto = UIImage(data: data!)
+                
+                marker.iconView = self.setupMarkerView(profilePic: userPhoto!)
+            }
+            else {
+                print("ERROR: \(String(describing: error))")
+            }
+            marker.tracksViewChanges = false
+        })
     }
     
     private func locationManager1(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
