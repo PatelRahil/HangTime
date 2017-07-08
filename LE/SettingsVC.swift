@@ -63,7 +63,7 @@ class SettingsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
             tableViewHeight += rowHeight * CGFloat(settingsTableView.numberOfRows(inSection: index))
         }
         
-        let frame = CGRect(x: 0, y: settingsTableView.frame.minY, width: settingsTableView.frame.width, height: tableViewHeight)
+        let frame = CGRect(x: 0, y: settingsTableView.frame.minY, width: view.frame.width, height: tableViewHeight)
         settingsTableView.frame = frame
     }
     
@@ -162,10 +162,32 @@ extension SettingsVC {
 
 class CustomSettingsCell:UITableViewCell {
     
-    @IBOutlet weak var cellSwitch: UISwitch!
     
-    @IBAction func switchTapped(_ sender: Any) {
+    @IBOutlet weak var cellSwitch: UISwitch! {
+        willSet {
+            print("ITS ABOUT TO CHANGE TO \(newValue)")
+        }
+        didSet {
+            print("It just changed from \(oldValue)")
+        }
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
         
+        if let cellSwitch = cellSwitch {
+            let tableView:UITableView = superview?.superview as! UITableView
+            let offset:CGFloat = 12
+            let switchWidth:CGFloat = cellSwitch.frame.width
+            let switchHeight:CGFloat = cellSwitch.frame.height
+            print(tableView.frame.width)
+            let xPos = tableView.frame.width - offset - switchWidth
+            let yPos = self.frame.height/2 - switchHeight/2
+            print("SWITCH \(cellSwitch)")
+            print(cellSwitch.frame)
+            cellSwitch.frame = CGRect(x: xPos, y: yPos, width: switchWidth, height: switchHeight)
+            cellSwitch.tintColor = Colors.blueGreen
+        }
     }
     
     

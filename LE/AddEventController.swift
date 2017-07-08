@@ -56,7 +56,7 @@ class AddEventController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var FriendsLbl: UILabel!
     @IBOutlet weak var DetailsBtn: UIButton!
     @IBOutlet weak var AddFriendsBtn: UIButton!
-
+    @IBOutlet weak var CreateEventBtn: UIButton!
     
     lazy var geocoder = CLGeocoder()
     
@@ -344,6 +344,10 @@ class AddEventController: UIViewController, UITextFieldDelegate {
         let minDate:Date = Date()
         myDatePicker.minimumDate = minDate
         
+        segmentedControl.tintColor = Colors.blueGreen
+        CreateEventBtn.backgroundColor = Colors.blueGreen
+        CreateEventBtn.setTitleColor(UIColor.white, for: .normal)
+        CreateEventBtn.layer.cornerRadius = 5
         
         self.AddressTextbox.delegate = self
         self.DescriptionTextbox.delegate = self

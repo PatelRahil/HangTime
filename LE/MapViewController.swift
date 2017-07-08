@@ -103,8 +103,9 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         }
 
         self.navigationController?.isNavigationBarHidden = true
-        PressButton.frame = CGRect(origin: CGPoint(x:5*UIScreen.main.bounds.width / 6, y:UIScreen.main.bounds.height / 25), size: CGSize(width: 7*UIScreen.main.bounds.width / 40, height: UIScreen.main.bounds.height / 11))
-        OpenSideBar.frame = CGRect(origin: CGPoint(x:7*UIScreen.main.bounds.width / 320, y:UIScreen.main.bounds.height / 25), size: CGSize(width: 7*UIScreen.main.bounds.width / 80, height: UIScreen.main.bounds.height / 22))
+        
+        layoutButtons()
+        
         view.addSubview(self.PressButton)
         view.addSubview(self.OpenSideBar)
         
@@ -343,6 +344,19 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         else {
             return true
         }
+    }
+    
+    private func layoutButtons() {
+        
+        let width = UIScreen.main.bounds.width
+        let height = UIScreen.main.bounds.height
+        
+        PressButton.frame = CGRect(origin: CGPoint(x: 8 * width / 9, y: height / 50), size: CGSize(width: height / 11, height: height / 11))
+        OpenSideBar.frame = CGRect(origin: CGPoint(x: 7 * width / 320, y: height / 25), size: CGSize(width: height / 22, height: height / 22))
+        
+        
+        //PressButton.frame = CGRect(origin: CGPoint(x:5*UIScreen.main.bounds.width / 6, y:UIScreen.main.bounds.height / 25), size: CGSize(width: 7*UIScreen.main.bounds.width / 40, height: UIScreen.main.bounds.height / 11))
+        //OpenSideBar.frame = CGRect(origin: CGPoint(x:7*UIScreen.main.bounds.width / 320, y:UIScreen.main.bounds.height / 25), size: CGSize(width: 7*UIScreen.main.bounds.width / 80, height: UIScreen.main.bounds.height / 22))
     }
     
     func loadUser() {
