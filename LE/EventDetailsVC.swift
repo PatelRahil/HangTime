@@ -324,14 +324,9 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
             cell.EventDataTextField.delegate = self
             cell.EventDataTextField.isUserInteractionEnabled = false
             cell.EventDataTextField.backgroundColor = UIColor.clear
-            cell.EventDataTextField.borderStyle = .line
+            cell.EventDataTextField.borderStyle = .none
             cell.layoutIfNeeded()
-            //for testing
-            cell.textLabel?.backgroundColor = UIColor.red
-            print("\n\nIMPORTANT")
-            print(cell.EventDataTextField.frame.minX)
-            print(cell.textLabel?.frame)
-            print(cell.textLabel?.frame.maxX)
+
             if indexPath.row-2 < eventInfo.count && shouldChangeInfoText {
                 cell.EventDataTextField.text = eventInfo[indexPath.row-2]
                 cell.EventDataTextField.attributedPlaceholder = NSAttributedString(string: eventInfo[indexPath.row-2], attributes: [NSForegroundColorAttributeName:UIColor.black])
@@ -582,22 +577,19 @@ class CustomEventCreatorProfilePicCell: UITableViewCell {
     @IBOutlet weak var ProfilePicture: UIImageView!
     override func layoutSubviews() {
         super.layoutSubviews()
-        ProfilePicture.frame = CGRect(x: ProfilePicture.frame.minX, y: self.frame.height/8, width: ProfilePicture.frame.width, height: ProfilePicture.frame.height)
+        let tableView:UITableView = superview?.superview as! UITableView
+        let xPos: CGFloat = tableView.frame.width/2 - ProfilePicture.frame.width/2
+        let yPos: CGFloat = self.frame.height/8
+        
+        ProfilePicture.frame = CGRect(x: xPos, y: yPos, width: ProfilePicture.frame.width, height: ProfilePicture.frame.height)
+        
         
     }
     
 }
 
 class CustomEventDetailsCell: UITableViewCell {
-    @IBOutlet weak var EventDataTextField: UITextField! {
-        willSet {
-            print("\nFRAME: \(newValue.frame)")
-        }
-        
-        didSet {
-            print("SET")
-        }
-    }
+    @IBOutlet weak var EventDataTextField: UITextField!
     
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -609,21 +601,25 @@ class CustomEventDetailsCell: UITableViewCell {
 
         let frame:CGRect = self.EventDataTextField.frame
         let offset:CGFloat = 12
-        let newWidth: CGFloat = self.contentView.frame.width - (textFrame.width + 3 * offset)
-        let newFrame = CGRect(x: textFrame.maxX + offset, y: frame.minY, width: newWidth, height: frame.height)
-        print(newFrame)
+        let newWidth: CGFloat = self.contentView.frame.width - (textFrame.width + 4 * offset)
+        let newFrame = CGRect(x: textFrame.maxX + 2 * offset, y: frame.minY, width: newWidth, height: frame.height)
         EventDataTextField.frame = newFrame
-        
-        print("IN LAYOUT SUBVIEWS")
-        print(self.textLabel?.text)
-        print(self.textLabel?.frame.maxX)
-        print(self.textLabel?.frame)
-        print(EventDataTextField.frame)
     }
 }
 
 class CustomDateTimeDetailsCell: UITableViewCell {
     @IBOutlet weak var showDatePickerBtn: UIButton!
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        let tableView:UITableView = superview?.superview as! UITableView
+        let offset:CGFloat = 12
+        let xPos:CGFloat = tableView.frame.width - offset - showDatePickerBtn.frame.width
+        
+        showDatePickerBtn.frame = CGRect(x: xPos, y: showDatePickerBtn.frame.minY, width: showDatePickerBtn.frame.width, height: showDatePickerBtn.frame.height)
+        showDatePickerBtn.titleLabel?.textAlignment = .right
+    }
 }
 
 class CustomPublicPrivateCell: UITableViewCell {
@@ -631,8 +627,16 @@ class CustomPublicPrivateCell: UITableViewCell {
     @IBAction func changePublicPrivate(_ sender: Any) {
         EventVariables.isPublic = !publicPrivateSwitch.isOn
         //first superview is a tableviewwrapper class
-        let tableView = superview?.superview as! UITableView
+        let tableView:UITableView = superview?.superview as! UITableView
         tableView.reloadData()
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        let tableView:UITableView = superview?.superview as! UITableView
+        let offset:CGFloat = 12
+        let xPos:CGFloat = tableView.frame.width - offset - publicPrivateSwitch.frame.width
+        publicPrivateSwitch.frame = CGRect(x: xPos, y: publicPrivateSwitch.frame.minY, width: publicPrivateSwitch.frame.width, height: publicPrivateSwitch.frame.height)
     }
     
 }
@@ -651,6 +655,7 @@ class AutoSizeTextField: UITextField {
             if let label = subView as? UILabel {
                 label.minimumScaleFactor = 0.3
                 label.adjustsFontSizeToFitWidth = true
+                label.textAlignment = .right
             }
         }
     }
