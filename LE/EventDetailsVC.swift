@@ -59,7 +59,14 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
     
     // MARK: Array for tables
     //var TableArray = ["Created By", "Date", "Address", "Description","Invited Friends"]
-    var TableArray = ["Created By", "Date", "Address", "Description"]
+    var TableArray = ["Created By", "Date", "Address", "Description"] {
+        willSet {
+            print("TableArray is about to change to \(newValue)")
+        }
+        didSet{
+            
+        }
+    }
 
     // MARK: Other variables
     var invitedFriendsUsernames = [String]()
@@ -184,9 +191,8 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        //self.navigationController?.navigationBar.barTintColor = UIColor.init(r: 189, g: 195, b: 199, a: 0.5)
-        //self.navigationController?.navigationBar.barTintColor = Colors.newEvergreen
         self.navigationController?.navigationBar.isTranslucent = false
+        self.navigationController?.navigationBar.barTintColor = nil
     }
     
     // MARK: - Table view methods
@@ -197,14 +203,14 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
             
             // last element is "Add More Friends" because setTitle() appends it to the end of TableArray, and nothing else is appended to TableArray after that
             TableArray.removeLast()
-            //second to last is "Invited Friends"
-            TableArray.removeLast()
         }
-            //if an event is switched from private to public, and then back to private again at any point, this occurs
-        else if (!TableArray.contains("Invited Friends") && !EventVariables.isPublic) {
+        
+        //if an event is switched from private to public, and then back to private again at any point, these next two occur
+        if (!TableArray.contains("Invited Friends") && !EventVariables.isPublic) {
             TableArray.append("Invited Friends")
         }
-        else if (!TableArray.contains("Add More Friends") && !EventVariables.isPublic) {
+        
+        if (!TableArray.contains("Add More Friends") && !EventVariables.isPublic) {
             if let id = eventCreator?.userID {
                 if id == currentUser!.userID {
                     print(TableArray)
@@ -369,7 +375,7 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
     // MARK: - Previous VC uses this to update values
     func setTitle() {
         self.title = "\(eventCreator!.username)'s Event"
-        if !EventVariables.isPublic {
+        if !EventVariables.isPublic && !TableArray.contains("Invited Friends") {
             TableArray.append("Invited Friends")
         }
         if EventVariables.createdByUID == currentUser!.userID {
