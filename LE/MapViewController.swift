@@ -106,7 +106,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         self.navigationController?.isNavigationBarHidden = true
         
         layoutButtons()
-        
         view.addSubview(self.PressButton)
         view.addSubview(self.OpenSideBar)
         
@@ -116,7 +115,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        updateMap()
         
         if CLLocationManager.locationServicesEnabled() {
             // 4
@@ -128,6 +126,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
             view = mapView
             
         }
+        
     }
     
     func updateMap() {
@@ -248,9 +247,8 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
-        self.navigationController?.isNavigationBarHidden = true
         updateMap()
+        self.navigationController?.isNavigationBarHidden = true
         print("Button Position:::  (\(PressButton.frame.midX),\(PressButton.frame.midY)")
     }
     private func isAllowedToViewEvent(isPublic:Bool, friendsAllowed:[String], tag:String) -> Bool {
@@ -347,11 +345,15 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     }
     
     private func layoutButtons() {
-        
         let width = UIScreen.main.bounds.width
         let height = UIScreen.main.bounds.height
-        
-        PressButton.frame = CGRect(origin: CGPoint(x: 8 * width / 9, y: height / 50), size: CGSize(width: height / 11, height: height / 11))
+        let btnWidth = height/15 //so width and height are equal
+        let btnHeight = height/15
+        let offset:CGFloat = 30
+        let size = CGSize(width: btnWidth, height: btnHeight)
+        let origin = CGPoint(x: width - btnWidth - offset/4 , y: offset)
+        //PressButton.frame = CGRect(origin: CGPoint(x: 8 * width / 9, y: height / 50), size: CGSize(width: height / 11, height: height / 11))
+        PressButton.frame = CGRect(origin: origin, size: size)
         OpenSideBar.frame = CGRect(origin: CGPoint(x: 7 * width / 320, y: height / 25), size: CGSize(width: height / 22, height: height / 22))
         
         
