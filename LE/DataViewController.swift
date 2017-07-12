@@ -12,8 +12,9 @@ import FirebaseStorage
 import GoogleMaps
 
 class DataViewController: UIViewController, UITextFieldDelegate {
-    var isTrue = true
+    var isLoading = false
     let locationManager = CLLocationManager()
+    var authListener:FIRAuthStateDidChangeListenerHandle?
     var childRef:FIRDatabaseReference?
     var storageRef:FIRStorageReference?
     
@@ -29,11 +30,11 @@ class DataViewController: UIViewController, UITextFieldDelegate {
             FIRAuth.auth()?.signIn(withEmail: usernameTextBox.text!, password: passwordTextBox.text!) { (user, error) in
                 if error == nil {
                     //Valid Email and Password
+                    self.isLoading = false
                     self.loadUser(sender: sender)
                 }
                 else {
                 
-                    print("###################\n\(error.debugDescription)\n###################")
                     self.respondToError(error: error!)
                 }
             }
@@ -56,6 +57,7 @@ class DataViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        print("HEY HEY HEY HEY HEY HEY")
         checkIfUserIsLoggedIn()
         
         self.passwordTextBox.delegate = self
@@ -131,9 +133,38 @@ class DataViewController: UIViewController, UITextFieldDelegate {
     
     private func loadUser(sender: Any?) {
         let userID = FIRAuth.auth()?.currentUser?.uid
-        
+        if let userID = userID {
+        self.childRef?.child("User: \(userID)").observeSingleEvent(of: .value, with: { (snapshot) in
+            print("\n\n\n\nLOGGING IN USER\(snapshot.value!)\n\n\n\n")
+                    self.currentUser = User(snapshot: snapshot)
+                    
+                    var profilePic:UIImage = #imageLiteral(resourceName: "DefaultProfileImg")
+                    if self.currentUser!.profilePicDownloadLink != "" {
+                        print("ProfilePicDownloadLink is not nil")
+                        let filePath = "Users/User: \(self.currentUser!.getUserID())/\("profilePicture")"
+                        self.storageRef!.child(filePath).data(withMaxSize: 10*1024*1024, completion: { (data, error) in
+                            if error == nil {
+                                let userPhoto = UIImage(data: data!)
+                                profilePic = userPhoto!
+                            }
+                            else {
+                                profilePic = #imageLiteral(resourceName: "DefaultProfileImg")
+                            }
+                            UserData.updateData(withUser: self.currentUser!, profilePic: profilePic)
+                            print("ABOUT TO PERFORM SEGUE")
+                            self.performSegue(withIdentifier: "LoginSegue", sender: sender)
+                        })
+                        
+                    }
+                    else {
+                        
+                        UserData.updateData(withUser: self.currentUser!, profilePic: profilePic)
+                        self.performSegue(withIdentifier: "LoginSegue", sender: sender)
+                    }
+        })
+        /*
         self.childRef!.observeSingleEvent(of: .value, with: { snapshot in
-            print("\n\n\n\nLOGGING IN USER\n\n\n\n")
+            print("\n\n\n\nLOGGING IN USER\(snapshot.value)\n\n\n\n")
             for item in snapshot.children.allObjects as! [FIRDataSnapshot] {
                 let dict = item.value as! Dictionary<String,Any>
                 if (dict["UserID"] as? String == userID) {
@@ -152,6 +183,7 @@ class DataViewController: UIViewController, UITextFieldDelegate {
                                 profilePic = #imageLiteral(resourceName: "DefaultProfileImg")
                             }
                             UserData.updateData(withUser: self.currentUser!, profilePic: profilePic)
+                            print("ABOUT TO PERFORM SEGUE")
                             self.performSegue(withIdentifier: "LoginSegue", sender: sender)
                         })
                         
@@ -165,21 +197,30 @@ class DataViewController: UIViewController, UITextFieldDelegate {
                 
             }
         })
+            */
+        }
     }
     
     private func checkIfUserIsLoggedIn() {
-        FIRAuth.auth()?.addStateDidChangeListener { auth, user in
-            print("\n\n\n")
-            if let _ = user {
+        print("BROOOOOO")
+            authListener = FIRAuth.auth()?.addStateDidChangeListener { auth, user in
+                print("SOOOOOOO")
+                if let _ = user {
                 // User is signed in.
-                self.loadUser(sender: nil)
-            } else {
+                    if !self.isLoading {
+                        self.loadUser(sender: nil)
+                        self.isLoading = true
+                    }
+
+                } else {
                 // No user is signed in.
-                print("USER NOT LOGGED IN")
+                    print("USER NOT LOGGED IN")
+                    FIRAuth.auth()?.removeStateDidChangeListener(self.authListener!)
+                }
             }
-        }
     }
 
+    
 }
 
 extension UIColor {
