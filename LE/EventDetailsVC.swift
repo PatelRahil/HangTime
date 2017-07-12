@@ -43,6 +43,13 @@ struct EventVariables {
         self.invitedFriends = []
         self.isPublic = true
     }
+    
+    static func updateEventWithCurrentVariables() {
+        let event = Event(description: EventVariables.description, day: String(EventVariables.dateDay), month: String(EventVariables.dateMonth), year: String(EventVariables.dateYear), hour: String(EventVariables.timeHr), minute: String(EventVariables.timeMin), address: EventVariables.address, latitude: EventVariables.latitude, longitude: EventVariables.longitude, eventID: 0, isPublic: EventVariables.isPublic, invitedFriends: EventVariables.invitedFriends, createdByUID: EventVariables.createdByUID)
+        let childRef = FIRDatabase.database().reference(withPath: "Events")
+        let eventRef = childRef.child(EventVariables.eventID)
+        eventRef.setValue(event.toAnyObject())
+    }
 }
 
 
@@ -92,7 +99,6 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
                 EditEventInfo.setTitle("Done", for: .normal)
                 
                 let cell = eventDetailsTableView.cellForRow(at: IndexPath(row: 2, section: 0)) as! CustomEventDetailsCell
-                print(cell.EventDataTextField.text ?? "NO TEXT")
                 
             }
             else {
@@ -104,7 +110,7 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
                 geocoder.geocodeAddressString(EventVariables.address) { (placemarks, error) in
                     // Process Response
                     self.processResponse(withPlacemarks: placemarks, error: error, sender: sender)
-                    self.updateEvent()
+                    EventVariables.updateEventWithCurrentVariables()
                 }
                 
                 
@@ -201,6 +207,7 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
     // MARK: - Table view methods
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
+        print("THIS:   \(EventVariables.isPublic)    \(TableArray)")
         //if an event is switched from private to public at any point, this occurs
         if EventVariables.isPublic && TableArray.contains("Add More Friends") {
             
@@ -471,13 +478,6 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         return date
     }
     
-    private func updateEvent() {
-        let event = Event(description: EventVariables.description, day: String(EventVariables.dateDay), month: String(EventVariables.dateMonth), year: String(EventVariables.dateYear), hour: String(EventVariables.timeHr), minute: String(EventVariables.timeMin), address: EventVariables.address, latitude: EventVariables.latitude, longitude: EventVariables.longitude, eventID: 0, isPublic: EventVariables.isPublic, invitedFriends: EventVariables.invitedFriends, createdByUID: EventVariables.createdByUID)
-        let childRef = FIRDatabase.database().reference(withPath: "Events")
-        let eventRef = childRef.child(EventVariables.eventID)
-        eventRef.setValue(event.toAnyObject())
-    }
-    
     private func processResponse(withPlacemarks placemarks: [CLPlacemark]?, error: Error?, sender: Any) {
         // Update View
         
@@ -652,6 +652,7 @@ class CustomPublicPrivateCell: UITableViewCell {
         //first superview is a tableviewwrapper class
         let tableView:UITableView = superview?.superview as! UITableView
         tableView.reloadData()
+        EventVariables.updateEventWithCurrentVariables()
     }
     
     override func layoutSubviews() {

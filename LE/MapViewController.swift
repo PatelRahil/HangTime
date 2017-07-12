@@ -210,6 +210,8 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
                     if snap.key == self.pickedEventID {
                         let event:Event = Event(snapshot: snap)
                         
+                        print(event)
+                        
                         EventVariables.address = event.address
                         EventVariables.dateDay = Int(event.day)!
                         EventVariables.dateMonth = Int(event.month)!
