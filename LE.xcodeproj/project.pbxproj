@@ -678,7 +678,7 @@
 				DEVELOPMENT_TEAM = 45ZJHP97X8;
 				INFOPLIST_FILE = LE/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = self.edu.Rahil.LE;
+				PRODUCT_BUNDLE_IDENTIFIER = self.edu.Rahil.Invyte;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "LE/LE-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -696,7 +696,7 @@
 				DEVELOPMENT_TEAM = 45ZJHP97X8;
 				INFOPLIST_FILE = LE/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = self.edu.Rahil.LE;
+				PRODUCT_BUNDLE_IDENTIFIER = self.edu.Rahil.Invyte;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "LE/LE-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;

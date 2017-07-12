@@ -142,7 +142,10 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         self.navigationController?.isNavigationBarHidden = false
         //self.navigationController?.navigationBar.barTintColor = UIColor.init(r: 189, g: 195, b: 199, a: 0.5)
         self.navigationController?.navigationBar.isTranslucent = false
-                
+        
+        //so the back button on VCs higher on the navigation stack have a back arrow without text
+        self.title = ""
+        
         currentUser = User(data: UserData())
         
         eventDetailsTableView.delegate = self
@@ -216,6 +219,14 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
                     print(TableArray)
                     TableArray.append("Add More Friends")
                 }
+            }
+        }
+        if let eventCreator = eventCreator {
+            if !EventVariables.isPublic {
+                self.navigationItem.setTitle(title: "\(eventCreator.username)'s", subtitle: "Private Event")
+            }
+            else {
+                self.navigationItem.setTitle(title: "\(eventCreator.username)'s", subtitle: "Public Event")
             }
         }
         return TableArray.count
@@ -374,7 +385,13 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
     }
     // MARK: - Previous VC uses this to update values
     func setTitle() {
-        self.title = "\(eventCreator!.username)'s Event"
+        //self.title = "\(eventCreator!.username)'s Event"
+        if !EventVariables.isPublic {
+            self.navigationItem.setTitle(title: "\(eventCreator!.username)'s", subtitle: "Private Event")
+        }
+        else {
+            self.navigationItem.setTitle(title: "\(eventCreator!.username)'s", subtitle: "Public Event")
+        }
         if !EventVariables.isPublic && !TableArray.contains("Invited Friends") {
             TableArray.append("Invited Friends")
         }
@@ -665,4 +682,37 @@ class AutoSizeTextField: UITextField {
             }
         }
     }
-} 
+}
+
+extension UINavigationItem {
+    
+    func setTitle(title:String, subtitle:String) {
+        
+        let one = UILabel()
+        one.text = title
+        one.font = UIFont.boldSystemFont(ofSize: 17)
+        one.sizeToFit()
+        
+        let two = UILabel()
+        two.text = subtitle
+        two.font = UIFont.systemFont(ofSize: 15)
+        two.textAlignment = .center
+        two.sizeToFit()
+        
+        
+        
+        let stackView = UIStackView(arrangedSubviews: [one, two])
+        stackView.distribution = .equalCentering
+        stackView.axis = .vertical
+        
+        let width = max(one.frame.size.width, two.frame.size.width)
+        stackView.frame = CGRect(x: 0, y: 0, width: width, height: 35)
+        stackView.alignment = .center
+        
+        one.sizeToFit()
+        two.sizeToFit()
+        
+        
+        self.titleView = stackView
+    }
+}

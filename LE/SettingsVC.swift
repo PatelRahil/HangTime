@@ -187,6 +187,7 @@ class CustomSettingsCell:UITableViewCell {
             print(cellSwitch.frame)
             cellSwitch.frame = CGRect(x: xPos, y: yPos, width: switchWidth, height: switchHeight)
             cellSwitch.tintColor = Colors.blueGreen
+            cellSwitch.onTintColor = Colors.blueGreen
         }
     }
     

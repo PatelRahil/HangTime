@@ -708,7 +708,7 @@
             <objects>
                 <navigationController id="MRL-5m-xYO" sceneMemberID="viewController">
                     <value key="contentSizeForViewInPopover" type="size" width="375" height="667"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="9HW-si-DRr">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="9HW-si-DRr">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <edgeInsets key="layoutMargins" top="8" left="8" bottom="8" right="8"/>
@@ -970,7 +970,7 @@
                                 <rect key="frame" x="16" y="100" width="343" height="30"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" returnKeyType="done"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="number" keyPath="maxLength">
                                         <integer key="value" value="40"/>
@@ -981,7 +981,7 @@
                                 <rect key="frame" x="16" y="167" width="343" height="30"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" returnKeyType="done"/>
                             </textField>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="04X-4U-Tnw">
                                 <rect key="frame" x="87" y="140" width="261" height="17"/>
@@ -1342,7 +1342,7 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="rMj-ae-PVL" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="1p0-XK-Sgr">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="1p0-XK-Sgr">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -1360,7 +1360,7 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="q1P-JG-WpV" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="E3N-rx-cKV">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="E3N-rx-cKV">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -1378,7 +1378,7 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="X6e-ef-2N7" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="hSk-vy-wF4">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="hSk-vy-wF4">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -1394,12 +1394,12 @@
     </scenes>
     <resources>
         <image name="DefaultProfileImg" width="121" height="121"/>
-        <image name="PlusImg" width="165" height="139"/>
+        <image name="PlusImg" width="459" height="444"/>
         <image name="SlideMenuIcon" width="225" height="225"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="baM-Ze-IdE"/>
-        <segue reference="DLv-nX-Xau"/>
-        <segue reference="81d-nb-Nx4"/>
+        <segue reference="9hV-fX-ZIQ"/>
+        <segue reference="ZX0-eu-5ey"/>
     </inferredMetricsTieBreakers>
 </document>

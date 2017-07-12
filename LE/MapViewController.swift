@@ -131,7 +131,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     
     func updateMap() {
         mapView.clear()
-        childRef.observe(.value, with: { snapshot in
+        childRef.observeSingleEvent(of: .value, with: { snapshot in
             // 2
             var newEvents: [Event] = []
             // 3
