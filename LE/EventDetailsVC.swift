@@ -564,20 +564,35 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
     }
     
     private func createRSVPBox() {
-        let rsvpBoxWidth:CGFloat = 2 * view.frame.width / 3
-        let rsvpBoxHeight:CGFloat = 40
-        let xPos:CGFloat = view.frame.width/2 - rsvpBoxWidth/2
+        
+        let boxWidth:CGFloat = 5 * view.frame.width / 6
+        let boxHeight:CGFloat = 40
+        let xPos:CGFloat = view.frame.width/24//view.frame.width/2 - boxWidth/2
         let yPos:CGFloat = 0
-        let rsvpBoxFrame:CGRect = CGRect(x: xPos, y: yPos, width: rsvpBoxWidth, height: rsvpBoxHeight)
-        let rsvpBox = UISegmentedControl(frame: rsvpBoxFrame)
+        let boxFrame:CGRect = CGRect(x: xPos, y: yPos, width: boxWidth, height: boxHeight)
+        
+        let boxSubView = UIView(frame: boxFrame)
+        
+        
+        
+        
+        let rsvpBox = UISegmentedControl(frame: boxSubView.frame)
         
         rsvpBox.insertSegment(withTitle: "Going?", at: 0, animated: false)
         rsvpBox.insertSegment(with: nil, at: 1, animated: false)
         rsvpBox.insertSegment(with: nil, at: 2, animated: false)
+        rsvpBox.insertSegment(with: nil, at: 3, animated: false)
         
-        rsvpBox.setWidth(rsvpBoxWidth/2, forSegmentAt: 0)
-        rsvpBox.setWidth(rsvpBoxWidth/4, forSegmentAt: 1)
-        rsvpBox.setWidth(rsvpBoxWidth/4, forSegmentAt: 2)
+        print("heyyyyy")
+        print(rsvpBox.numberOfSegments)
+        let shortSegmentWidth:CGFloat = boxWidth/4 - view.frame.width/24.0
+        let longSegmentWidth:CGFloat = boxWidth/2 - view.frame.width/12.0
+        
+        rsvpBox.setWidth(longSegmentWidth, forSegmentAt: 0)
+        rsvpBox.setWidth(shortSegmentWidth, forSegmentAt: 1)
+        rsvpBox.setWidth(shortSegmentWidth, forSegmentAt: 2)
+        rsvpBox.setWidth(shortSegmentWidth, forSegmentAt: 3)
+        
         
         rsvpBox.setEnabled(false, forSegmentAt: 0)
         
@@ -585,14 +600,9 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         rsvpBox.backgroundColor = defaultColor
         rsvpBox.tintColor = UIColor.black
         
-        //rsvpBox.removeBorders()
-        
-        //(rsvpBox.subviews[0] as UIView).tintColor = UIColor.white
-        //(rsvpBox.subviews[1] as UIView).tintColor = UIColor.green
-        //(rsvpBox.subviews[2] as UIView).tintColor = UIColor.red
         rsvpBox.backgroundColor = UIColor.white
         
-        rsvpBox.setSegmentStyle(colors: [UIColor.white, UIColor.green, UIColor.red])
+        rsvpBox.setSegmentStyle(colors: [UIColor.white, UIColor.green, UIColor.red, UIColor.blue])
         
         for subview in rsvpBox.subviews[0].subviews {
             if let label = subview as? UILabel {
@@ -602,8 +612,9 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         
         rsvpBox.addTarget(self, action: #selector(selectedSegment), for: .valueChanged)
         
-        view.addSubview(rsvpBox)
-        view.bringSubview(toFront: rsvpBox)
+        view.addSubview(boxSubView)
+        boxSubView.addSubview(rsvpBox)
+        view.bringSubview(toFront: boxSubView)
     }
 
     @objc private func selectedSegment(sender:UISegmentedControl) {
@@ -611,15 +622,11 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         case 0:
             break
         case 1:
-            print(1)
-            sender.setSegmentStyle(colors: [UIColor.white, UIColor.green, UIColor.red])
-            //sender.subviews[2].tintColor = UIColor.white
-            //sender.subviews[1].tintColor = UIColor.green
+            sender.setSegmentStyle(colors: [UIColor.white, UIColor.green, UIColor.red, UIColor.blue])
         case 2:
-            print(2)
-            sender.setSegmentStyle(colors: [UIColor.white, UIColor.green, UIColor.red])
-            //sender.subviews[1].tintColor = UIColor.white
-            //sender.subviews[2].tintColor = UIColor.red
+            sender.setSegmentStyle(colors: [UIColor.white, UIColor.green, UIColor.red,UIColor.blue])
+        case 3:
+            sender.setSegmentStyle(colors: [UIColor.white, UIColor.green, UIColor.red,UIColor.blue])
         default:
             break
         }
@@ -780,27 +787,7 @@ extension UINavigationItem {
         self.titleView = stackView
     }
 }
-/*
-extension UISegmentedControl {
-    func removeBorders() {
-        setBackgroundImage(imageWithColor(color: backgroundColor!), for: .normal, barMetrics: .default)
-        setBackgroundImage(imageWithColor(color: tintColor!), for: .selected, barMetrics: .default)
-        setDividerImage(imageWithColor(color: UIColor.clear), forLeftSegmentState: .normal, rightSegmentState: .normal, barMetrics: .default)
-    }
-    
-    // create a 1x1 image with this color
-    private func imageWithColor(color: UIColor) -> UIImage {
-        let rect = CGRect(x: 0.0, y: 0.0, width:  1.0, height: 1.0)
-        UIGraphicsBeginImageContext(rect.size)
-        let context = UIGraphicsGetCurrentContext()
-        context!.setFillColor(color.cgColor);
-        context!.fill(rect);
-        let image = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
-        return image!
-    }
-}
-*/
+
 extension UISegmentedControl {
     
     func setSegmentStyle(colors:[UIColor]) {
@@ -816,20 +803,7 @@ extension UISegmentedControl {
             setBackgroundImage(imageWithColor(color: colors[0]), for: .selected, barMetrics: .default)
 
         }
-
-        /*
-    let segAttributes: NSDictionary = [
-        NSForegroundColorAttributeName: UIColor.gray,
-        NSFontAttributeName: UIFont(name: "Merriweather-Regular", size: 14)!
-    ]
-    setTitleTextAttributes(segAttributes as [NSObject : AnyObject], for: UIControlState.normal)
-    let segAttributesExtra: NSDictionary = [
-        NSForegroundColorAttributeName: UIColor.white,
-        NSFontAttributeName: UIFont(name: "Merriweather-Regular", size: 14)!
-    ]
-    setTitleTextAttributes(segAttributesExtra as [NSObject : AnyObject], for: UIControlState.selected)
-    selectedSegmentIndex = -1
-         */
+        
         self.layer.borderWidth = 1.0
         self.layer.cornerRadius = 5.0
         self.layer.borderColor = segmentGrayColor.cgColor

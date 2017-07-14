@@ -216,7 +216,7 @@ class AddEventController: UIViewController, UITextFieldDelegate {
 
     }
     
-    func calculateID(sender:Any) {
+    private func calculateID(sender:Any) {
         childRef.observeSingleEvent(of:.value, with: { (snapshot: FIRDataSnapshot!) in
             var eventID = 0;
             for item in snapshot.children {
@@ -233,7 +233,8 @@ class AddEventController: UIViewController, UITextFieldDelegate {
         })
     }
     
-    func createEvent(sender: Any, eventID: Int) {
+    private func createEvent(sender: Any, eventID: Int) {
+        var eventStrID:String? = nil
         if isPublic {
             print(AddressTextbox.text ?? "OOPS")
             let event = Event(description: DescriptionTextbox.text!,
@@ -253,6 +254,7 @@ class AddEventController: UIViewController, UITextFieldDelegate {
             )
             
             let eventRefID = childRef.childByAutoId()
+            eventStrID = eventRefID.key
             currentUser?.addEvent(eventID: eventRefID.key)
             let userRef = self.userRef.child("User: \(currentUser!.userID)")
             userRef.setValue(currentUser!.toAnyObject())
@@ -276,14 +278,36 @@ class AddEventController: UIViewController, UITextFieldDelegate {
             
             )
             let eventRefID = childRef.childByAutoId()
+            eventStrID = eventRefID.key
             currentUser?.addEvent(eventID: eventRefID.key)
             let userRef = self.userRef.child("User: \(currentUser!.userID)")
             userRef.setValue(currentUser!.toAnyObject())
             UserData.updateData(withUser: currentUser!)
             eventRefID.setValue(event.toAnyObject())
         }
-
+        
+        updateFriendsDB(eventStrID: eventStrID!)
+        
         segueRightToLeft(storyboardIdentifier: "RevealViewController")
+    }
+    
+    private func updateFriendsDB(eventStrID:String) {
+        for userID in invitedFriendsUIDs {
+            let userRef = FIRDatabase.database().reference(withPath: "Users/User: \(userID)")
+            let invitedEventsRef = userRef.child("invitedEvents")
+            invitedEventsRef.observeSingleEvent(of: .value, with: { (snapshot) in
+                print(snapshot)
+                if snapshot.exists() {
+                    var snapDic = snapshot.value as! Dictionary<String,Int>
+                    snapDic[eventStrID] = 0
+                    invitedEventsRef.setValue(snapDic)
+                }
+                else {
+                    let snapDic:Dictionary<String,Int> = ["\(eventStrID)":3]
+                    invitedEventsRef.setValue(snapDic)
+                }
+            })
+        }
     }
     
 

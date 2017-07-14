@@ -17,6 +17,7 @@ class User {
     var username:String
     var createdEvents:[String]
     var profilePicDownloadLink:String
+    var invitedEvents:[String:Int] = [String:Int]()
     
     var profilePic:UIImage? = #imageLiteral(resourceName: "DefaultProfileImg")
     
@@ -26,12 +27,25 @@ class User {
         self.friends = []
         self.createdEvents = []
         self.profilePicDownloadLink = ""
+        self.invitedEvents = [String:Int]()
     }
     
     init (snapshot: FIRDataSnapshot) {
         let snapshotValue = snapshot.value as! [String: AnyObject]
         username = snapshotValue["username"] as! String
         userID = snapshotValue["UserID"] as! String
+        
+        let friendsStringRep = snapshotValue["friends"] as! String
+        friends = friendsStringRep.characters.split{$0 == ","}.map(String.init)
+        let eventsStringRep = snapshotValue["createdEvents"] as! String
+        createdEvents = eventsStringRep.characters.split{$0 == ","}.map(String.init)
+        profilePicDownloadLink = snapshotValue["profilePicture"] as! String
+        
+        if let invitedEvents = snapshotValue["invitedEvents"] as? [String:Int] {
+            self.invitedEvents = invitedEvents
+        }
+        
+        /*
         if let friendsStringRep = snapshotValue["friends"] as? String {
             
             friends = friendsStringRep.characters.split{$0 == ","}.map(String.init)
@@ -87,7 +101,7 @@ class User {
             }
             userRef.setValue(self.toAnyObject())
         }
-        
+        */
     }
     
     init (data:UserData) {
@@ -97,6 +111,7 @@ class User {
         createdEvents = data._createdEvents!
         profilePicDownloadLink = data._profilePicDownloadLink!
         profilePic = data._profilePic!
+        invitedEvents = data._invitedEvents!
     }
     
     func addFriend(uid:String) {
@@ -121,10 +136,13 @@ class User {
             "friends":friendsStringRep,
             "username":username,
             "createdEvents": createdEventsStringRep,
-            "profilePicture": profilePicDownloadLink
+            "profilePicture": profilePicDownloadLink,
+            "invitedEvents": invitedEvents
         ]
     }
 }
+
+
 
 struct UserData {
     static var userID:String? = nil
@@ -133,6 +151,7 @@ struct UserData {
     static var createdEvents:[String]? = nil
     static var profilePicDownloadLink:String? = nil
     static var profilePic:UIImage? = #imageLiteral(resourceName: "DefaultProfileImg")
+    static var invitedEvents:[String:Int]? = nil
     
     var _userID:String? = nil
     var _friends:[String]? = nil
@@ -140,6 +159,7 @@ struct UserData {
     var _createdEvents:[String]? = nil
     var _profilePicDownloadLink:String? = nil
     var _profilePic:UIImage? = #imageLiteral(resourceName: "DefaultProfileImg")
+    var _invitedEvents:[String:Int]? = nil
     ///Want to set or change profile picture
     static func updateData(withUser user:User) {
         userID = user.userID
@@ -147,6 +167,7 @@ struct UserData {
         username = user.username
         createdEvents = user.createdEvents
         profilePicDownloadLink = user.profilePicDownloadLink
+        invitedEvents = user.invitedEvents
     }
     
     ///Profile picture does not need to change
@@ -157,7 +178,7 @@ struct UserData {
         createdEvents = user.createdEvents
         profilePicDownloadLink = user.profilePicDownloadLink
         profilePic = image
-        
+        invitedEvents = user.invitedEvents
     }
     
     init() {
@@ -167,5 +188,7 @@ struct UserData {
         _createdEvents = UserData.createdEvents
         _profilePicDownloadLink = UserData.profilePicDownloadLink
         _profilePic = UserData.profilePic
+        _invitedEvents = UserData.invitedEvents
+        
     }
 }

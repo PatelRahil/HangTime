@@ -64,8 +64,8 @@ class NewAccountController: UIViewController, UITextFieldDelegate {
                     self.PasswordMismatchLbl.text = ""
                     let userID = FIRAuth.auth()?.currentUser?.uid
                     let currUser:User = User.init(uid: userID!, username: username!)
-                    let eventRef = self.childRef.child("User: " + userID!)
-                    eventRef.setValue(currUser.toAnyObject())
+                    let userRef = self.childRef.child("User: " + userID!)
+                    userRef.setValue(currUser.toAnyObject())
                     UserData.updateData(withUser: currUser)
                     
                     self.performSegue(withIdentifier: "CreateAccountSegue", sender: sender)
