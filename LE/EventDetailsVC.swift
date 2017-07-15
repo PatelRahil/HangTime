@@ -81,6 +81,7 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
     var isEditSelected = false
     var shouldChangeInfoText = true
     
+    let segmentColors:[UIColor] = [UIColor.white, UIColor.green, UIColor.blue, UIColor.red]
     let boxSubView = UIView()
     var prevTranslation:CGPoint = CGPoint.zero
     var initialYPos:CGFloat = 0
@@ -147,12 +148,13 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         datePickerSubview.isHidden = true
         eventDetailsTableView.isUserInteractionEnabled = true
     }
-    
+
     // MARK: - View setup methods
     override func viewDidLoad() {
         self.navigationController?.isNavigationBarHidden = false
         //self.navigationController?.navigationBar.barTintColor = UIColor.init(r: 189, g: 195, b: 199, a: 0.5)
         self.navigationController?.navigationBar.isTranslucent = false
+        
         
         //so the back button on VCs higher on the navigation stack have a back arrow without text
         self.title = ""
@@ -573,31 +575,31 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         let boxWidth:CGFloat = 5 * view.frame.width / 6
         let boxHeight:CGFloat = (navigationController?.navigationBar.frame.height)!
         let xPos:CGFloat = view.frame.width/24
-        let yPos:CGFloat = -boxHeight/2
-        let boxFrame:CGRect = CGRect(x: xPos, y: yPos, width: boxWidth, height: boxHeight)
+        let yPos:CGFloat = -boxHeight
+        let boxFrame:CGRect = CGRect(x: xPos * 2, y: yPos, width: boxWidth, height: 3*boxHeight/2)
+        let rsvpFrame:CGRect = CGRect(x: 0, y: 0, width: boxWidth, height: boxHeight)
+
         
         boxSubView.frame = boxFrame
-        
+        boxSubView.alpha = 0.95
         let arrowBoxWidth:CGFloat = boxWidth/4 - view.frame.width/24.0
         let arrowBoxHeight:CGFloat = boxHeight/2
-        let arrowBoxX:CGFloat = view.frame.width/2 - 3*arrowBoxWidth/4
-        let arrowBoxY:CGFloat = boxFrame.maxY
+        let arrowBoxX:CGFloat = boxFrame.width/2 - arrowBoxWidth/2
+        let arrowBoxY:CGFloat = boxHeight
         let arrowBoxFrame:CGRect = CGRect(x: arrowBoxX, y: arrowBoxY, width: arrowBoxWidth, height: arrowBoxHeight)
         
         let arrowBox = UIView(frame: arrowBoxFrame)
         //extension at the bottom of this file
         arrowBox.roundCorners([.bottomLeft,.bottomRight], radius: 5)
         arrowBox.backgroundColor = UIColor.white
+        arrowBox.alpha = 0.95
         
-        let rsvpBox = UISegmentedControl(frame: boxSubView.frame)
-        
+        let rsvpBox = UISegmentedControl(frame: rsvpFrame)
         rsvpBox.insertSegment(withTitle: "Going?", at: 0, animated: false)
-        rsvpBox.insertSegment(with: nil, at: 1, animated: false)
-        rsvpBox.insertSegment(with: nil, at: 2, animated: false)
-        rsvpBox.insertSegment(with: nil, at: 3, animated: false)
+        rsvpBox.insertSegment(withTitle: "Yes", at: 1, animated: false)
+        rsvpBox.insertSegment(withTitle: "Maybe", at: 2, animated: false)
+        rsvpBox.insertSegment(withTitle: "No", at: 3, animated: false)
         
-        print("heyyyyy")
-        print(rsvpBox.numberOfSegments)
         let shortSegmentWidth:CGFloat = boxWidth/4 - view.frame.width/24.0
         let longSegmentWidth:CGFloat = boxWidth/2 - view.frame.width/12.0
         
@@ -611,11 +613,10 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         
         let defaultColor:UIColor = UIColor.white
         rsvpBox.backgroundColor = defaultColor
+        rsvpBox.alpha = 0.95
         rsvpBox.tintColor = UIColor.black
         
-        rsvpBox.backgroundColor = UIColor.white
-        
-        rsvpBox.setSegmentStyle(colors: [UIColor.white, UIColor.green, UIColor.red, UIColor.blue])
+        rsvpBox.setSegmentStyle(colors: segmentColors)
         
         for subview in rsvpBox.subviews[0].subviews {
             if let label = subview as? UILabel {
@@ -631,6 +632,7 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         view.bringSubview(toFront: boxSubView)
         boxSubView.bringSubview(toFront: arrowBox)
         
+        
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(EventDetailsVC.handleTap(gestureRecognizer:)))
         tapGesture.delegate = self
         arrowBox.addGestureRecognizer(tapGesture)
@@ -639,46 +641,36 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         panGesture.delegate = self
         arrowBox.addGestureRecognizer(panGesture)
         
-        print(navigationController?.navigationBar.frame.height)
     }
-
+    
+    // MARK: Action for UISegmentedControl
     @objc private func selectedSegment(sender:UISegmentedControl) {
         switch sender.selectedSegmentIndex {
         case 0:
             break
         case 1:
-            sender.setSegmentStyle(colors: [UIColor.white, UIColor.green, UIColor.red, UIColor.blue])
+            sender.setSegmentStyle(colors: segmentColors)
         case 2:
-            sender.setSegmentStyle(colors: [UIColor.white, UIColor.green, UIColor.red,UIColor.blue])
+            sender.setSegmentStyle(colors: segmentColors)
         case 3:
-            sender.setSegmentStyle(colors: [UIColor.white, UIColor.green, UIColor.red,UIColor.blue])
+            sender.setSegmentStyle(colors: segmentColors)
         default:
             break
         }
     }
     
-    
+    // MARK: - Gesture Recognizers
     @objc private func handleTap(gestureRecognizer: UITapGestureRecognizer) {
-        
-        // TODO: Figure out how this works
-        
         let frame = boxSubView.frame
-        //let transformDown = CGAffineTransform(translationX: 0, y: (self.navigationController?.navigationBar.frame.height)!)
-        //let transformUp = CGAffineTransform(translationX: 0, y: -(self.navigationController?.navigationBar.frame.height)!/8)
-
         if frame.minY < 0 {
-            //boxSubView.frame = CGRect(x: frame.minX, y: (self.navigationController?.navigationBar.frame.height)!/2, width: frame.width, height: frame.height)
-            //boxSubView.transform = transformDown
-            UIView.animate(withDuration: 1, animations: {
-                self.boxSubView.frame = CGRect(x: frame.minX, y: (self.navigationController?.navigationBar.frame.height)!/2, width: frame.width, height: frame.height)
+            UIView.animate(withDuration: 0.5, animations: {
+                self.boxSubView.frame = CGRect(x: frame.minX, y: 0, width: frame.width, height: frame.height)
             })
             
         }
         else {
-            //boxSubView.frame = CGRect(x: frame.minX, y: -(self.navigationController?.navigationBar.frame.height)!/2, width: frame.width, height: frame.height)
-            //boxSubView.transform = transformUp
             UIView.animate(withDuration: 0.5, animations: {
-                self.boxSubView.frame = CGRect(x: frame.minX, y: -(self.navigationController?.navigationBar.frame.height)!/2, width: frame.width, height: frame.height)
+                self.boxSubView.frame = CGRect(x: frame.minX, y: -(self.navigationController?.navigationBar.frame.height)!, width: frame.width, height: frame.height)
             })
         }
     }
@@ -691,18 +683,18 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         if gestureRecognizer.state == .changed {
             let translation = gestureRecognizer.translation(in: boxSubView)
             //below line sets limit to how far down the view will go
-            if translation.y >= 0 && boxSubView.frame.minY <= (self.navigationController?.navigationBar.frame.height)!/2 {
+            if translation.y >= 0 && boxSubView.frame.minY <= 0 {
                 prevTranslation = CGPoint(x: 0, y: translation.y - prevTranslation.y)
                 boxSubView.center = CGPoint(x: boxSubView.center.x, y: boxSubView.center.y + prevTranslation.y)
                 prevTranslation = translation
             }
             
-            else if translation.y < 44 && boxSubView.frame.minY >= -(self.navigationController?.navigationBar.frame.height)!/2 {
+            else if translation.y < 44 && boxSubView.frame.minY >= -(self.navigationController?.navigationBar.frame.height)! {
                 prevTranslation = CGPoint(x: 0, y: translation.y - prevTranslation.y)
                 boxSubView.center = CGPoint(x: boxSubView.center.x, y: boxSubView.center.y + prevTranslation.y)
                 prevTranslation = translation
             }
-            else if boxSubView.frame.minY >= (self.navigationController?.navigationBar.frame.height)!/2{
+            else if boxSubView.frame.minY >= 0{
                 prevTranslation = translation
             }
             
@@ -712,14 +704,14 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
             prevTranslation = CGPoint.zero
             let frame: CGRect = boxSubView.frame
             if gestureRecognizer.translation(in: boxSubView).y > 0 {
-                UIView.animate(withDuration: 1, animations: {
-                    self.boxSubView.frame = CGRect(x: frame.minX, y: (self.navigationController?.navigationBar.frame.height)!/2, width: frame.width, height: frame.height)
+                UIView.animate(withDuration: 0.5, animations: {
+                    self.boxSubView.frame = CGRect(x: frame.minX, y: 0, width: frame.width, height: frame.height)
                 })
                 
             }
             else {
                 UIView.animate(withDuration: 0.5, animations: {
-                    self.boxSubView.frame = CGRect(x: frame.minX, y: -(self.navigationController?.navigationBar.frame.height)!/2, width: frame.width, height: frame.height)
+                    self.boxSubView.frame = CGRect(x: frame.minX, y: -(self.navigationController?.navigationBar.frame.height)!, width: frame.width, height: frame.height)
                 })
             }
         }
