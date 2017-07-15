@@ -53,7 +53,7 @@ struct EventVariables {
 }
 
 
-class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
+class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, UIGestureRecognizerDelegate {
     
     lazy var geocoder = CLGeocoder()
 
@@ -80,6 +80,11 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
     var eventInfo = [String]()
     var isEditSelected = false
     var shouldChangeInfoText = true
+    
+    let boxSubView = UIView()
+    var prevTranslation:CGPoint = CGPoint.zero
+    var initialYPos:CGFloat = 0
+
     
     // MARK: IBOutlets
     @IBOutlet weak var datePickerDoneBtn: UIButton!
@@ -566,15 +571,23 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
     private func createRSVPBox() {
         
         let boxWidth:CGFloat = 5 * view.frame.width / 6
-        let boxHeight:CGFloat = 40
-        let xPos:CGFloat = view.frame.width/24//view.frame.width/2 - boxWidth/2
-        let yPos:CGFloat = 0
+        let boxHeight:CGFloat = (navigationController?.navigationBar.frame.height)!
+        let xPos:CGFloat = view.frame.width/24
+        let yPos:CGFloat = -boxHeight/2
         let boxFrame:CGRect = CGRect(x: xPos, y: yPos, width: boxWidth, height: boxHeight)
         
-        let boxSubView = UIView(frame: boxFrame)
+        boxSubView.frame = boxFrame
         
+        let arrowBoxWidth:CGFloat = boxWidth/4 - view.frame.width/24.0
+        let arrowBoxHeight:CGFloat = boxHeight/2
+        let arrowBoxX:CGFloat = view.frame.width/2 - 3*arrowBoxWidth/4
+        let arrowBoxY:CGFloat = boxFrame.maxY
+        let arrowBoxFrame:CGRect = CGRect(x: arrowBoxX, y: arrowBoxY, width: arrowBoxWidth, height: arrowBoxHeight)
         
-        
+        let arrowBox = UIView(frame: arrowBoxFrame)
+        //extension at the bottom of this file
+        arrowBox.roundCorners([.bottomLeft,.bottomRight], radius: 5)
+        arrowBox.backgroundColor = UIColor.white
         
         let rsvpBox = UISegmentedControl(frame: boxSubView.frame)
         
@@ -614,7 +627,19 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         
         view.addSubview(boxSubView)
         boxSubView.addSubview(rsvpBox)
+        boxSubView.addSubview(arrowBox)
         view.bringSubview(toFront: boxSubView)
+        boxSubView.bringSubview(toFront: arrowBox)
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(EventDetailsVC.handleTap(gestureRecognizer:)))
+        tapGesture.delegate = self
+        arrowBox.addGestureRecognizer(tapGesture)
+        
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(EventDetailsVC.handlePan(gestureRecognizer:)))
+        panGesture.delegate = self
+        arrowBox.addGestureRecognizer(panGesture)
+        
+        print(navigationController?.navigationBar.frame.height)
     }
 
     @objc private func selectedSegment(sender:UISegmentedControl) {
@@ -632,6 +657,73 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         }
     }
     
+    
+    @objc private func handleTap(gestureRecognizer: UITapGestureRecognizer) {
+        
+        // TODO: Figure out how this works
+        
+        let frame = boxSubView.frame
+        //let transformDown = CGAffineTransform(translationX: 0, y: (self.navigationController?.navigationBar.frame.height)!)
+        //let transformUp = CGAffineTransform(translationX: 0, y: -(self.navigationController?.navigationBar.frame.height)!/8)
+
+        if frame.minY < 0 {
+            //boxSubView.frame = CGRect(x: frame.minX, y: (self.navigationController?.navigationBar.frame.height)!/2, width: frame.width, height: frame.height)
+            //boxSubView.transform = transformDown
+            UIView.animate(withDuration: 1, animations: {
+                self.boxSubView.frame = CGRect(x: frame.minX, y: (self.navigationController?.navigationBar.frame.height)!/2, width: frame.width, height: frame.height)
+            })
+            
+        }
+        else {
+            //boxSubView.frame = CGRect(x: frame.minX, y: -(self.navigationController?.navigationBar.frame.height)!/2, width: frame.width, height: frame.height)
+            //boxSubView.transform = transformUp
+            UIView.animate(withDuration: 0.5, animations: {
+                self.boxSubView.frame = CGRect(x: frame.minX, y: -(self.navigationController?.navigationBar.frame.height)!/2, width: frame.width, height: frame.height)
+            })
+        }
+    }
+    
+    @objc private func handlePan(gestureRecognizer: UIPanGestureRecognizer) {
+        if gestureRecognizer.state == .began {
+            initialYPos = boxSubView.frame.minY
+        }
+        
+        if gestureRecognizer.state == .changed {
+            let translation = gestureRecognizer.translation(in: boxSubView)
+            //below line sets limit to how far down the view will go
+            if translation.y >= 0 && boxSubView.frame.minY <= (self.navigationController?.navigationBar.frame.height)!/2 {
+                prevTranslation = CGPoint(x: 0, y: translation.y - prevTranslation.y)
+                boxSubView.center = CGPoint(x: boxSubView.center.x, y: boxSubView.center.y + prevTranslation.y)
+                prevTranslation = translation
+            }
+            
+            else if translation.y < 44 && boxSubView.frame.minY >= -(self.navigationController?.navigationBar.frame.height)!/2 {
+                prevTranslation = CGPoint(x: 0, y: translation.y - prevTranslation.y)
+                boxSubView.center = CGPoint(x: boxSubView.center.x, y: boxSubView.center.y + prevTranslation.y)
+                prevTranslation = translation
+            }
+            else if boxSubView.frame.minY >= (self.navigationController?.navigationBar.frame.height)!/2{
+                prevTranslation = translation
+            }
+            
+        }
+        
+        if gestureRecognizer.state == .ended {
+            prevTranslation = CGPoint.zero
+            let frame: CGRect = boxSubView.frame
+            if gestureRecognizer.translation(in: boxSubView).y > 0 {
+                UIView.animate(withDuration: 1, animations: {
+                    self.boxSubView.frame = CGRect(x: frame.minX, y: (self.navigationController?.navigationBar.frame.height)!/2, width: frame.width, height: frame.height)
+                })
+                
+            }
+            else {
+                UIView.animate(withDuration: 0.5, animations: {
+                    self.boxSubView.frame = CGRect(x: frame.minX, y: -(self.navigationController?.navigationBar.frame.height)!/2, width: frame.width, height: frame.height)
+                })
+            }
+        }
+    }
     // MARK: - Segue method
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
             invitedFriendsUsernames = []
@@ -821,5 +913,14 @@ extension UISegmentedControl {
         let image = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
         return image!
+    }
+}
+
+extension UIView {
+    func roundCorners(_ corners: UIRectCorner, radius: CGFloat) {
+        let path = UIBezierPath(roundedRect: self.bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
+        let mask = CAShapeLayer()
+        mask.path = path.cgPath
+        self.layer.mask = mask
     }
 }
