@@ -44,7 +44,6 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
     
     
     @IBOutlet weak var UserNotFoundLbl: UILabel!
-    @IBOutlet weak var OpenSideBar: UIButton!
     
     @IBOutlet weak var AddFriendListTblView: UITableView!
     @IBOutlet weak var SearchBar: UITextField!
@@ -70,7 +69,6 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
         SearchBar.attributedPlaceholder = attributedText
         SearchBar.delegate = self
         SearchBar.addTarget(self, action: #selector(removeAllCells), for: .touchDown)
-        OpenSideBar.addTarget(self.revealViewController(), action: #selector(SWRevealViewController.revealToggle(_:)), for: .touchUpInside)
     }
     
     func loadUser() {
@@ -147,6 +145,7 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
         let userRef = self.childRef.child("User: \(currentUser!.userID)")
         userRef.setValue(currentUser!.toAnyObject())
         AddFriendListTblView.reloadData()
+        UserData.updateData(withUser: currentUser!)
         }
     }
     
@@ -163,8 +162,8 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
                 
                 //All this is to find UserID's that matched the input username and
                 //Create an array of all UserID's with that username
-                let user: Dictionary<String,Any> = snapshot.value as! Dictionary<String,Any>
-                for (uid,data) in user {
+                let users: Dictionary<String,Any> = snapshot.value as! Dictionary<String,Any>
+                for (uid,data) in users {
                     var uidStr = uid.replacingOccurrences(of: "User: ", with: "")
                     let uidStrArr:[String] = uidStr.characters.split{$0 == ","}.map(String.init)
                     let dataDic:Dictionary<String,Any> = data as! Dictionary<String,Any>

@@ -117,6 +117,22 @@ class User {
     func addFriend(uid:String) {
         self.friends.append(uid)
     }
+    func removeFriend(uid:String) {
+        for (index,friend) in self.friends.enumerated() {
+            if friend == uid {
+                friends.remove(at: index)
+            }
+        }
+    }
+    func stillFriends(with uid:String) -> Bool {
+        for friend in self.friends {
+            if friend == uid {
+                return true
+            }
+        }
+        
+        return false
+    }
     func changeUsername(username: String) {
         self.username = username
     }

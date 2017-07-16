@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5A058A291F1BC31700ADC7D8 /* FriendsListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A058A281F1BC31600ADC7D8 /* FriendsListVC.swift */; };
 		5A56671D1EC0C8C3001F5B55 /* SWRevealViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A56671C1EC0C8C3001F5B55 /* SWRevealViewController.m */; };
 		5A705DA61ECA1374006E13E4 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A705DA51ECA1374006E13E4 /* User.swift */; };
 		5A7580ED1EDA80B900F8273D /* AddFriendsToEventVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7580EC1EDA80B900F8273D /* AddFriendsToEventVC.swift */; };
@@ -57,6 +58,7 @@
 		0AB4618FB26CA5341C395A64 /* Pods_LE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B9190D2E4B2D594D871D76B /* Pods-LE.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LE.release.xcconfig"; path = "Pods/Target Support Files/Pods-LE/Pods-LE.release.xcconfig"; sourceTree = "<group>"; };
 		4E2DA4941C9BC757A47509ED /* Pods-LETests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LETests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LETests/Pods-LETests.debug.xcconfig"; sourceTree = "<group>"; };
+		5A058A281F1BC31600ADC7D8 /* FriendsListVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FriendsListVC.swift; sourceTree = "<group>"; };
 		5A56671A1EC0C8C3001F5B55 /* LE-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LE-Bridging-Header.h"; sourceTree = "<group>"; };
 		5A56671B1EC0C8C3001F5B55 /* SWRevealViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWRevealViewController.h; sourceTree = "<group>"; };
 		5A56671C1EC0C8C3001F5B55 /* SWRevealViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWRevealViewController.m; sourceTree = "<group>"; };
@@ -163,6 +165,7 @@
 				5AD642E61ED26503001155AA /* SettingsVC.swift */,
 				5ABA18121ECB6DA9005679E3 /* BackTableVC.swift */,
 				5ABA18101ECB5FEA005679E3 /* AddFriendsVC.swift */,
+				5A058A281F1BC31600ADC7D8 /* FriendsListVC.swift */,
 				5ACA67761DD890CF00A8CE5D /* AddEventController.swift */,
 				5A7580EC1EDA80B900F8273D /* AddFriendsToEventVC.swift */,
 				5ADA4D891E3D23DD00063420 /* Event.swift */,
@@ -505,6 +508,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5ADA4D8A1E3D23DD00063420 /* Event.swift in Sources */,
+				5A058A291F1BC31700ADC7D8 /* FriendsListVC.swift in Sources */,
 				5AA984A41F09C309000B9FA8 /* Colors.swift in Sources */,
 				5AA516BB1EDCE18700686A65 /* EventFriendListVC.swift in Sources */,
 				5ABA18111ECB5FEA005679E3 /* AddFriendsVC.swift in Sources */,

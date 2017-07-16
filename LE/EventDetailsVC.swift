@@ -648,6 +648,7 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         boxSubView.addSubview(arrowBox)
         view.bringSubview(toFront: boxSubView)
         boxSubView.bringSubview(toFront: arrowBox)
+        addThreeLines(to: arrowBox)
         
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(EventDetailsVC.handleTap(gestureRecognizer:)))
@@ -692,6 +693,29 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
             }
         }
         
+    }
+    
+    private func addThreeLines(to view: UIView) {
+        let size = CGSize(width: 40, height: 1)
+        let xPos:CGFloat = view.frame.width / 2 - size.width/2
+        let const:CGFloat = 1/14.0 * view.frame.height
+
+        let pos1 = CGPoint(x: xPos, y: const * 5)
+        let pos2 = CGPoint(x: xPos, y: const * 7)
+        let pos3 = CGPoint(x: xPos, y: const * 9)
+
+        let line1 = UIView(frame: CGRect(origin: pos1, size: size))
+        let line2 = UIView(frame: CGRect(origin: pos2, size: size))
+        let line3 = UIView(frame: CGRect(origin: pos3, size: size))
+        
+        line1.backgroundColor = UIColor.lightGray
+        line2.backgroundColor = UIColor.lightGray
+        line3.backgroundColor = UIColor.lightGray
+
+        view.addSubview(line1)
+        view.addSubview(line2)
+        view.addSubview(line3)
+
     }
     
     // MARK: Action for UISegmentedControl
