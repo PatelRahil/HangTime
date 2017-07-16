@@ -42,7 +42,7 @@ class SettingsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         OpenSideBar.addTarget(self.revealViewController(), action: #selector(SWRevealViewController.revealToggle(_:)), for: .touchUpInside)
         
         LogoutBtn.setTitleColor(UIColor.white, for: .normal)
-        LogoutBtn.backgroundColor = UIColor.red
+        LogoutBtn.backgroundColor = Colors.cinnabar
         LogoutBtn.layer.cornerRadius = 5
         
         settingsTableView.delegate = self

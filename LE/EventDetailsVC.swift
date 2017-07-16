@@ -65,7 +65,7 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
     var eventCreator:User? = nil
     
     // MARK: Array for tables
-    //var TableArray = ["Created By", "Date", "Address", "Description","Invited Friends"]
+    //var TableArray = ["Created By", "Date", "Address", "Description","Invited Users"]
     var TableArray = ["Created By", "Date", "Address", "Description"] {
         willSet {
             print("TableArray is about to change to \(newValue)")
@@ -81,7 +81,8 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
     var isEditSelected = false
     var shouldChangeInfoText = true
     
-    let segmentColors:[UIColor] = [UIColor.white, UIColor.green, UIColor.blue, UIColor.red]
+    // MARK: Variables for RSVP
+    let segmentColors:[UIColor] = [UIColor.white, Colors.eucalyptus, Colors.royalBlue, Colors.cinnabar]
     let boxSubView = UIView()
     var prevTranslation:CGPoint = CGPoint.zero
     var initialYPos:CGFloat = 0
@@ -199,9 +200,7 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         greySubview.isHidden = true
         
         datePicker.minimumDate = Date()
-        
-        createRSVPBox()
-    }
+        }
     override func viewWillDisappear(_ animated: Bool) {
         self.navigationController?.navigationBar.isTranslucent = true
         navigationController?.navigationBar.barTintColor = nil
@@ -224,8 +223,8 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         }
         
         //if an event is switched from private to public, and then back to private again at any point, these next two occur
-        if (!TableArray.contains("Invited Friends") && !EventVariables.isPublic) {
-            TableArray.append("Invited Friends")
+        if (!TableArray.contains("Invited Users") && !EventVariables.isPublic) {
+            TableArray.append("Invited Users")
         }
         
         if (!TableArray.contains("Add More Friends") && !EventVariables.isPublic) {
@@ -257,7 +256,7 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if TableArray[indexPath.row] == "Invited Friends" && !EventVariables.isPublic {
+        if TableArray[indexPath.row] == "Invited Users" && !EventVariables.isPublic {
             saveTextFieldInfo()
             performSegue(withIdentifier: "invited friends", sender: indexPath)
         }
@@ -319,7 +318,7 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
             
             return cell
         }
-        else if TableArray[indexPath.row] == "Invited Friends" {
+        else if TableArray[indexPath.row] == "Invited Users" {
             let cell = tableView.dequeueReusableCell(withIdentifier: "Invited Friends", for: indexPath)
             //cell.selectionStyle = .none
             if EventVariables.isPublic {
@@ -407,8 +406,8 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         else {
             self.navigationItem.setTitle(title: "\(eventCreator!.username)'s", subtitle: "Public Event")
         }
-        if !EventVariables.isPublic && !TableArray.contains("Invited Friends") {
-            TableArray.append("Invited Friends")
+        if !EventVariables.isPublic && !TableArray.contains("Invited Users") {
+            TableArray.append("Invited Users")
         }
         if EventVariables.createdByUID == currentUser!.userID {
             EditEventInfo.isHidden = false
@@ -420,6 +419,7 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         }
         else {
             EditEventInfo.isHidden = true
+            createRSVPBox()
         }
 
         eventInfo.append(EventVariables.address)
@@ -618,6 +618,23 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         
         rsvpBox.setSegmentStyle(colors: segmentColors)
         
+        if let rsvpCode = getCurrentRSVP() {
+            switch rsvpCode {
+            case 0:
+                rsvpBox.selectedSegmentIndex = 1
+                selectedSegment(sender: rsvpBox)
+            case 1:
+                rsvpBox.selectedSegmentIndex = 2
+                selectedSegment(sender: rsvpBox)
+            case 2:
+                rsvpBox.selectedSegmentIndex = 3
+                selectedSegment(sender: rsvpBox)
+                print("IT SHOULD'VE WORKED")
+            default:
+                break
+            }
+        }
+        
         for subview in rsvpBox.subviews[0].subviews {
             if let label = subview as? UILabel {
                 label.textColor = UIColor.black
@@ -641,6 +658,40 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         panGesture.delegate = self
         arrowBox.addGestureRecognizer(panGesture)
         
+        handleTap(gestureRecognizer: nil)
+        
+    }
+    
+    private func getCurrentRSVP() -> Int? {
+        if let invitedEvents = currentUser?.invitedEvents {
+            for (event,rsvp) in invitedEvents {
+                if event == EventVariables.eventID {
+                    print("IT WORKED \(rsvp)")
+                    return rsvp
+                }
+            }
+        }
+        
+        return nil
+    }
+    
+    private func updateUserRSVP(with code:Int) {
+        let invitedEventsRef = userRef.child("User: \(currentUser!.userID)").child("invitedEvents").child(EventVariables.eventID)
+        invitedEventsRef.setValue(code)
+        for (event,_) in currentUser!.invitedEvents {
+            if event == EventVariables.eventID {
+                currentUser?.invitedEvents[event] = code
+            }
+        }
+        
+        if let invitedEvents = UserData.invitedEvents {
+            for (event,_) in invitedEvents {
+                if event == EventVariables.eventID {
+                    UserData.invitedEvents![event] = code
+                }
+            }
+        }
+        
     }
     
     // MARK: Action for UISegmentedControl
@@ -650,17 +701,20 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
             break
         case 1:
             sender.setSegmentStyle(colors: segmentColors)
+            updateUserRSVP(with: 0)
         case 2:
             sender.setSegmentStyle(colors: segmentColors)
+            updateUserRSVP(with: 1)
         case 3:
             sender.setSegmentStyle(colors: segmentColors)
+            updateUserRSVP(with: 2)
         default:
             break
         }
     }
     
     // MARK: - Gesture Recognizers
-    @objc private func handleTap(gestureRecognizer: UITapGestureRecognizer) {
+    @objc private func handleTap(gestureRecognizer: UITapGestureRecognizer?) {
         let frame = boxSubView.frame
         if frame.minY < 0 {
             UIView.animate(withDuration: 0.5, animations: {
@@ -881,6 +935,7 @@ extension UISegmentedControl {
         setDividerImage(imageWithColor(color: segmentGrayColor), forLeftSegmentState: .normal, rightSegmentState: .normal, barMetrics: .default)
         
         if selectedSegmentIndex > 0 {
+            print("HELP \(selectedSegmentIndex)")
             setBackgroundImage(imageWithColor(color: colors[selectedSegmentIndex]), for: .selected, barMetrics: .default)
         }
         else {
@@ -906,6 +961,7 @@ extension UISegmentedControl {
         UIGraphicsEndImageContext();
         return image!
     }
+    
 }
 
 extension UIView {

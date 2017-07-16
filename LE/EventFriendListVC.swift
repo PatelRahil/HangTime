@@ -36,6 +36,7 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
     var selectedCellsIndex:[Int] = []
     var editIsSelected:Bool = false
     var profilePicArray = [UIImage]()
+    var rsvpStatusArray = [String:Int]()
     
     @IBOutlet weak var SelectAllButton: UIButton!
     @IBOutlet weak var DeleteButton: UIButton!
@@ -124,6 +125,7 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         loadProfilePictures()
+        determineRSVPStatus()
         DeleteButton.isHidden = true
         SelectAllButton.isHidden = true
         EditButtonLbl.isHidden = !editable!
@@ -145,13 +147,45 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
         else {
             cell.ProfileImg.image = #imageLiteral(resourceName: "DefaultProfileImg")
         }
-        cell.UsernameLbl.text = invitedFriendsUsernames[indexPath.row]
+        
+        if invitedFriendsUsernames[indexPath.row] == currentUser?.username {
+            cell.UsernameLbl.text = "You"
+            cell.UsernameLbl.font = UIFont.boldSystemFont(ofSize: cell.UsernameLbl.font.pointSize)
+        }
+        else {
+            cell.UsernameLbl.text = invitedFriendsUsernames[indexPath.row]
+        }
+        
         if editIsSelected {
             cell.selectionStyle = UITableViewCellSelectionStyle.init(rawValue: 3)!
         }
         else {
             cell.selectionStyle = UITableViewCellSelectionStyle.none
         }
+        
+        if cameFromEventDetailsVC {
+            for (userID, status) in rsvpStatusArray {
+                if userID == invitedFriendsUIDs[indexPath.row] {
+                    switch status {
+                    case 0:
+                        cell.rsvpStatusLabel.text = "Going"
+                        cell.rsvpStatusLabel.textColor = Colors.eucalyptus
+                    case 1:
+                        cell.rsvpStatusLabel.text = "Maybe"
+                        cell.rsvpStatusLabel.textColor = Colors.royalBlue
+                    case 2:
+                        cell.rsvpStatusLabel.text = "Not Going"
+                        cell.rsvpStatusLabel.textColor = Colors.cinnabar
+                    case 3:
+                        cell.rsvpStatusLabel.text = "Undecided"
+                        cell.rsvpStatusLabel.textColor = Colors.lightGray
+                    default:
+                        break
+                    }
+                }
+            }
+        }
+        
         cell.tintColor = Colors.blueGreen
         return cell
     }
@@ -199,7 +233,6 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
                     profilePic = userPhoto!
                 }
                 else {
-                    print("ERROR: \(String(describing: error))")
                     profilePic = #imageLiteral(resourceName: "DefaultProfileImg")
                 }
                 
@@ -208,6 +241,21 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
             })
         }
         
+    }
+    
+    private func determineRSVPStatus() {
+        for userID in invitedFriendsUIDs {
+            //default value
+            rsvpStatusArray[userID] = 3
+            
+            let userRef = FIRDatabase.database().reference(withPath: "Users")
+            let invitedEventRef = userRef.child("User: \(userID)").child("invitedEvents").child(EventVariables.eventID)
+            invitedEventRef.observe(.value, with: { (snapshot) in
+                
+                self.rsvpStatusArray[userID] = snapshot.value as? Int
+                self.editInvitedFriendsTableView.reloadData()
+            })
+        }
     }
     
     private func layoutProfilePics(with cell:CustomEventFriendListCell) {
@@ -236,6 +284,7 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
 class CustomEventFriendListCell: UITableViewCell {
     @IBOutlet weak var ProfileImg: UIImageView!
     @IBOutlet weak var UsernameLbl: UILabel!
+    @IBOutlet weak var rsvpStatusLabel: UILabel!
     
     
 }
