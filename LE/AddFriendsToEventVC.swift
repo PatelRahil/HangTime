@@ -148,11 +148,13 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
         index = indexPath.row
         if (isAlreadyAdded(userID: allUserID[indexPath.row])) {
             cell.AddFriendBtn.setTitle("Added", for: .normal)
-            cell.AddFriendBtn.setTitleColor(UIColor.darkGray, for: .normal)
+            //cell.AddFriendBtn.setTitleColor(UIColor.darkGray, for: .normal)
+            cell.AddFriendBtn.backgroundColor = UIColor.white
+            cell.AddFriendBtn.setTitleColor(Colors.blueGreen, for: .normal)
         }
         else {
             cell.AddFriendBtn.setTitle("Add", for: .normal)
-            cell.AddFriendBtn.setTitleColor(UIColor.blue, for: .normal)
+            //cell.AddFriendBtn.setTitleColor(UIColor.blue, for: .normal)
             cell.AddFriendBtn.tag = indexPath.row
             cell.AddFriendBtn.addTarget(self, action: #selector(addFriendToEvent(_:)), for: .touchUpInside)
         }
@@ -304,11 +306,16 @@ class CustomAddFriendTableViewCell: UITableViewCell {
     
     
     override func prepareForReuse() {
+        AddFriendBtn.layer.borderWidth = 1
+        AddFriendBtn.layer.borderColor = Colors.blueGreen.cgColor
+        AddFriendBtn.layer.cornerRadius = 4
+        
         if (AddFriendBtn.titleLabel?.text == "Added") {
             AddFriendBtn.removeTarget(nil, action: nil, for: .allEvents)
         }
         if (AddFriendBtn.titleLabel?.text == "Add") {
-            AddFriendBtn.setTitleColor(UIColor.blue, for: .normal)
+            AddFriendBtn.backgroundColor = Colors.blueGreen
+            AddFriendBtn.setTitleColor(UIColor.white, for: .normal)
             AddFriendBtn.setTitleColor(UIColor.gray, for: .selected)
         }
     }

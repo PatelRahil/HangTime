@@ -113,13 +113,23 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
         cell.UsernameLbl.text = TableArray[indexPath.row + 1]
         
         index = indexPath.row
+        cell.AddFriendBtn.layer.borderColor = Colors.blueGreen.cgColor
+        cell.AddFriendBtn.layer.borderWidth = 1
+        cell.AddFriendBtn.layer.cornerRadius = 4
+        cell.AddFriendBtn.titleLabel?.font = UIFont.boldSystemFont(ofSize: (cell.AddFriendBtn.titleLabel?.font.pointSize)!)
         if (isAlreadyFriend(userID: allUserID[indexPath.row])) {
-            cell.AddFriendBtn.setTitle("Added", for: .normal)
-            cell.AddFriendBtn.setTitleColor(UIColor.darkGray, for: .normal)
+            cell.AddFriendBtn.removeTarget(self, action: #selector(addFriend(_:)), for: .touchUpInside)
+            cell.AddFriendBtn.setTitle("Friends", for: .normal)
+            cell.AddFriendBtn.setTitleColor(Colors.blueGreen, for: .normal)
+            cell.AddFriendBtn.backgroundColor = UIColor.white
+            cell.AddFriendBtn.tag = indexPath.row
+            cell.AddFriendBtn.addTarget(self, action: #selector(removeFriend(_:)), for: .touchUpInside)
         }
         else {
+            cell.AddFriendBtn.removeTarget(self, action: #selector(removeFriend(_:)), for: .touchUpInside)
             cell.AddFriendBtn.setTitle("Add", for: .normal)
-            cell.AddFriendBtn.setTitleColor(UIColor.blue, for: .normal)
+            cell.AddFriendBtn.setTitleColor(UIColor.white, for: .normal)
+            cell.AddFriendBtn.backgroundColor = Colors.blueGreen
             cell.AddFriendBtn.tag = indexPath.row
             cell.AddFriendBtn.addTarget(self, action: #selector(addFriend(_:)), for: .touchUpInside)
         }
@@ -138,14 +148,25 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
         return isFriend
     }
     
-    func addFriend(_ sender:UIButton) {
+    @objc private func addFriend(_ sender:UIButton) {
         let pickedUserID = allUserID[sender.tag]
         if (!isAlreadyFriend(userID: pickedUserID)) {
-        currentUser?.addFriend(uid: pickedUserID)
-        let userRef = self.childRef.child("User: \(currentUser!.userID)")
-        userRef.setValue(currentUser!.toAnyObject())
-        AddFriendListTblView.reloadData()
-        UserData.updateData(withUser: currentUser!)
+            currentUser?.addFriend(uid: pickedUserID)
+            let userRef = self.childRef.child("User: \(currentUser!.userID)")
+            userRef.setValue(currentUser!.toAnyObject())
+            AddFriendListTblView.reloadData()
+            UserData.updateData(withUser: currentUser!)
+        }
+    }
+    
+    @objc private func removeFriend(_ sender:UIButton) {
+        let pickedUserID = allUserID[sender.tag]
+        if isAlreadyFriend(userID: pickedUserID) {
+            currentUser?.removeFriend(uid: pickedUserID)
+            let userRef = self.childRef.child("User: \(currentUser!.userID)")
+            userRef.setValue(currentUser!.toAnyObject())
+            AddFriendListTblView.reloadData()
+            UserData.updateData(withUser: currentUser!)
         }
     }
     

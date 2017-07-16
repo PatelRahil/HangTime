@@ -34,7 +34,10 @@ class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        tableDic = [Int:[String:String]]()
+        profilePicDic = [String:UIImage]()
         currentUser = User(data: UserData())
+        setupArrays()
         updateTableArray()
         friendsListTableView.reloadData()
     }
@@ -54,7 +57,7 @@ class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         cell.UsernameLbl.text = username
         cell.ProfilePic.image = profilePicDic[friendUID]
         setupFriendBtn(for: cell)
-        layoutProfilePics(for: cell)
+        //layoutProfilePics(for: cell)
         
         cell.selectionStyle = .none
         return cell
@@ -93,7 +96,7 @@ class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     
     private func setupFriendBtn(for cell:CustomFriendsListCell) {
         if cell.isFriends! {
-            cell.FriendBtn.setTitle("Friend", for: .normal)
+            cell.FriendBtn.setTitle("Friends", for: .normal)
             cell.FriendBtn.setTitleColor(Colors.blueGreen, for: .normal)
             cell.FriendBtn.backgroundColor = UIColor.white
         }
