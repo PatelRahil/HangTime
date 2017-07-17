@@ -138,9 +138,7 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "eventFriendCell", for: indexPath) as! CustomEventFriendListCell
-        
-        layoutProfilePics(with: cell)
-        
+                
         if indexPath.row < profilePicArray.count {
             cell.ProfileImg.image = profilePicArray[indexPath.row]
         }
@@ -258,6 +256,18 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
         }
     }
     
+}
+
+class CustomEventFriendListCell: UITableViewCell {
+    @IBOutlet weak var ProfileImg: UIImageView!
+    @IBOutlet weak var UsernameLbl: UILabel!
+    @IBOutlet weak var rsvpStatusLabel: UILabel!
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        layoutProfilePics(with: self)
+    }
+    
     private func layoutProfilePics(with cell:CustomEventFriendListCell) {
         
         let gradient = CAGradientLayer()
@@ -278,13 +288,4 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
         cell.ProfileImg.layer.addSublayer(gradient)
         
     }
-    
-}
-
-class CustomEventFriendListCell: UITableViewCell {
-    @IBOutlet weak var ProfileImg: UIImageView!
-    @IBOutlet weak var UsernameLbl: UILabel!
-    @IBOutlet weak var rsvpStatusLabel: UILabel!
-    
-    
 }

@@ -60,7 +60,7 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
     // MARK: - Firebase reference paths
     let userRef = FIRDatabase.database().reference(withPath: "Users")
     let storageRef = FIRStorage.storage().reference()
-    // Mark: Users
+    // MARK: Users
     var currentUser:User? = nil
     var eventCreator:User? = nil
     
@@ -987,6 +987,7 @@ extension UISegmentedControl {
     }
     
 }
+
 
 extension UIView {
     func roundCorners(_ corners: UIRectCorner, radius: CGFloat) {

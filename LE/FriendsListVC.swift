@@ -57,7 +57,6 @@ class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         cell.UsernameLbl.text = username
         cell.ProfilePic.image = profilePicDic[friendUID]
         setupFriendBtn(for: cell)
-        //layoutProfilePics(for: cell)
         
         cell.selectionStyle = .none
         return cell
@@ -113,27 +112,6 @@ class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         cell.FriendBtn.addTarget(self, action: #selector(friendBtnPressed(sender:)), for: .touchUpInside)
     }
     
-    private func layoutProfilePics(for cell:CustomFriendsListCell) {
-        
-        let gradient = CAGradientLayer()
-        gradient.frame =  CGRect(origin: CGPoint.zero, size: cell.ProfilePic.frame.size)
-        gradient.colors = [Colors.blueGreen.cgColor, Colors.yellow.cgColor]
-        
-        let shape = CAShapeLayer()
-        shape.lineWidth = 3
-        shape.path = UIBezierPath(ovalIn: cell.ProfilePic.bounds).cgPath
-        shape.strokeColor = UIColor.black.cgColor
-        shape.fillColor = UIColor.clear.cgColor
-        gradient.mask = shape
-        
-        cell.ProfilePic.layoutIfNeeded()
-        cell.ProfilePic.clipsToBounds = true
-        cell.ProfilePic.layer.masksToBounds = true
-        cell.ProfilePic.layer.cornerRadius = cell.ProfilePic.bounds.size.width/2.0
-        cell.ProfilePic.layer.addSublayer(gradient)
-        
-    }
-    
     @objc private func friendBtnPressed(sender:Any) {
         let cell = (sender as! UIButton).superview?.superview as! CustomFriendsListCell
         let row = friendsListTableView.indexPath(for: cell)?.row
@@ -166,5 +144,31 @@ class CustomFriendsListCell: UITableViewCell {
     
     var isFriends:Bool? = nil
     
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        layoutProfilePics(with: self)
+    }
     
+    private func layoutProfilePics(with cell: CustomFriendsListCell) {
+        
+        let gradient = CAGradientLayer()
+        gradient.frame =  CGRect(origin: CGPoint.zero, size: cell.ProfilePic.frame.size)
+        gradient.colors = [Colors.blueGreen.cgColor, Colors.yellow.cgColor]
+        
+        
+        let shape = CAShapeLayer()
+        shape.lineWidth = 3
+        shape.path = UIBezierPath(ovalIn: cell.ProfilePic.bounds).cgPath
+        shape.strokeColor = UIColor.black.cgColor // causing lag when scrolling
+        shape.fillColor = UIColor.clear.cgColor
+        gradient.mask = shape
+        
+        
+        
+        cell.ProfilePic.layoutIfNeeded()
+        cell.ProfilePic.clipsToBounds = true
+        cell.ProfilePic.layer.masksToBounds = true
+        cell.ProfilePic.layer.cornerRadius = cell.ProfilePic.bounds.size.width/2.0
+        cell.ProfilePic.layer.addSublayer(gradient)
+    }
 }

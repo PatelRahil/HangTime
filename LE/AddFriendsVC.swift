@@ -105,9 +105,7 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = AddFriendListTblView.dequeueReusableCell(withIdentifier: "friendCell", for: indexPath) as! CustomTableViewCell
         cell.AddFriendBtn.removeTarget(nil, action: nil, for: .allEvents)
-        
-        layoutProfilePics(with: cell)
-        
+                
         cell.ProfileImg.image = profilePicArray[indexPath.row]
         
         cell.UsernameLbl.text = TableArray[indexPath.row + 1]
@@ -245,27 +243,6 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
         return true
     }
     
-    private func layoutProfilePics(with cell:CustomTableViewCell) {
-        
-        let gradient = CAGradientLayer()
-        gradient.frame =  CGRect(origin: CGPoint.zero, size: cell.ProfileImg.frame.size)
-        gradient.colors = [Colors.blueGreen.cgColor, Colors.yellow.cgColor]
-        
-        let shape = CAShapeLayer()
-        shape.lineWidth = 3
-        shape.path = UIBezierPath(ovalIn: cell.ProfileImg.bounds).cgPath
-        shape.strokeColor = UIColor.black.cgColor
-        shape.fillColor = UIColor.clear.cgColor
-        gradient.mask = shape
-        
-        cell.ProfileImg.layoutIfNeeded()
-        cell.ProfileImg.clipsToBounds = true
-        cell.ProfileImg.layer.masksToBounds = true
-        cell.ProfileImg.layer.cornerRadius = cell.ProfileImg.bounds.size.width/2.0
-        cell.ProfileImg.layer.addSublayer(gradient)
-        
-    }
-    
 }
 
 class CustomTableViewCell: UITableViewCell {
@@ -282,5 +259,33 @@ class CustomTableViewCell: UITableViewCell {
             AddFriendBtn.setTitleColor(UIColor.blue, for: .normal)
             AddFriendBtn.setTitleColor(UIColor.gray, for: .selected)
         }
+    }
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        layoutProfilePics(with: self)
+    }
+    
+    private func layoutProfilePics(with cell: CustomTableViewCell) {
+        
+        let gradient = CAGradientLayer()
+        gradient.frame =  CGRect(origin: CGPoint.zero, size: cell.ProfileImg.frame.size)
+        gradient.colors = [Colors.blueGreen.cgColor, Colors.yellow.cgColor]
+        
+        
+        let shape = CAShapeLayer()
+        shape.lineWidth = 3
+        shape.path = UIBezierPath(ovalIn: cell.ProfileImg.bounds).cgPath
+        shape.strokeColor = UIColor.black.cgColor // causing lag when scrolling
+        shape.fillColor = UIColor.clear.cgColor
+        gradient.mask = shape
+        
+        
+        
+        cell.ProfileImg.layoutIfNeeded()
+        cell.ProfileImg.clipsToBounds = true
+        cell.ProfileImg.layer.masksToBounds = true
+        cell.ProfileImg.layer.cornerRadius = cell.ProfileImg.bounds.size.width/2.0
+        cell.ProfileImg.layer.addSublayer(gradient)
     }
 }

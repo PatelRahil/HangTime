@@ -118,6 +118,8 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
         SearchBar.attributedPlaceholder = attributedText
         SearchBar.delegate = self
         SearchBar.addTarget(self, action: #selector(removeAllCells), for: .touchDown)
+        
+        doWhenTextFieldReturns()
     }
     
     func loadUser() {
@@ -142,7 +144,6 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = AddFriendListTblView.dequeueReusableCell(withIdentifier: "eventFriendCell", for: indexPath) as! CustomAddFriendTableViewCell
-        layoutProfilePics(with: cell)
         cell.ProfileImg.image = profilePicArray[indexPath.row]
         cell.UsernameLbl.text = TableArray[indexPath.row + 1]
         index = indexPath.row
@@ -183,6 +184,12 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        doWhenTextFieldReturns()
+        self.view.endEditing(true)
+        return true
+    }
+    
+    private func doWhenTextFieldReturns() {
         _ = self.rootRef.child("Users").queryOrdered(byChild: "username").queryStarting(atValue:SearchBar.text!).queryEnding(atValue: "\(SearchBar.text!)~").observeSingleEvent(of: .value, with: { (snapshot) in
             
             //let databaseRefQuery = self.rootRef.child("Users").queryOrdered(byChild: "username").queryEqual(toValue:SearchBar.text!).observeSingleEvent(of: .value, with: { (snapshot) in
@@ -224,20 +231,20 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
                             var profilePic:UIImage = #imageLiteral(resourceName: "DefaultProfileImg")
                             let photoIndex = self.allUserID.count
                             
-                                let filePath = "Users/User: \(dataDic["UserID"]!)/\("profilePicture")"
-                                self.storageRef.child(filePath).data(withMaxSize: 10*1024*1024, completion: { (data, error) in
-                                    if error == nil {
-                                        let userPhoto = UIImage(data: data!)
-                                        profilePic = userPhoto!
-                                    }
-                                    else {
-                                        print("ERROR: \(String(describing: error))")
-                                        profilePic = #imageLiteral(resourceName: "DefaultProfileImg")
-                                    }
-                                    self.profilePicArray[photoIndex] = profilePic
-                                    print("\(link)    array: \(self.profilePicArray)")
-                                    self.AddFriendListTblView.reloadData()
-                                })
+                            let filePath = "Users/User: \(dataDic["UserID"]!)/\("profilePicture")"
+                            self.storageRef.child(filePath).data(withMaxSize: 10*1024*1024, completion: { (data, error) in
+                                if error == nil {
+                                    let userPhoto = UIImage(data: data!)
+                                    profilePic = userPhoto!
+                                }
+                                else {
+                                    print("ERROR: \(String(describing: error))")
+                                    profilePic = #imageLiteral(resourceName: "DefaultProfileImg")
+                                }
+                                self.profilePicArray[photoIndex] = profilePic
+                                print("\(link)    array: \(self.profilePicArray)")
+                                self.AddFriendListTblView.reloadData()
+                            })
                             
                         }
                     }
@@ -253,7 +260,7 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
                     //and interate through that to find profile pic
                     //and make an array of the images to iterate through
                 }
-
+                
                 //self.AddFriendListTblView.reloadData()
                 self.AddFriendListTblView.beginUpdates()
                 self.AddFriendListTblView.reloadData()
@@ -261,7 +268,7 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
                     self.AddFriendListTblView.insertRows(at: [IndexPath(row: /*self.TableArray.count-2+*/index, section: 0)], with: .automatic)
                 }
                 self.AddFriendListTblView.endUpdates()
-
+                
             }
             
             
@@ -269,31 +276,6 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
             
             // An error occurred
         })
-        self.view.endEditing(true)
-        return true
-    }
-    
-    private func layoutProfilePics(with cell:CustomAddFriendTableViewCell) {
-        
-        let gradient = CAGradientLayer()
-        gradient.frame =  CGRect(origin: CGPoint.zero, size: cell.ProfileImg.frame.size)
-        gradient.colors = [Colors.blueGreen.cgColor, Colors.yellow.cgColor]
-        
-        let shape = CAShapeLayer()
-        shape.lineWidth = 3
-        //shape.path = UIBezierPath(rect: cell.ProfileImg.bounds).cgPath
-        shape.path = UIBezierPath(ovalIn: cell.ProfileImg.bounds).cgPath
-        shape.strokeColor = UIColor.black.cgColor
-        shape.fillColor = UIColor.clear.cgColor
-        //shape.cornerRadius = cell.ProfileImg.bounds.size.width/2.0
-        gradient.mask = shape
-        
-        cell.ProfileImg.layoutIfNeeded()
-        cell.ProfileImg.clipsToBounds = true
-        cell.ProfileImg.layer.masksToBounds = true
-        cell.ProfileImg.layer.cornerRadius = cell.ProfileImg.bounds.size.width/2.0
-        cell.ProfileImg.layer.addSublayer(gradient)
-
     }
     
 }
@@ -318,5 +300,34 @@ class CustomAddFriendTableViewCell: UITableViewCell {
             AddFriendBtn.setTitleColor(UIColor.white, for: .normal)
             AddFriendBtn.setTitleColor(UIColor.gray, for: .selected)
         }
+        
+    }
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        layoutProfilePics(with: self)
+    }
+    
+    private func layoutProfilePics(with cell: CustomAddFriendTableViewCell) {
+        
+        let gradient = CAGradientLayer()
+        gradient.frame =  CGRect(origin: CGPoint.zero, size: cell.ProfileImg.frame.size)
+        gradient.colors = [Colors.blueGreen.cgColor, Colors.yellow.cgColor]
+        
+        
+        let shape = CAShapeLayer()
+        shape.lineWidth = 3
+        shape.path = UIBezierPath(ovalIn: cell.ProfileImg.bounds).cgPath
+        shape.strokeColor = UIColor.black.cgColor // causing lag when scrolling
+        shape.fillColor = UIColor.clear.cgColor
+        gradient.mask = shape
+        
+        
+        
+        cell.ProfileImg.layoutIfNeeded()
+        cell.ProfileImg.clipsToBounds = true
+        cell.ProfileImg.layer.masksToBounds = true
+        cell.ProfileImg.layer.cornerRadius = cell.ProfileImg.bounds.size.width/2.0
+        cell.ProfileImg.layer.addSublayer(gradient)
     }
 }
