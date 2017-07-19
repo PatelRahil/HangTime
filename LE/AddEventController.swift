@@ -299,7 +299,7 @@ class AddEventController: UIViewController, UITextFieldDelegate {
                 print(snapshot)
                 if snapshot.exists() {
                     var snapDic = snapshot.value as! Dictionary<String,Int>
-                    snapDic[eventStrID] = 0
+                    snapDic[eventStrID] = 3
                     invitedEventsRef.setValue(snapDic)
                 }
                 else {

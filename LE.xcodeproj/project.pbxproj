@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		5A058A291F1BC31700ADC7D8 /* FriendsListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A058A281F1BC31600ADC7D8 /* FriendsListVC.swift */; };
 		5A56671D1EC0C8C3001F5B55 /* SWRevealViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A56671C1EC0C8C3001F5B55 /* SWRevealViewController.m */; };
+		5A6E98531F1D6BF30034FBFD /* EventsListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A6E98521F1D6BF30034FBFD /* EventsListVC.swift */; };
 		5A705DA61ECA1374006E13E4 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A705DA51ECA1374006E13E4 /* User.swift */; };
 		5A7580ED1EDA80B900F8273D /* AddFriendsToEventVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7580EC1EDA80B900F8273D /* AddFriendsToEventVC.swift */; };
 		5A7646941DD7B5F300503F07 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7646931DD7B5F300503F07 /* AppDelegate.swift */; };
@@ -62,6 +63,7 @@
 		5A56671A1EC0C8C3001F5B55 /* LE-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LE-Bridging-Header.h"; sourceTree = "<group>"; };
 		5A56671B1EC0C8C3001F5B55 /* SWRevealViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWRevealViewController.h; sourceTree = "<group>"; };
 		5A56671C1EC0C8C3001F5B55 /* SWRevealViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWRevealViewController.m; sourceTree = "<group>"; };
+		5A6E98521F1D6BF30034FBFD /* EventsListVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventsListVC.swift; sourceTree = "<group>"; };
 		5A705DA51ECA1374006E13E4 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		5A7580EC1EDA80B900F8273D /* AddFriendsToEventVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFriendsToEventVC.swift; sourceTree = "<group>"; };
 		5A7646901DD7B5F300503F07 /* LE.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LE.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -159,6 +161,7 @@
 				5A705DA51ECA1374006E13E4 /* User.swift */,
 				5A7646991DD7B5F300503F07 /* ModelController.swift */,
 				5AFFBF011DE3D5E600D399C7 /* Main.storyboard */,
+				5A6E98521F1D6BF30034FBFD /* EventsListVC.swift */,
 				5AB22FEC1EE9E271007F802B /* EventDetailsVC.swift */,
 				5AA516BA1EDCE18700686A65 /* EventFriendListVC.swift */,
 				5AD642E41ED264EC001155AA /* ProfileVC.swift */,
@@ -526,6 +529,7 @@
 				5AB22FED1EE9E271007F802B /* EventDetailsVC.swift in Sources */,
 				5A705DA61ECA1374006E13E4 /* User.swift in Sources */,
 				5AD642E71ED26503001155AA /* SettingsVC.swift in Sources */,
+				5A6E98531F1D6BF30034FBFD /* EventsListVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

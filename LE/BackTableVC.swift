@@ -23,7 +23,7 @@ class BackTableVC: UITableViewController {
     var profilePic: UIImage = #imageLiteral(resourceName: "DefaultProfileImg")
     
     override func viewDidLoad() {
-        TableArray = [" ", "Map", "Add Friends", "Settings"]
+        TableArray = [" ", "Map", "Friends", "Events", "Settings"]
         loadUser()
     }
     

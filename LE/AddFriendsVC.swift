@@ -51,7 +51,6 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
     override func viewDidLoad() {
         super.viewDidLoad()
         loadUser()
-        self.view.addGestureRecognizer(revealViewController().panGestureRecognizer())
         let magnifyingGlassAttachment = NSTextAttachment(data: nil, ofType: nil)
         var magnifyingGlassImg = UIImage(named: "MagnifyingGlass")
         magnifyingGlassImg = magnifyingGlassImg?.imageResize(sizeChange: CGSize(width: 14, height: 12))

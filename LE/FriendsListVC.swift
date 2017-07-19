@@ -30,6 +30,8 @@ class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         setupArrays()
         updateTableArray()
         
+        
+        self.view.addGestureRecognizer(revealViewController().panGestureRecognizer())
         OpenSideBar.addTarget(self.revealViewController(), action: #selector(SWRevealViewController.revealToggle(_:)), for: .touchUpInside)
     }
     

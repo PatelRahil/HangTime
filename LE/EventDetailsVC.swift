@@ -105,8 +105,6 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
                 eventDetailsTableView.reloadData()
                 EditEventInfo.setTitle("Done", for: .normal)
                 
-                let cell = eventDetailsTableView.cellForRow(at: IndexPath(row: 2, section: 0)) as! CustomEventDetailsCell
-                
             }
             else {
                 eventDetailsTableView.reloadData()
@@ -203,12 +201,15 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         }
     override func viewWillDisappear(_ animated: Bool) {
         self.navigationController?.navigationBar.isTranslucent = true
-        navigationController?.navigationBar.barTintColor = nil
+        self.navigationController?.navigationBar.barTintColor = nil
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
     }
 
     override func viewWillAppear(_ animated: Bool) {
         self.navigationController?.navigationBar.isTranslucent = false
         self.navigationController?.navigationBar.barTintColor = nil
+        //if enabled, causes problems with the navigation bar disappearing if the gesture is only half completed
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = false
     }
     
     // MARK: - Table view methods

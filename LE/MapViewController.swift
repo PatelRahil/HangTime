@@ -226,13 +226,8 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
                         EventVariables.invitedFriends = event.invitedFriends
                         EventVariables.isPublic = event.isPublic
                         
-                        self.userRef.observeSingleEvent(of: .value,with: { snapshot in
-                            for user in snapshot.children {
-                                let userSnap = user as! FIRDataSnapshot
-                                if userSnap.key == "User: \(event.createdByUID)" {
-                                    nextController.eventCreator = User(snapshot: userSnap)
-                                }
-                            }
+                        self.userRef.child("User: \(event.createdByUID)").observeSingleEvent(of: .value,with: { snapshot in
+                            nextController.eventCreator = User(snapshot: snapshot)
                             nextController.setTitle() //This is what causes a switch to be added
                         })
                     }
