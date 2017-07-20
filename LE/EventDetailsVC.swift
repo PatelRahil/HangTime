@@ -420,7 +420,9 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         }
         else {
             EditEventInfo.isHidden = true
-            createRSVPBox()
+            if !EventVariables.isPublic {
+                createRSVPBox()
+            }
         }
 
         eventInfo.append(EventVariables.address)
