@@ -69,6 +69,8 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     
     var events: [Event] = []
     var pickedEventID:String = ""
+    var cameraHasBeenSetToCurrentPositionAtLeastOnce:Bool = false
+    var cameraPosition:GMSCameraPosition? = nil
 
     var currentUser:User!
     var mapView: GMSMapView = GMSMapView.map(withFrame: CGRect.zero, camera: GMSCameraPosition.camera(withLatitude: 0,longitude:0, zoom:6))
@@ -125,8 +127,16 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
             mapView.settings.myLocationButton = true
             view = mapView
             
+            if let cameraPos = cameraPosition {
+                mapView.camera = cameraPos
+            }
+            
         }
         
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        cameraPosition = mapView.camera
     }
     
     func updateMap() {
@@ -418,12 +428,14 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let location = locations.first {
-            
-            mapView.camera = GMSCameraPosition(target: location.coordinate, zoom: 15, bearing: 0, viewingAngle: 0)
-            
-            locationManager.stopUpdatingLocation()
-        }
         
+        if !cameraHasBeenSetToCurrentPositionAtLeastOnce {
+            if let location = locations.first {
+                    mapView.camera = GMSCameraPosition(target: location.coordinate, zoom: 15, bearing: 0, viewingAngle: 0)
+            
+                    locationManager.stopUpdatingLocation()
+            }
+            cameraHasBeenSetToCurrentPositionAtLeastOnce = true
+        }
     }
 }
