@@ -337,3 +337,8 @@ class CustomCreatedEventsCell: UITableViewCell {
     @IBOutlet weak var publicPrivateDateTimeLbl: UILabel!
     @IBOutlet weak var descriptionLbl: UILabel!
 }
+
+
+class ProfileView: UIView {
+    
+}

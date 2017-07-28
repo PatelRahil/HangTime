@@ -249,6 +249,24 @@
             </objects>
             <point key="canvasLocation" x="6108" y="-1173.4632683658172"/>
         </scene>
+        <!--View Controller-->
+        <scene sceneID="9I1-lM-bgg">
+            <objects>
+                <viewController id="cek-xS-c1K" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="lgh-mu-q7a"/>
+                        <viewControllerLayoutGuide type="bottom" id="Cda-vw-CsF"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="4sM-Ez-Rjh">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="MKT-Xu-uDu" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="8172" y="-1036"/>
+        </scene>
         <!--Settings-->
         <scene sceneID="Rw6-sy-di6">
             <objects>
@@ -340,7 +358,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Q3h-pU-vEd" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-783" y="-242"/>
+            <point key="canvasLocation" x="-689" y="-243"/>
         </scene>
         <!--Data View Controller-->
         <scene sceneID="snT-py-3hH">

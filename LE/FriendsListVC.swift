@@ -10,7 +10,7 @@ import Foundation
 import Firebase
 import FirebaseStorage
 
-class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate {
     var currentUser:User? = nil
     var tableDic:[Int:[String:String]] = [Int:[String:String]]()
     var profilePicDic:[String:UIImage] = [String:UIImage]()
@@ -44,7 +44,10 @@ class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         friendsListTableView.reloadData()
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print("refreshed \(tableDic.count)")
+        if !ProfileInfo.isVisible {
+            self.navigationController?.navigationBar.isUserInteractionEnabled = true
+        }
+        currentUser = User(data: UserData())
         return tableDic.count
     }
     
@@ -61,7 +64,38 @@ class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         setupFriendBtn(for: cell)
         
         cell.selectionStyle = .none
+        
+        cell.tag = indexPath.row
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(cellTapped(_:)))
+        tapGesture.delegate = self
+        tapGesture.cancelsTouchesInView = false
+        cell.addGestureRecognizer(tapGesture)
+        
         return cell
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if gestureRecognizer != revealViewController().panGestureRecognizer() {
+
+            let tableViewIfButtonIsTapped = touch.view?.superview?.superview?.superview?.superview
+            if tableViewIfButtonIsTapped == friendsListTableView {
+                print("Touch in tableview")
+                let touchPosition = touch.location(in: friendsListTableView)
+                let indexPath = friendsListTableView.indexPathForRow(at: touchPosition)
+                if let indexPath = indexPath {
+                    let cell:CustomFriendsListCell = friendsListTableView.cellForRow(at: indexPath) as! CustomFriendsListCell
+                    if touch.view == cell.FriendBtn {
+                        print("touch in button")
+                        return false
+                    }
+                }
+            }
+        
+            return true
+        }
+        else {
+            return true
+        }
     }
     
     private func setupArrays() {
@@ -136,6 +170,18 @@ class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         userRef.setValue(currentUser!.toAnyObject())
         
         friendsListTableView.reloadData()
+    }
+    
+    @objc private func cellTapped(_ sender: UITapGestureRecognizer) {
+        let tapLocation = sender.location(in: self.friendsListTableView)
+        let indexPath = friendsListTableView.indexPathForRow(at: tapLocation)
+        let cell = friendsListTableView.cellForRow(at: indexPath!)
+        let uid = friendsUIDs[cell!.tag]
+        let profilePic = profilePicDic[uid]
+        
+        ProfileInfo.presentOnTableView(tableView: self.friendsListTableView, userID: uid, superViewFrame: self.view.frame, currentUser: self.currentUser!, profilePic: profilePic!)
+        self.navigationController?.navigationBar.isUserInteractionEnabled = false
+        
     }
 }
 

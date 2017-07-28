@@ -45,63 +45,6 @@ class User {
             self.invitedEvents = invitedEvents
         }
         
-        /*
-        if let friendsStringRep = snapshotValue["friends"] as? String {
-            
-            friends = friendsStringRep.characters.split{$0 == ","}.map(String.init)
-            if let eventsStringRep = snapshotValue["createdEvents"] as? String {
-                createdEvents = eventsStringRep.characters.split{$0 == ","}.map(String.init)
-                let childRef = FIRDatabase.database().reference(withPath: "Users")
-                let userRef = childRef.child("User: \(self.userID)")
-                if let profilePicLink = snapshotValue["profilePicture"] as? String {
-                    profilePicDownloadLink = profilePicLink
-                }
-                else {
-                    profilePicDownloadLink = ""
-                }
-                userRef.setValue(self.toAnyObject())
-            }
-            else {
-                createdEvents = []
-                let childRef = FIRDatabase.database().reference(withPath: "Users")
-                let userRef = childRef.child("User: \(self.userID)")
-                if let profilePicLink = snapshotValue["profilePicture"] as? String {
-                    profilePicDownloadLink = profilePicLink
-                }
-                else {
-                    profilePicDownloadLink = ""
-                }
-                userRef.setValue(self.toAnyObject())
-            }
-        }
-        else {
-            friends = []
-            let childRef = FIRDatabase.database().reference(withPath: "Users")
-            let userRef = childRef.child("User: \(self.userID)")
-            if let eventsStringRep = snapshotValue["createdEvents"] as? String {
-                createdEvents = eventsStringRep.characters.split{$0 == ","}.map(String.init)
-                if let profilePicLink = snapshotValue["profilePicture"] as? String {
-                    profilePicDownloadLink = profilePicLink
-                }
-                else {
-                    profilePicDownloadLink = ""
-                }
-                userRef.setValue(self.toAnyObject())
-            }
-            else {
-                createdEvents = []
-                let childRef = FIRDatabase.database().reference(withPath: "Users")
-                let userRef = childRef.child("User: \(self.userID)")
-                if let profilePicLink = snapshotValue["profilePicture"] as? String {
-                    profilePicDownloadLink = profilePicLink
-                }
-                else {
-                    profilePicDownloadLink = ""
-                }
-            }
-            userRef.setValue(self.toAnyObject())
-        }
-        */
     }
     
     init (data:UserData) {

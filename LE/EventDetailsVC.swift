@@ -132,6 +132,9 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         view.bringSubview(toFront: datePickerSubview)
         datePickerSubview.isUserInteractionEnabled = true
         
+        self.navigationController?.navigationBar.isUserInteractionEnabled = false
+
+        
     }
     @IBAction func setDateAndTime(_ sender: Any) {
         let components = datePicker.calendar.dateComponents([.year, .month, .day, .minute, .hour], from: datePicker.date)
@@ -146,6 +149,8 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         greySubview.isHidden = true
         datePickerSubview.isHidden = true
         eventDetailsTableView.isUserInteractionEnabled = true
+        
+        self.navigationController?.navigationBar.isUserInteractionEnabled = true
     }
 
     // MARK: - View setup methods
@@ -198,6 +203,7 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
         greySubview.isHidden = true
         
         datePicker.minimumDate = Date()
+        
         }
     override func viewWillDisappear(_ animated: Bool) {
         self.navigationController?.navigationBar.isTranslucent = true
@@ -215,7 +221,6 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
     // MARK: - Table view methods
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        print("THIS:   \(EventVariables.isPublic)    \(TableArray)")
         //if an event is switched from private to public at any point, this occurs
         if EventVariables.isPublic && TableArray.contains("Add More Friends") {
             
@@ -1000,3 +1005,5 @@ extension UIView {
         self.layer.mask = mask
     }
 }
+
+

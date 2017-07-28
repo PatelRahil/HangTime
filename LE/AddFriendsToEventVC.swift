@@ -11,7 +11,7 @@ import FirebaseDatabase
 import Firebase
 import FirebaseStorage
 
-class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource {
+class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate {
     let rootRef = FIRDatabase.database().reference()
     let childRef = FIRDatabase.database().reference(withPath: "Users")
     let storageRef = FIRStorage.storage().reference()
@@ -66,7 +66,13 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
         
             let createEventVC = self.navigationController?.viewControllers[vcIndex!] as! AddEventController
             //createEventVC.invitedFriendsUIDs = addedFriends
-        
+            
+            addedFriends.forEach({ (friend) in
+                if !currentUser!.friends.contains(friend) {
+                    addedFriends = addedFriends.filter{$0 != friend}
+                }
+            })
+            
             self.childRef.observe(.value, with: { snapshot in
                 /*
                 for child in snapshot.children.allObjects as! [FIRDataSnapshot] {
@@ -78,6 +84,7 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
                     }
                 }
                  */
+                
                 for id in self.addedFriends {
                     for child in snapshot.children.allObjects as! [FIRDataSnapshot] {
                         if child.key == "User: \(id)" {
@@ -135,6 +142,10 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if !ProfileInfo.isVisible {
+            self.navigationController?.navigationBar.isUserInteractionEnabled = true
+        }
+        currentUser = User(data: UserData())
         return TableArray.count - 1
     }
     
@@ -147,6 +158,7 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
         cell.ProfileImg.image = profilePicArray[indexPath.row]
         cell.UsernameLbl.text = TableArray[indexPath.row + 1]
         index = indexPath.row
+        cell.AddFriendBtn.alpha = 1
         if (isAlreadyAdded(userID: allUserID[indexPath.row])) {
             cell.AddFriendBtn.setTitle("Added", for: .normal)
             //cell.AddFriendBtn.setTitleColor(UIColor.darkGray, for: .normal)
@@ -159,7 +171,20 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
             cell.AddFriendBtn.tag = indexPath.row
             cell.AddFriendBtn.addTarget(self, action: #selector(addFriendToEvent(_:)), for: .touchUpInside)
         }
+        //if the user for this cell is no longer a friend
+        if !currentUser!.friends.contains(allUserID[indexPath.row]) {
+            cell.AddFriendBtn.removeTarget(nil, action: nil, for: .allEvents)
+            cell.AddFriendBtn.setTitle("Not Friends", for: .normal)
+            cell.AddFriendBtn.alpha = 0.6
+        }
         cell.selectionStyle = UITableViewCellSelectionStyle.none
+        
+        cell.tag = indexPath.row
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(cellTapped(_:)))
+        tapGesture.delegate = self
+        tapGesture.cancelsTouchesInView = false
+        cell.addGestureRecognizer(tapGesture)
+        
         return cell
     }
     
@@ -187,6 +212,36 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
         doWhenTextFieldReturns()
         self.view.endEditing(true)
         return true
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        let tableViewIfButtonIsTapped = touch.view?.superview?.superview?.superview?.superview
+        if tableViewIfButtonIsTapped == AddFriendListTblView {
+            print("Touch in tableview")
+            let touchPosition = touch.location(in: AddFriendListTblView)
+            let indexPath = AddFriendListTblView.indexPathForRow(at: touchPosition)
+            if let indexPath = indexPath {
+                let cell:CustomAddFriendTableViewCell = AddFriendListTblView.cellForRow(at: indexPath) as! CustomAddFriendTableViewCell
+                if touch.view == cell.AddFriendBtn {
+                    print("touch in button")
+                    return false
+                }
+            }
+        }
+        
+        return true
+    }
+    
+    @objc private func cellTapped(_ sender: UITapGestureRecognizer) {
+        let tapLocation = sender.location(in: self.AddFriendListTblView)
+        let indexPath = AddFriendListTblView.indexPathForRow(at: tapLocation)
+        let cell = AddFriendListTblView.cellForRow(at: indexPath!)
+        let uid = allUserID[cell!.tag]
+        let profilePic = profilePicArray[cell!.tag]
+        
+        ProfileInfo.presentOnTableView(tableView: self.AddFriendListTblView, userID: uid, superViewFrame: self.view.frame, currentUser: self.currentUser!, profilePic: profilePic)
+        self.navigationController?.navigationBar.isUserInteractionEnabled = false
+        
     }
     
     private func doWhenTextFieldReturns() {

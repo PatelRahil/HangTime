@@ -28,7 +28,7 @@ extension UIImage {
     
 }
 
-class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource {
+class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate {
     
     let rootRef = FIRDatabase.database().reference()
     let childRef = FIRDatabase.database().reference(withPath: "Users")
@@ -68,6 +68,7 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
         SearchBar.attributedPlaceholder = attributedText
         SearchBar.delegate = self
         SearchBar.addTarget(self, action: #selector(removeAllCells), for: .touchDown)
+        
     }
     
     func loadUser() {
@@ -94,6 +95,10 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if !ProfileInfo.isVisible {
+            self.navigationController?.navigationBar.isUserInteractionEnabled = true
+        }
+        currentUser = User(data: UserData())
         return TableArray.count - 1
     }
     
@@ -104,16 +109,17 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = AddFriendListTblView.dequeueReusableCell(withIdentifier: "friendCell", for: indexPath) as! CustomTableViewCell
         cell.AddFriendBtn.removeTarget(nil, action: nil, for: .allEvents)
-                
-        cell.ProfileImg.image = profilePicArray[indexPath.row]
         
+        cell.ProfileImg.image = profilePicArray[indexPath.row]
         cell.UsernameLbl.text = TableArray[indexPath.row + 1]
+        
         
         index = indexPath.row
         cell.AddFriendBtn.layer.borderColor = Colors.blueGreen.cgColor
         cell.AddFriendBtn.layer.borderWidth = 1
         cell.AddFriendBtn.layer.cornerRadius = 4
         cell.AddFriendBtn.titleLabel?.font = UIFont.boldSystemFont(ofSize: (cell.AddFriendBtn.titleLabel?.font.pointSize)!)
+        
         if (isAlreadyFriend(userID: allUserID[indexPath.row])) {
             cell.AddFriendBtn.removeTarget(self, action: #selector(addFriend(_:)), for: .touchUpInside)
             cell.AddFriendBtn.setTitle("Friends", for: .normal)
@@ -131,18 +137,38 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
             cell.AddFriendBtn.addTarget(self, action: #selector(addFriend(_:)), for: .touchUpInside)
         }
         cell.selectionStyle = UITableViewCellSelectionStyle.none
+        
+        //for identifying which cell is tapped
+        cell.tag = indexPath.row
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(cellTapped(_:)))
+        tapGesture.delegate = self
+        tapGesture.cancelsTouchesInView = false
+        cell.addGestureRecognizer(tapGesture)
+        
+        
         return cell
     }
     
-    func isAlreadyFriend(userID:String) -> Bool {
-        var isFriend = false
-        
-        for friend in (currentUser?.friends)! {
-            if (friend == userID) {
-                isFriend = true
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        let tableViewIfButtonIsTapped = touch.view?.superview?.superview?.superview?.superview
+        if tableViewIfButtonIsTapped == AddFriendListTblView {
+            print("Touch in tableview")
+            let touchPosition = touch.location(in: AddFriendListTblView)
+            let indexPath = AddFriendListTblView.indexPathForRow(at: touchPosition)
+            if let indexPath = indexPath {
+                let cell:CustomTableViewCell = AddFriendListTblView.cellForRow(at: indexPath) as! CustomTableViewCell
+                if touch.view == cell.AddFriendBtn {
+                    print("touch in button")
+                    return false
+                }
             }
         }
-        return isFriend
+        
+        return true
+    }
+    
+    func isAlreadyFriend(userID:String) -> Bool {
+        return currentUser!.friends.contains(userID)
     }
     
     @objc private func addFriend(_ sender:UIButton) {
@@ -151,9 +177,11 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
             currentUser?.addFriend(uid: pickedUserID)
             let userRef = self.childRef.child("User: \(currentUser!.userID)")
             userRef.setValue(currentUser!.toAnyObject())
-            AddFriendListTblView.reloadData()
             UserData.updateData(withUser: currentUser!)
+
+            AddFriendListTblView.reloadData()
         }
+        
     }
     
     @objc private func removeFriend(_ sender:UIButton) {
@@ -162,9 +190,21 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
             currentUser?.removeFriend(uid: pickedUserID)
             let userRef = self.childRef.child("User: \(currentUser!.userID)")
             userRef.setValue(currentUser!.toAnyObject())
-            AddFriendListTblView.reloadData()
             UserData.updateData(withUser: currentUser!)
+            AddFriendListTblView.reloadData()
         }
+    }
+    
+    @objc private func cellTapped(_ sender: UITapGestureRecognizer) {
+        let tapLocation = sender.location(in: self.AddFriendListTblView)
+        let indexPath = AddFriendListTblView.indexPathForRow(at: tapLocation)
+        let cell = AddFriendListTblView.cellForRow(at: indexPath!)
+        let uid = allUserID[cell!.tag]
+        let profilePic = profilePicArray[cell!.tag]
+        
+        ProfileInfo.presentOnTableView(tableView: self.AddFriendListTblView, userID: uid, superViewFrame: self.view.frame, currentUser: self.currentUser!, profilePic: profilePic)
+        self.navigationController?.navigationBar.isUserInteractionEnabled = false
+        
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -221,16 +261,14 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
                     //and interate through that to find profile pic
                     //and make an array of the images to iterate through
                 }
-                print(self.allUserID)
                 
                 self.AddFriendListTblView.beginUpdates()
                 self.AddFriendListTblView.reloadData()
                 for (index,_) in self.allUserID.enumerated() {
-                    print(index)
                     self.AddFriendListTblView.insertRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
-                    print(index)
                 }
                 self.AddFriendListTblView.endUpdates()
+                
             }
             
             

@@ -107,13 +107,13 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
         editIsSelected = !editIsSelected
         selectedCellsIndex = []
         DeleteButton.setTitleColor(UIColor.lightGray, for: .normal)
-        if editIsSelected { //edit is tapped
+        if editIsSelected { //the word edit is tapped
             DeleteButton.isHidden = false
             SelectAllButton.isHidden = false
             EditButtonLbl.setTitle("Done", for: .normal)
             editInvitedFriendsTableView.setEditing(true, animated: true)
         }
-        else { //done is tapped
+        else { //the word done is tapped
             DeleteButton.isHidden = true
             SelectAllButton.isHidden = true
             EditButtonLbl.setTitle("Edit", for: .normal)
@@ -125,7 +125,11 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         loadProfilePictures()
-        determineRSVPStatus()
+        
+        if cameFromEventDetailsVC {
+            determineRSVPStatus()
+        }
+        
         DeleteButton.isHidden = true
         SelectAllButton.isHidden = true
         EditButtonLbl.isHidden = !editable!
@@ -133,6 +137,11 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        //updating the current user's data before tableview is set up
+        if !ProfileInfo.isVisible {
+            self.navigationController?.navigationBar.isUserInteractionEnabled = true
+        }
+        currentUser = User(data: UserData())
         return invitedFriendsUsernames.count
     }
     
@@ -156,9 +165,14 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
         
         if editIsSelected {
             cell.selectionStyle = UITableViewCellSelectionStyle.init(rawValue: 3)!
+            //cell.removeGestureRecognizer(tapGesture)
         }
         else {
             cell.selectionStyle = UITableViewCellSelectionStyle.none
+            
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(cellTapped(_:)))
+            cell.tag = indexPath.row
+            cell.addGestureRecognizer(tapGesture)
         }
         
         if cameFromEventDetailsVC {
@@ -185,6 +199,7 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
         }
         
         cell.tintColor = Colors.blueGreen
+        
         return cell
     }
     
@@ -254,6 +269,20 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
                 self.editInvitedFriendsTableView.reloadData()
             })
         }
+    }
+    
+    @objc private func cellTapped(_ sender: UITapGestureRecognizer) {
+        
+        print("CELL TAPPED")
+        let tapLocation = sender.location(in: self.editInvitedFriendsTableView)
+        let indexPath = editInvitedFriendsTableView.indexPathForRow(at: tapLocation)
+        let cell = editInvitedFriendsTableView.cellForRow(at: indexPath!)
+        let uid = invitedFriendsUIDs[cell!.tag]
+        let profilePic = profilePicArray[cell!.tag]
+        
+        ProfileInfo.presentOnTableView(tableView: self.editInvitedFriendsTableView, userID: uid, superViewFrame: self.view.frame, currentUser: self.currentUser!, profilePic: profilePic)
+        self.navigationController?.navigationBar.isUserInteractionEnabled = false
+        
     }
     
 }
