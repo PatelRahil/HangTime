@@ -68,13 +68,7 @@ class User {
         }
     }
     func stillFriends(with uid:String) -> Bool {
-        for friend in self.friends {
-            if friend == uid {
-                return true
-            }
-        }
-        
-        return false
+        return friends.contains(uid)
     }
     func changeUsername(username: String) {
         self.username = username

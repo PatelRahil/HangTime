@@ -58,7 +58,6 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
         print("{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}")
         selectedCellsIndex = selectedCellsIndex.sorted(by: >)
         for index in selectedCellsIndex {
-            print("index: \(index)\ninvitedFriendsUIDs: \(invitedFriendsUsernames)")
             invitedFriendsUIDs.remove(at: index)
             invitedFriendsUsernames.remove(at: index)
             profilePicArray.remove(at: index)
@@ -78,28 +77,11 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
         if cameFromEventDetailsVC {
             
             EventVariables.invitedFriends = invitedFriendsUIDs
-            /*
-            eventsRef.observeSingleEvent(of: .value, with: { (snapshot) in
-                print("VALUE \n\(snapshot.value)")
-                var event = Event(snapshot: snapshot)
-                
-                //the line below is somehow calling the "Event Details" segue from map view controller to event details VC and in the process calling the corresponding code in MapViewController's prepare(for segue:)
-                //event.invitedFriends = self.invitedFriendsUIDs
-                //eventsRef.setValue(event.toAnyObject())
-
-                let invFriendsRef = eventsRef.child("invitedFriends")
-                let invitedFriendsStringRep = self.invitedFriendsUIDs.joined(separator: ",")
-                invFriendsRef.setValue(invitedFriendsStringRep)
-                
-            })
-            */
-            
             
             let invFriendsRef = self.eventRef.child(EventVariables.eventID).child("invitedFriends")
             let invitedFriendsStringRep = self.invitedFriendsUIDs.joined(separator: ",")
             invFriendsRef.setValue(invitedFriendsStringRep)
             
-            //eventRef.setValue(invitedFriendsUIDs, forKey: "invitedFriends")
         }
  
     }
@@ -142,6 +124,35 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
             self.navigationController?.navigationBar.isUserInteractionEnabled = true
         }
         currentUser = User(data: UserData())
+        
+        var deletedIndices:[Int] = [Int]()
+        for (index,friend) in invitedFriendsUIDs.enumerated() {
+            if !currentUser!.stillFriends(with: friend) {
+                deletedIndices.append(index)
+            }
+        }
+        
+        var count = 0
+        for index in deletedIndices {
+            invitedFriendsUIDs.remove(at: (index - count))
+            invitedFriendsUsernames.remove(at: (index - count))
+            profilePicArray.remove(at: (index - count))
+            count += 1
+        }
+        
+        InvitedFriends.invitedFriendsUIDs = invitedFriendsUIDs
+        InvitedFriends.invitedFriendsUsernames = invitedFriendsUsernames
+        
+        if cameFromEventDetailsVC {
+            
+            EventVariables.invitedFriends = invitedFriendsUIDs
+            
+            let invFriendsRef = self.eventRef.child(EventVariables.eventID).child("invitedFriends")
+            let invitedFriendsStringRep = self.invitedFriendsUIDs.joined(separator: ",")
+            invFriendsRef.setValue(invitedFriendsStringRep)
+            
+        }
+        
         return invitedFriendsUsernames.count
     }
     
