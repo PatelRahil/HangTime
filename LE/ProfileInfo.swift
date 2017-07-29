@@ -163,6 +163,7 @@ class ProfileInfo {
         isVisible = false
         tableView.isUserInteractionEnabled = true
         tableView.isScrollEnabled = scrollingWasEnabled
+        tableView.reloadData()
         newView.removeFromSuperview()
         greyView.removeFromSuperview()
     }

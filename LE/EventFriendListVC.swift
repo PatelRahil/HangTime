@@ -120,24 +120,31 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         //updating the current user's data before tableview is set up
+        print(ProfileInfo.isVisible)
         if !ProfileInfo.isVisible {
             self.navigationController?.navigationBar.isUserInteractionEnabled = true
         }
         currentUser = User(data: UserData())
         
-        var deletedIndices:[Int] = [Int]()
-        for (index,friend) in invitedFriendsUIDs.enumerated() {
-            if !currentUser!.stillFriends(with: friend) {
-                deletedIndices.append(index)
+        //if the user created this event, his/her uid would not be in the list of invited uid's
+        let createdByUser = !invitedFriendsUIDs.contains(currentUser!.userID)
+        if createdByUser {
+            var deletedIndices:[Int] = [Int]()
+            for (index,friend) in invitedFriendsUIDs.enumerated() {
+                if !currentUser!.stillFriends(with: friend) {
+                    deletedIndices.append(index)
+                }
             }
-        }
         
-        var count = 0
-        for index in deletedIndices {
-            invitedFriendsUIDs.remove(at: (index - count))
-            invitedFriendsUsernames.remove(at: (index - count))
-            profilePicArray.remove(at: (index - count))
-            count += 1
+            var count = 0
+            print(deletedIndices)
+            for index in deletedIndices {
+                print("\(index) ----- \(count)")
+                invitedFriendsUIDs.remove(at: (index - count))
+                invitedFriendsUsernames.remove(at: (index - count))
+                profilePicArray.remove(at: (index - count))
+                count += 1
+            }
         }
         
         InvitedFriends.invitedFriendsUIDs = invitedFriendsUIDs

@@ -23,6 +23,8 @@ struct Event {
     var isPublic: Bool
     var invitedFriends: [String]
     var createdByUID: String
+    var eventMillisecondsFromEST: Int
+    
     
     //now obsolete; need to delete it and all references to it
     var eventID: Int
@@ -55,6 +57,7 @@ struct Event {
         self.isPublic = isPublic
         self.invitedFriends = invitedFriends
         self.createdByUID = createdByUID
+        self.eventMillisecondsFromEST = (TimeZone.current.secondsFromGMT() + 14400) * 1000
     }
     
     init (snapshot: FIRDataSnapshot) {
@@ -74,6 +77,7 @@ struct Event {
         let invitedFriendsStringRep = snapshotValue["invitedFriends"] as! String
         invitedFriends = invitedFriendsStringRep.characters.split{$0 == ","}.map(String.init)
         createdByUID = snapshotValue["createdByUID"] as! String
+        eventMillisecondsFromEST = snapshotValue["millisecondsFromEST"] as! Int
     }
     
     mutating func addFriendToEvent(withID: String) {
@@ -82,7 +86,7 @@ struct Event {
     
     func toAnyObject() -> Any {
         let invitedFriendsStringRep = invitedFriends.joined(separator: ",")
-        return [
+        let object: [String:Any] = [
             "description": description,
             "day": day,
             "month": month,
@@ -95,7 +99,10 @@ struct Event {
             "eventID": eventID,
             "isPublic": isPublic,
             "invitedFriends": invitedFriendsStringRep,
-            "createdByUID": createdByUID
+            "createdByUID": createdByUID,
+            "millisecondsFromEST": eventMillisecondsFromEST
         ]
+        
+        return object
     }
 }
