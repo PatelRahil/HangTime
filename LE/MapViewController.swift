@@ -150,9 +150,9 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
                 let snap = item as! FIRDataSnapshot
                 let event = Event(snapshot: snap)
                 
-                let thirtyPast: Bool = self.isThirtyPastCurrentTime(date: NSDate(), hour: Int(event.hour)!, minute: Int(event.minute)!, day: Int(event.day)!, month: Int(event.month)!, year: Int(event.year)!)
+                //let thirtyPast: Bool = self.isThirtyPastCurrentTime(date: NSDate(), hour: Int(event.hour)!, minute: Int(event.minute)!, day: Int(event.day)!, month: Int(event.month)!, year: Int(event.year)!)
                 let allowedToView: Bool = self.isAllowedToViewEvent(isPublic:event.isPublic, friendsAllowed: event.invitedFriends, tag:snap.key)
-                if !thirtyPast && allowedToView {
+                if allowedToView {
                     newEvents.append(event)
                     self.createMarker(hour:event.hour, minute:event.minute, address:event.address, latitude:event.latitude, longitude:event.longitude, description:event.description, day:event.day, month:event.month, year:event.year, tag:snap.key, uid:event.createdByUID)
                     
