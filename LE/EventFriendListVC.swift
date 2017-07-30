@@ -183,14 +183,28 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
         
         if editIsSelected {
             cell.selectionStyle = UITableViewCellSelectionStyle.init(rawValue: 3)!
-            //cell.removeGestureRecognizer(tapGesture)
+            if let gestureRecognizers = cell.gestureRecognizers {
+                for gestureRecognizer in gestureRecognizers {
+                    cell.removeGestureRecognizer(gestureRecognizer)
+                }
+            }
+            print(cell.gestureRecognizers)
         }
         else {
+            print("-----------------------------\nEDIT ISNT SELECTED")
             cell.selectionStyle = UITableViewCellSelectionStyle.none
             
             let tapGesture = UITapGestureRecognizer(target: self, action: #selector(cellTapped(_:)))
             cell.tag = indexPath.row
-            cell.addGestureRecognizer(tapGesture)
+            if let gestureRecognizers = cell.gestureRecognizers {
+                if gestureRecognizers == [] {
+                    cell.addGestureRecognizer(tapGesture)
+                }
+            }
+            else {
+                cell.addGestureRecognizer(tapGesture)
+            }
+            print("Gesture Recognizers:\n\(cell.gestureRecognizers)")
         }
         
         if cameFromEventDetailsVC {
@@ -222,18 +236,24 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        DeleteButton.setTitleColor(UIColor.init(red:14.0/255, green:122.0/255, blue:254.0/255, alpha: 1), for: .normal)
-        selectedCellsIndex.append(indexPath.row)
+        if tableView.isEditing {
+            DeleteButton.setTitleColor(UIColor.init(red:14.0/255, green:122.0/255, blue:254.0/255, alpha: 1), for: .normal)
+            selectedCellsIndex.append(indexPath.row)
+        }
     }
     
     override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        print("Row \(indexPath.row) deselected")
+        if tableView.isEditing {
         for (index, element) in selectedCellsIndex.enumerated() {
             if element == indexPath.row {
-                selectedCellsIndex.remove(at: index)
+                    print("Index \(index)")
+                    selectedCellsIndex.remove(at: index)
+                }
             }
-        }
-        if selectedCellsIndex == [] {
-            DeleteButton.setTitleColor(UIColor.gray, for: .normal)
+            if selectedCellsIndex == [] {
+                DeleteButton.setTitleColor(UIColor.gray, for: .normal)
+            }
         }
         print(selectedCellsIndex)
     }
