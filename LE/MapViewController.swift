@@ -239,15 +239,23 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         //draw polyline from current location to marker
         if let coord = locationManager.location?.coordinate {
             
-            let coordBounds:GMSCoordinateBounds = GMSCoordinateBounds(coordinate: coord, coordinate: marker.position)
+            var coordBounds:GMSCoordinateBounds = GMSCoordinateBounds(coordinate: coord, coordinate: marker.position)
+            
             let insets:UIEdgeInsets = UIEdgeInsets(top: 50, left: 50, bottom: 50, right: 50)
             mapView.animate(to: mapView.camera(for: coordBounds, insets: insets)!)
             drawPath(startLocation: coord, endLocation: marker.position) { (status, success) in
                 if success {
                     self.drawRoute()
+                    for i in 0..<Int(self.routePolyline.path!.count()) {
+                        print(self.routePolyline.path!.coordinate(at: UInt(i)))
+                        coordBounds.includingCoordinate(self.routePolyline.path!.coordinate(at: UInt(i)))
+                    }
+                    coordBounds = coordBounds.includingPath(self.routePolyline.path!)
+                    mapView.animate(to: mapView.camera(for: coordBounds, insets: insets)!)
+                    
+                    print("\n\n\(coordBounds.southWest)")
                 }
             }
-            
             
             return true
         }
@@ -261,7 +269,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         let origin = "\(startLocation.latitude),\(startLocation.longitude)"
         let destination = "\(endLocation.latitude),\(endLocation.longitude)"
         let url = "https://maps.googleapis.com/maps/api/directions/json?origin=\(origin)&destination=\(destination)&mode=driving"
-        print(url)
         //url = url.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
         let directionsURL = URL(string: url)
         
@@ -308,7 +315,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
                 }
             }
             catch {
-                print("invalid d error: \n\(error)")
+                print("invalid error: \n\(error)")
             }
         }
         
@@ -319,6 +326,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         
         let path: GMSPath = GMSPath(fromEncodedPath: route)!
         routePolyline = GMSPolyline(path: path)
+        routePolyline.strokeWidth = 4
         routePolyline.map = mapView
     }
     
