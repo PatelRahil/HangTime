@@ -80,17 +80,11 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     
     //Google Map Locations variables
     var selectedRoute: Dictionary<String, AnyObject>!
-    
     var overviewPolyline: Dictionary<String, AnyObject>!
-    
     var originCoordinate: CLLocationCoordinate2D!
-    
     var destinationCoordinate: CLLocationCoordinate2D!
-    
     var originAddress: String!
-    
     var destinationAddress: String!
-    
     var routePolyline: GMSPolyline!
     
     //just the image of the button
@@ -246,14 +240,8 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
             drawPath(startLocation: coord, endLocation: marker.position) { (status, success) in
                 if success {
                     self.drawRoute()
-                    for i in 0..<Int(self.routePolyline.path!.count()) {
-                        print(self.routePolyline.path!.coordinate(at: UInt(i)))
-                        coordBounds.includingCoordinate(self.routePolyline.path!.coordinate(at: UInt(i)))
-                    }
                     coordBounds = coordBounds.includingPath(self.routePolyline.path!)
                     mapView.animate(to: mapView.camera(for: coordBounds, insets: insets)!)
-                    
-                    print("\n\n\(coordBounds.southWest)")
                 }
             }
             
@@ -265,13 +253,12 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     }
 
     func drawPath(startLocation:CLLocationCoordinate2D, endLocation:CLLocationCoordinate2D, completionHandler: @escaping ((_ status: String, _ success: Bool) -> Void)) {
-        print("DRAW PATH CALLED")
         let origin = "\(startLocation.latitude),\(startLocation.longitude)"
         let destination = "\(endLocation.latitude),\(endLocation.longitude)"
         let url = "https://maps.googleapis.com/maps/api/directions/json?origin=\(origin)&destination=\(destination)&mode=driving"
         //url = url.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
         let directionsURL = URL(string: url)
-        
+        print(url)
         DispatchQueue.main.async {
             do {
                 let directionsData = try Data(contentsOf: directionsURL!)
@@ -315,7 +302,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
                 }
             }
             catch {
-                print("invalid error: \n\(error)")
+                print("invalid data error: \n\(error)")
             }
         }
         
@@ -327,6 +314,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         let path: GMSPath = GMSPath(fromEncodedPath: route)!
         routePolyline = GMSPolyline(path: path)
         routePolyline.strokeWidth = 4
+        routePolyline.strokeColor = Colors.blueGreen
         routePolyline.map = mapView
     }
     
