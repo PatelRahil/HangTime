@@ -208,7 +208,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         }
  
         marker.position = GMSCameraPosition.camera(withLatitude: CLLocationDegrees(latitude),longitude:CLLocationDegrees(longitude), zoom:6).target
-        marker.snippet = description + "\nDate: " + month + "/" + day + "/" + year + "\nTime: " + timeStr + "\nLocation: " + address
+        marker.snippet = description + "\n" + month + "/" + day + "/" + year + "\n" + timeStr + "\n" + address
         marker.userData = tag
         marker.appearAnimation = kGMSMarkerAnimationPop
         marker.map = mapView
