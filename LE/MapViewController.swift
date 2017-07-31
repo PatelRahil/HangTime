@@ -92,11 +92,13 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     @IBOutlet var OpenSideBar: UIButton!
     @IBAction func PushButton(_ sender: Any, forEvent event: UIEvent) {
     }
+    
+    // MARK: - View methods
     override func viewDidLoad() {
         
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        loadUser()
+        currentUser = User(data: UserData())
         mapView.delegate = self
         view.addSubview(mapView)
         
@@ -145,10 +147,117 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        updateMap()
+        self.navigationController?.isNavigationBarHidden = true
+        print("Button Position:::  (\(PressButton.frame.midX),\(PressButton.frame.midY)")
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         cameraPosition = mapView.camera
     }
     
+    // MARK: - GMSMapView Delegate methods
+    func mapView(_ mapView: GMSMapView, didTapInfoWindowOf marker: GMSMarker) {
+        //perform segue depending on the event
+        
+        pickedEventID = marker.userData as! String
+        performSegue(withIdentifier: "EventDetails", sender: marker)
+    }
+    func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
+        //remove any previous polylines
+        mapView.clear()
+        for marker in markers {
+            marker.appearAnimation = kGMSMarkerAnimationNone
+            marker.map = self.mapView
+            
+        }
+        
+        //draw polyline from current location to marker
+        if let coord = locationManager.location?.coordinate {
+            
+            var coordBounds:GMSCoordinateBounds = GMSCoordinateBounds(coordinate: coord, coordinate: marker.position)
+            
+            let insets:UIEdgeInsets = UIEdgeInsets(top: 50, left: 50, bottom: 50, right: 50)
+            mapView.animate(to: mapView.camera(for: coordBounds, insets: insets)!)
+            drawPath(startLocation: coord, endLocation: marker.position) { (status, success) in
+                if success {
+                    self.drawRoute()
+                    coordBounds = coordBounds.includingPath(self.routePolyline.path!)
+                    mapView.animate(to: mapView.camera(for: coordBounds, insets: insets)!)
+                }
+            }
+            
+            return true
+        }
+        else {
+            return false
+        }
+    }
+    
+    // MARK: - CLLocationManager delegate methods
+    private func locationManager1(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+        if status == .authorizedWhenInUse {
+            
+            locationManager.startUpdatingLocation()
+            
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        
+        if !cameraHasBeenSetToCurrentPositionAtLeastOnce {
+            if let location = locations.first {
+                mapView.camera = GMSCameraPosition(target: location.coordinate, zoom: 15, bearing: 0, viewingAngle: 0)
+                
+                locationManager.stopUpdatingLocation()
+            }
+            cameraHasBeenSetToCurrentPositionAtLeastOnce = true
+        }
+    }
+    
+    // MARK: - Segue methods
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        locationManager.stopUpdatingLocation()
+        if segue.identifier == "EventDetails" {
+            let nextController = (segue.destination as! EventDetailsVC)
+            childRef.observeSingleEvent(of: .value, with: { snapshot in
+                for item in snapshot.children {
+                    let snap = item as! FIRDataSnapshot
+                    if snap.key == self.pickedEventID {
+                        let event:Event = Event(snapshot: snap)
+                        
+                        print(event)
+                        
+                        EventVariables.address = event.address
+                        EventVariables.dateDay = Int(event.day)!
+                        EventVariables.dateMonth = Int(event.month)!
+                        EventVariables.dateYear = Int(event.year)!
+                        EventVariables.description = event.description
+                        EventVariables.latitude = event.latitude
+                        EventVariables.longitude = event.longitude
+                        EventVariables.timeHr = Int(event.hour)!
+                        EventVariables.timeMin = Int(event.minute)!
+                        EventVariables.eventID = self.pickedEventID
+                        EventVariables.createdByUID = event.createdByUID
+                        EventVariables.invitedFriends = event.invitedFriends
+                        EventVariables.isPublic = event.isPublic
+                        
+                        self.userRef.child("User: \(event.createdByUID)").observeSingleEvent(of: .value,with: { snapshot in
+                            nextController.eventCreator = User(snapshot: snapshot)
+                            nextController.setTitle() //This is what causes a switch to be added
+                        })
+                    }
+                }
+            })
+            
+        }
+    }
+    
+    // MARK: - Private convenience methods
+    
+    //MARK: laying out mapView
     func updateMap() {
         mapView.clear()
         childRef.observeSingleEvent(of: .value, with: { snapshot in
@@ -213,43 +322,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         markers.append(marker)
         updateMarkerView(uid: uid, marker: marker)
         
-    }
-    
-    func mapView(_ mapView: GMSMapView, didTapInfoWindowOf marker: GMSMarker) {
-        //perform segue depending on the event
-        
-        pickedEventID = marker.userData as! String
-        performSegue(withIdentifier: "EventDetails", sender: marker)
-    }
-    func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
-        //remove any previous polylines
-        mapView.clear()
-        for marker in markers {
-            marker.appearAnimation = kGMSMarkerAnimationNone
-            marker.map = self.mapView
-            
-        }
-        
-        //draw polyline from current location to marker
-        if let coord = locationManager.location?.coordinate {
-            
-            var coordBounds:GMSCoordinateBounds = GMSCoordinateBounds(coordinate: coord, coordinate: marker.position)
-            
-            let insets:UIEdgeInsets = UIEdgeInsets(top: 50, left: 50, bottom: 50, right: 50)
-            mapView.animate(to: mapView.camera(for: coordBounds, insets: insets)!)
-            drawPath(startLocation: coord, endLocation: marker.position) { (status, success) in
-                if success {
-                    self.drawRoute()
-                    coordBounds = coordBounds.includingPath(self.routePolyline.path!)
-                    mapView.animate(to: mapView.camera(for: coordBounds, insets: insets)!)
-                }
-            }
-            
-            return true
-        }
-        else {
-            return false
-        }
     }
 
     func drawPath(startLocation:CLLocationCoordinate2D, endLocation:CLLocationCoordinate2D, completionHandler: @escaping ((_ status: String, _ success: Bool) -> Void)) {
@@ -318,54 +390,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         routePolyline.map = mapView
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        locationManager.stopUpdatingLocation()
-        if segue.identifier == "EventDetails" {
-            let nextController = (segue.destination as! EventDetailsVC)
-            childRef.observeSingleEvent(of: .value, with: { snapshot in
-                for item in snapshot.children {
-                    let snap = item as! FIRDataSnapshot
-                    if snap.key == self.pickedEventID {
-                        let event:Event = Event(snapshot: snap)
-                        
-                        print(event)
-                        
-                        EventVariables.address = event.address
-                        EventVariables.dateDay = Int(event.day)!
-                        EventVariables.dateMonth = Int(event.month)!
-                        EventVariables.dateYear = Int(event.year)!
-                        EventVariables.description = event.description 
-                        EventVariables.latitude = event.latitude 
-                        EventVariables.longitude = event.longitude 
-                        EventVariables.timeHr = Int(event.hour)!
-                        EventVariables.timeMin = Int(event.minute)!
-                        EventVariables.eventID = self.pickedEventID
-                        EventVariables.createdByUID = event.createdByUID
-                        EventVariables.invitedFriends = event.invitedFriends
-                        EventVariables.isPublic = event.isPublic
-                        
-                        self.userRef.child("User: \(event.createdByUID)").observeSingleEvent(of: .value,with: { snapshot in
-                            nextController.eventCreator = User(snapshot: snapshot)
-                            nextController.setTitle() //This is what causes a switch to be added
-                        })
-                    }
-                }
-            })
-            
-        }
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        updateMap()
-        self.navigationController?.isNavigationBarHidden = true
-        print("Button Position:::  (\(PressButton.frame.midX),\(PressButton.frame.midY)")
-    }
     private func isAllowedToViewEvent(isPublic:Bool, friendsAllowed:[String], tag:String) -> Bool {
         var isAllowed = false
         var userCreatedThisEvent = false
@@ -459,6 +483,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         }
     }
     
+    // MARK: UI Stuff
     private func layoutButtons() {
         let width = UIScreen.main.bounds.width
         let height = UIScreen.main.bounds.height
@@ -471,14 +496,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         PressButton.frame = CGRect(origin: origin, size: size)
         OpenSideBar.frame = CGRect(origin: CGPoint(x: 7 * width / 320, y: height / 25), size: CGSize(width: height / 22, height: height / 22))
         
-        
-        //PressButton.frame = CGRect(origin: CGPoint(x:5*UIScreen.main.bounds.width / 6, y:UIScreen.main.bounds.height / 25), size: CGSize(width: 7*UIScreen.main.bounds.width / 40, height: UIScreen.main.bounds.height / 11))
-        //OpenSideBar.frame = CGRect(origin: CGPoint(x:7*UIScreen.main.bounds.width / 320, y:UIScreen.main.bounds.height / 25), size: CGSize(width: 7*UIScreen.main.bounds.width / 80, height: UIScreen.main.bounds.height / 22))
-    }
-    
-    func loadUser() {
-        
-        currentUser = User(data: UserData())
     }
     
     private func setupMarkerView(profilePic: UIImage) -> UIImageView {
@@ -527,23 +544,4 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         })
     }
     
-    private func locationManager1(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
-        if status == .authorizedWhenInUse {
-            
-            locationManager.startUpdatingLocation()
-            
-        }
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        
-        if !cameraHasBeenSetToCurrentPositionAtLeastOnce {
-            if let location = locations.first {
-                    mapView.camera = GMSCameraPosition(target: location.coordinate, zoom: 15, bearing: 0, viewingAngle: 0)
-            
-                    locationManager.stopUpdatingLocation()
-            }
-            cameraHasBeenSetToCurrentPositionAtLeastOnce = true
-        }
-    }
 }
