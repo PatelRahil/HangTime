@@ -68,6 +68,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     let storageRef = FIRStorage.storage().reference()
     
     var events: [Event] = []
+    var markers: [GMSMarker] = []
     var pickedEventID:String = ""
     var cameraHasBeenSetToCurrentPositionAtLeastOnce:Bool = false
     var cameraPosition:GMSCameraPosition? = nil
@@ -76,6 +77,21 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     var mapView: GMSMapView = GMSMapView.map(withFrame: CGRect.zero, camera: GMSCameraPosition.camera(withLatitude: 0,longitude:0, zoom:6))
     
     let locationManager = CLLocationManager()
+    
+    //Google Map Locations variables
+    var selectedRoute: Dictionary<String, AnyObject>!
+    
+    var overviewPolyline: Dictionary<String, AnyObject>!
+    
+    var originCoordinate: CLLocationCoordinate2D!
+    
+    var destinationCoordinate: CLLocationCoordinate2D!
+    
+    var originAddress: String!
+    
+    var destinationAddress: String!
+    
+    var routePolyline: GMSPolyline!
     
     //just the image of the button
     @IBOutlet weak var PressButton: UIButton!
@@ -200,14 +216,110 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         marker.iconView = setupMarkerView(profilePic: #imageLiteral(resourceName: "DefaultProfileImg"))
         marker.tracksViewChanges = true
         marker.infoWindowAnchor = CGPoint(x: 0.5, y: 0.25)
+        markers.append(marker)
         updateMarkerView(uid: uid, marker: marker)
         
     }
     
     func mapView(_ mapView: GMSMapView, didTapInfoWindowOf marker: GMSMarker) {
         //perform segue depending on the event
+        
         pickedEventID = marker.userData as! String
         performSegue(withIdentifier: "EventDetails", sender: marker)
+    }
+    func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
+        //remove any previous polylines
+        mapView.clear()
+        for marker in markers {
+            marker.appearAnimation = kGMSMarkerAnimationNone
+            marker.map = self.mapView
+            
+        }
+        
+        //draw polyline from current location to marker
+        if let coord = locationManager.location?.coordinate {
+            
+            let coordBounds:GMSCoordinateBounds = GMSCoordinateBounds(coordinate: coord, coordinate: marker.position)
+            let insets:UIEdgeInsets = UIEdgeInsets(top: 50, left: 50, bottom: 50, right: 50)
+            mapView.animate(to: mapView.camera(for: coordBounds, insets: insets)!)
+            drawPath(startLocation: coord, endLocation: marker.position) { (status, success) in
+                if success {
+                    self.drawRoute()
+                }
+            }
+            
+            
+            return true
+        }
+        else {
+            return false
+        }
+    }
+
+    func drawPath(startLocation:CLLocationCoordinate2D, endLocation:CLLocationCoordinate2D, completionHandler: @escaping ((_ status: String, _ success: Bool) -> Void)) {
+        print("DRAW PATH CALLED")
+        let origin = "\(startLocation.latitude),\(startLocation.longitude)"
+        let destination = "\(endLocation.latitude),\(endLocation.longitude)"
+        let url = "https://maps.googleapis.com/maps/api/directions/json?origin=\(origin)&destination=\(destination)&mode=driving"
+        print(url)
+        //url = url.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
+        let directionsURL = URL(string: url)
+        
+        DispatchQueue.main.async {
+            do {
+                let directionsData = try Data(contentsOf: directionsURL!)
+                print("VALID DATA")
+                do {
+                    let dict = try JSONSerialization.jsonObject(with: directionsData, options: JSONSerialization.ReadingOptions.mutableContainers)
+                    if let dictionary = dict as? [String:AnyObject] {
+                        
+                        
+                            let status = dictionary["status"] as! String
+                
+                            if status == "OK" {
+                                self.selectedRoute = (dictionary["routes"] as! Array<Dictionary<String, AnyObject>>)[0]
+                                self.overviewPolyline = self.selectedRoute["overview_polyline"] as! Dictionary<String, AnyObject>
+                    
+                                let legs = self.selectedRoute["legs"] as! Array<Dictionary<String, AnyObject>>
+                    
+                                let startLocationDictionary = legs[0]["start_location"] as! Dictionary<String, AnyObject>
+                                self.originCoordinate = CLLocationCoordinate2DMake(startLocationDictionary["lat"] as! Double, startLocationDictionary["lng"] as! Double)
+                    
+                                let endLocationDictionary = legs[legs.count - 1]["end_location"] as! Dictionary<String, AnyObject>
+                                self.destinationCoordinate = CLLocationCoordinate2DMake(endLocationDictionary["lat"] as! Double, endLocationDictionary["lng"] as! Double)
+                    
+                                self.originAddress = legs[0]["start_address"] as! String
+                                self.destinationAddress = legs[legs.count - 1]["end_address"] as! String
+                                completionHandler(status, true)
+                    //self.calculateTotalDistanceAndDuration()
+                    
+                            }
+                            else {
+                    completionHandler(status, false)
+                            }
+                
+                        }
+                }
+                
+                catch {
+                    print("json error: \(error.localizedDescription)")
+                    completionHandler("",false)
+
+                }
+            }
+            catch {
+                print("invalid d error: \n\(error)")
+            }
+        }
+        
+    }
+    
+    func drawRoute() {
+        let route = self.overviewPolyline["points"] as! String
+        
+        let path: GMSPath = GMSPath(fromEncodedPath: route)!
+        routePolyline = GMSPolyline(path: path)
+        routePolyline.map = mapView
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
