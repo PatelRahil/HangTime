@@ -164,8 +164,8 @@ class AddEventController: UIViewController, UITextFieldDelegate {
             EventVariables.timeHr = hour
             EventVariables.timeMin = minute
             EventVariables.address = address!
-        
-
+            
+            
             geocoder.geocodeAddressString(address!) { (placemarks, error) in
                 // Process Response
                 self.processResponse(withPlacemarks: placemarks, error: error, sender: sender)
@@ -255,11 +255,19 @@ class AddEventController: UIViewController, UITextFieldDelegate {
             
             let eventRefID = childRef.childByAutoId()
             eventStrID = eventRefID.key
-            currentUser?.addEvent(eventID: eventRefID.key)
-            let userRef = self.userRef.child("User: \(currentUser!.userID)")
-            userRef.setValue(currentUser!.toAnyObject())
             UserData.updateData(withUser: currentUser!)
             eventRefID.setValue(event.toAnyObject())
+            
+            let userRef = self.userRef.child("User: \(currentUser!.userID)")
+            //this is to update the user in the case that any of his/her events expired since the last time currentUser was set
+            userRef.observe(.value, with: { (snapshot) in
+                self.currentUser = User(snapshot: snapshot)
+                self.currentUser?.addEvent(eventID: eventRefID.key)
+                UserData.updateData(withUser: self.currentUser!)
+                userRef.setValue(self.currentUser!.toAnyObject())
+            })
+            
+
         }
         else {
             let event = Event(description: DescriptionTextbox.text!,

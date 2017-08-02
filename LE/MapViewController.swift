@@ -122,6 +122,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         layoutButtons()
         view.addSubview(self.PressButton)
         view.addSubview(self.OpenSideBar)
+        view.addSubview(self.findAddressView())
         
         OpenSideBar.addTarget(self.revealViewController(), action: #selector(SWRevealViewController.revealToggle(_:)), for: .touchUpInside)
         //self.revealViewController().rearViewRevealWidth = self.view.frame.width - 200
@@ -189,7 +190,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
                 }
             }
             
-            return true
+            return false
         }
         else {
             return false
@@ -458,11 +459,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
             tempYear += 1
         }
         
-        
-        let expireTime = "\(tempHr):\(tempMin)"
-        let expireDate = "\(tempMonth)/\(tempDay)/\(tempYear)"
-        //print("Expire Time and Date: \(expireTime)\n\(expireDate)")
-        
         if (tempYear > thisYear) {
             return false
         }
@@ -542,6 +538,28 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
             }
             marker.tracksViewChanges = false
         })
+    }
+    
+    private func findAddressView() -> UIView {
+        let containerView = UIView()
+        let width = view.frame.width
+        let height = view.frame.height/3
+        let xPos:CGFloat = 0
+        let yPos = view.frame.height - height/3
+        containerView.frame = CGRect(x: xPos, y: yPos, width: width, height: height)
+        containerView.backgroundColor = UIColor.init(r: 255, g: 255, b: 255, a: 0.8)
+        
+        let textField = UITextField()
+        let textFieldWidth = width
+        let textFieldHeight:CGFloat = 40
+        let textFieldXPos:CGFloat = 0
+        let textFieldYPos:CGFloat = 10
+        textField.frame = CGRect(x: textFieldXPos, y: textFieldYPos, width: textFieldWidth, height: textFieldHeight)
+        textField.placeholder = "Search"
+        
+        containerView.addSubview(textField)
+        
+        return containerView
     }
     
 }

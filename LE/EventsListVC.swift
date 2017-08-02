@@ -71,14 +71,19 @@ class EventsListVC: UIViewController, UITableViewDelegate, UITableViewDataSource
             for (id,_) in invitedEvents {
                 let eventRef = FIRDatabase.database().reference(withPath: "Events").child(id)
                 eventRef.observe(.value, with: { [preCount = count] (snapshot) in
-                    let event = Event(snapshot: snapshot)
-                    self.determineUsername(of: event.createdByUID, count: preCount)
-                    self.downloadPhoto(of: event.createdByUID, count: preCount)
-                    self.invitedEvents[preCount] = event
+                    if snapshot.exists() {
+                        let event = Event(snapshot: snapshot)
+                        self.determineUsername(of: event.createdByUID, count: preCount)
+                        self.downloadPhoto(of: event.createdByUID, count: preCount)
+                        self.invitedEvents[preCount] = event
                 
-                    //self.eventsListTableView.reloadData()
-                    //to imporove performace, only reload the row that contain's this event's information
-                    self.eventsListTableView.reloadRows(at: [IndexPath.init(row: preCount, section: 1)], with: .fade)
+                        //self.eventsListTableView.reloadData()
+                        //to imporove performace, only reload the row that contain's this event's information
+                        self.eventsListTableView.reloadRows(at: [IndexPath.init(row: preCount, section: 1)], with: .fade)
+                    }
+                    else {
+                        print(id)
+                    }
                 })
                 self.invitedEventIDs[count] = id
                 count += 1
@@ -91,12 +96,18 @@ class EventsListVC: UIViewController, UITableViewDelegate, UITableViewDataSource
         for id in currentUser!.createdEvents {
             let eventRef = FIRDatabase.database().reference(withPath: "Events").child(id)
             eventRef.observe(.value, with: { [preCount = count] (snapshot) in
-                let event = Event(snapshot: snapshot)
-                self.createdEvents[preCount] = event
+                print(snapshot.value)
+                if snapshot.exists() {
+                    let event = Event(snapshot: snapshot)
+                    self.createdEvents[preCount] = event
                 
                 //self.eventsListTableView.reloadData()
                 //to improve performace, only reload the row that contain's this event's information
-                self.eventsListTableView.reloadRows(at: [IndexPath.init(row: preCount, section: 0)], with: .fade)
+                    self.eventsListTableView.reloadRows(at: [IndexPath.init(row: preCount, section: 0)], with: .fade)
+                }
+                else {
+                    print(id)
+                }
             })
             count += 1
         }
