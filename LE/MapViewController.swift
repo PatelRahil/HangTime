@@ -150,7 +150,10 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         
     }
     override func viewDidLayoutSubviews() {
+        //ensures the laying out is only done once
         if !isContainerLaidOut {
+            //moves the myLocation button above the container view
+            mapView.padding = UIEdgeInsets(top: 0, left: 0, bottom: view.frame.height/9, right: 0)
             searchLocationsContainerView = findAddressView()
             view.addSubview(searchLocationsContainerView)
         }
@@ -628,6 +631,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         textField.borderStyle = .roundedRect
         textField.placeholder = "Search"
         textField.clearButtonMode = .whileEditing
+        textField.returnKeyType = .search
         textField.delegate = self
         textField.addTarget(self, action: #selector(processTextfieldText(_:)), for: .editingChanged)
         
@@ -637,6 +641,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         let tableViewHeight:CGFloat = containerHeight - tableViewYPos
         
         tableView.frame = CGRect(x: tableViewXPos, y: tableViewYPos, width: tableViewWidth, height: tableViewHeight)
+        tableView.separatorColor = Colors.blueGreen
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "placeCell")
