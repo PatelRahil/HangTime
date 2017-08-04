@@ -69,6 +69,8 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     
     var events: [Event] = []
     var markers: [GMSMarker] = []
+    // following variable is [eventID:eventCreatorProfilePic]
+    var eventCreatorProfilePics: [String:UIImage] = [String:UIImage]()
     var pickedEventID:String = ""
     var cameraHasBeenSetToCurrentPositionAtLeastOnce:Bool = false
     var cameraPosition:GMSCameraPosition? = nil
@@ -599,6 +601,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
                 let userPhoto = UIImage(data: data!)
                 
                 marker.iconView = self.setupMarkerView(profilePic: userPhoto!)
+                self.eventCreatorProfilePics[marker.userData as! String] = userPhoto!
             }
             else {
                 //error
@@ -659,11 +662,18 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     
     // MARK:- Other
     func clearMapExceptEventMarkers() {
+        print("CLEARING MAP")
+        print(eventCreatorProfilePics)
         mapView.clear()
         for marker in markers {
             marker.appearAnimation = kGMSMarkerAnimationNone
             marker.map = self.mapView
             
+            if let eventID = marker.userData as? String {
+                if let profilePic = eventCreatorProfilePics[eventID] {
+                    marker.iconView = setupMarkerView(profilePic: profilePic)
+                }
+            }
         }
     }
     
