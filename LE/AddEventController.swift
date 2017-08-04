@@ -348,20 +348,6 @@ class AddEventController: UIViewController, UITextFieldDelegate {
     }
     
     func loadUser() {
-        /*
-        if let currentUser = FIRAuth.auth()?.currentUser {
-            let userID = currentUser.uid
-            let userRef = FIRDatabase.database().reference(withPath: "Users")
-            userRef.observe(.value, with: { snapshot in
-                for item in snapshot.children.allObjects as! [FIRDataSnapshot] {
-                    let dict = item.value as! Dictionary<String,Any>
-                    if (dict["UserID"] as? String == userID) {
-                        self.currentUser = User(snapshot: item)
-                    }
-                }
-            })
-        }
-         */
         currentUser = User(data: UserData())
     }
     
@@ -381,8 +367,12 @@ class AddEventController: UIViewController, UITextFieldDelegate {
         CreateEventBtn.setTitleColor(UIColor.white, for: .normal)
         CreateEventBtn.layer.cornerRadius = 5
         
-        self.AddressTextbox.delegate = self
-        self.DescriptionTextbox.delegate = self
+        AddressTextbox.text = address
+        AddressTextbox.clearButtonMode = .whileEditing
+        AddressTextbox.delegate = self
+        
+        DescriptionTextbox.clearButtonMode = .whileEditing
+        DescriptionTextbox.delegate = self
         
         DetailsBtn.isHidden = true
         AddFriendsBtn.isHidden = true

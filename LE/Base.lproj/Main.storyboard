@@ -1186,7 +1186,7 @@
         <!--Create Event-->
         <scene sceneID="had-tI-0wO">
             <objects>
-                <viewController id="PwQ-w3-1Qo" customClass="AddEventController" customModule="LE" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="AddEventController" id="PwQ-w3-1Qo" customClass="AddEventController" customModule="LE" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="W66-go-tFi"/>
                         <viewControllerLayoutGuide type="bottom" id="i47-Jw-9RB"/>
@@ -1658,8 +1658,8 @@
         <image name="SlideMenuIcon" width="225" height="225"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Fdl-S6-tSX"/>
-        <segue reference="9hV-fX-ZIQ"/>
-        <segue reference="ZX0-eu-5ey"/>
+        <segue reference="baM-Ze-IdE"/>
+        <segue reference="DLv-nX-Xau"/>
+        <segue reference="81d-nb-Nx4"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -87,6 +87,23 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     var destinationAddress: String!
     var routePolyline: GMSPolyline!
     
+    //container view variables
+    var searchLocationsContainerView:UIView = UIView()
+    var textField:UITextField = UITextField()
+    var isContainerLaidOut = false
+    var originalContainerPosition:CGPoint? = nil
+    var direction:GestureDirection? = nil
+    
+    //Location searching variables
+    var tableView:UITableView = UITableView()
+    var tableData:[String] = [String]()
+    var secondaryTableData:[String] = [String]()
+    var fullAddressData:[String] = [String]()
+    var placeIDData:[String] = [String]()
+    var dataFetcher:GMSAutocompleteFetcher? = nil
+    var tempMarker:GMSMarker? = nil
+    
+
     //just the image of the button
     @IBOutlet weak var PressButton: UIButton!
     @IBOutlet var OpenSideBar: UIButton!
@@ -122,11 +139,21 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         layoutButtons()
         view.addSubview(self.PressButton)
         view.addSubview(self.OpenSideBar)
-        view.addSubview(self.findAddressView())
         
         OpenSideBar.addTarget(self.revealViewController(), action: #selector(SWRevealViewController.revealToggle(_:)), for: .touchUpInside)
         //self.revealViewController().rearViewRevealWidth = self.view.frame.width - 200
 
+        //removes a default gesture recognizer blocker from the mapview so that other ui elements can be interacted with
+        for gesture in mapView.gestureRecognizers! {
+            mapView.removeGestureRecognizer(gesture)
+        }
+        
+    }
+    override func viewDidLayoutSubviews() {
+        if !isContainerLaidOut {
+            searchLocationsContainerView = findAddressView()
+            view.addSubview(searchLocationsContainerView)
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -162,38 +189,69 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     // MARK: - GMSMapView Delegate methods
     func mapView(_ mapView: GMSMapView, didTapInfoWindowOf marker: GMSMarker) {
         //perform segue depending on the event
-        
-        pickedEventID = marker.userData as! String
-        performSegue(withIdentifier: "EventDetails", sender: marker)
-    }
-    func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
-        //remove any previous polylines
-        mapView.clear()
-        for marker in markers {
-            marker.appearAnimation = kGMSMarkerAnimationNone
-            marker.map = self.mapView
-            
+        var userData:String = marker.userData as! String
+        let firstChar = userData[userData.startIndex]
+
+        if firstChar == "&" {
+            userData.remove(at:userData.startIndex)
+            print("USERDATA: \(userData)")
+            pushToCreateEventWithAddress(address: userData)
         }
+        else {
+            pickedEventID = marker.userData as! String
+            performSegue(withIdentifier: "EventDetails", sender: marker)
+        }
+    }
+    
+    func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
         
-        //draw polyline from current location to marker
-        if let coord = locationManager.location?.coordinate {
+        if let marker = tempMarker {
+            var userData:String = marker.userData as! String
             
-            var coordBounds:GMSCoordinateBounds = GMSCoordinateBounds(coordinate: coord, coordinate: marker.position)
-            
-            let insets:UIEdgeInsets = UIEdgeInsets(top: 50, left: 50, bottom: 50, right: 50)
-            mapView.animate(to: mapView.camera(for: coordBounds, insets: insets)!)
-            drawPath(startLocation: coord, endLocation: marker.position) { (status, success) in
-                if success {
-                    self.drawRoute()
-                    coordBounds = coordBounds.includingPath(self.routePolyline.path!)
-                    mapView.animate(to: mapView.camera(for: coordBounds, insets: insets)!)
+            userData.remove(at: userData.startIndex)
+            for (index,address) in fullAddressData.enumerated() {
+                if address == userData {
+                    let indexPath:IndexPath = IndexPath(row: index, section: 0)
+                    print(indexPath)
+                    tableView.deselectRow(at: indexPath, animated: false)
                 }
             }
-            
+        }
+        
+        clearMapExceptEventMarkers()
+    }
+    
+    func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
+        let userData:String = marker.userData as! String
+        let firstChar = userData[userData.startIndex]
+        if firstChar == "&" {
             return false
         }
         else {
-            return false
+            //remove any previous polylines
+            clearMapExceptEventMarkers()
+        
+            //draw polyline from current location to marker
+            if let coord = locationManager.location?.coordinate {
+            
+                var coordBounds:GMSCoordinateBounds = GMSCoordinateBounds(coordinate: coord, coordinate: marker.position)
+            
+                let insets:UIEdgeInsets = UIEdgeInsets(top: 50, left: 50, bottom: 50, right: 50)
+                //mapView.animate(to: mapView.camera(for: coordBounds, insets: insets)!)
+                drawPath(startLocation: coord, endLocation: marker.position) { (status, success) in
+                    if success {
+                        self.drawRoute()
+                        coordBounds = coordBounds.includingPath(self.routePolyline.path!)
+                        mapView.animate(to: mapView.camera(for: coordBounds, insets: insets)!)
+                    }
+                }
+                mapView.selectedMarker = marker
+            
+                return true
+            }
+            else {
+                return false
+            }
         }
     }
     
@@ -218,7 +276,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         }
     }
     
-    // MARK: - Segue methods
+    // MARK: - Transition methods
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         locationManager.stopUpdatingLocation()
         if segue.identifier == "EventDetails" {
@@ -254,6 +312,13 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
             })
             
         }
+    }
+    
+    private func pushToCreateEventWithAddress(address:String) {
+        let destinationVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "AddEventController") as! AddEventController
+        destinationVC.address = address
+        
+        self.navigationController?.pushViewController(destinationVC, animated: true)
     }
     
     // MARK: - Private convenience methods
@@ -331,7 +396,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         let url = "https://maps.googleapis.com/maps/api/directions/json?origin=\(origin)&destination=\(destination)&mode=driving"
         //url = url.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
         let directionsURL = URL(string: url)
-        print(url)
         DispatchQueue.main.async {
             do {
                 let directionsData = try Data(contentsOf: directionsURL!)
@@ -541,25 +605,259 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     }
     
     private func findAddressView() -> UIView {
-        let containerView = UIView()
-        let width = view.frame.width
-        let height = view.frame.height/3
-        let xPos:CGFloat = 0
-        let yPos = view.frame.height - height/3
-        containerView.frame = CGRect(x: xPos, y: yPos, width: width, height: height)
-        containerView.backgroundColor = UIColor.init(r: 255, g: 255, b: 255, a: 0.8)
+        let swipeGesture:UIPanGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(swipeRecognizer(gestureRecognizer:)))
+        swipeGesture.delegate = self
         
-        let textField = UITextField()
-        let textFieldWidth = width
-        let textFieldHeight:CGFloat = 40
-        let textFieldXPos:CGFloat = 0
+        let containerView = UIView()
+        let containerWidth = view.frame.width
+        let containerHeight = 2 * view.frame.height/3
+        let xPos:CGFloat = 0
+        let yPos = view.frame.height - containerHeight/6
+        containerView.frame = CGRect(x: xPos, y: yPos, width: containerWidth, height: containerHeight)
+        containerView.backgroundColor = UIColor.init(r: 255, g: 255, b: 255, a: 0.9)
+        containerView.layer.cornerRadius = 8
+        containerView.addGestureRecognizer(swipeGesture)
+        
+        let textFieldXPos:CGFloat = 10
         let textFieldYPos:CGFloat = 10
+        let textFieldHeight:CGFloat = 40
+        let textFieldWidth:CGFloat = containerWidth - textFieldXPos * 2
+
         textField.frame = CGRect(x: textFieldXPos, y: textFieldYPos, width: textFieldWidth, height: textFieldHeight)
+        textField.backgroundColor = UIColor.init(r: 204, g: 204, b: 204, a: 1)
+        textField.borderStyle = .roundedRect
         textField.placeholder = "Search"
+        textField.clearButtonMode = .whileEditing
+        textField.delegate = self
+        textField.addTarget(self, action: #selector(processTextfieldText(_:)), for: .editingChanged)
+        
+        let tableViewXPos:CGFloat = 0
+        let tableViewYPos:CGFloat = textFieldYPos * 2 + textFieldHeight
+        let tableViewWidth:CGFloat = containerWidth
+        let tableViewHeight:CGFloat = containerHeight - tableViewYPos
+        
+        tableView.frame = CGRect(x: tableViewXPos, y: tableViewYPos, width: tableViewWidth, height: tableViewHeight)
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "placeCell")
+        
+        let filter = GMSAutocompleteFilter()
+        filter.type = .address
+        dataFetcher = GMSAutocompleteFetcher(bounds: nil, filter: nil)
+        dataFetcher?.delegate = self
         
         containerView.addSubview(textField)
-        
+        containerView.addSubview(tableView)
+        isContainerLaidOut = true
         return containerView
     }
     
+    // MARK:- Other
+    func clearMapExceptEventMarkers() {
+        mapView.clear()
+        for marker in markers {
+            marker.appearAnimation = kGMSMarkerAnimationNone
+            marker.map = self.mapView
+            
+        }
+    }
+    
+}
+
+// MARK:- Textfield Methods
+extension MapViewController:UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        return true
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        let frame = searchLocationsContainerView.frame
+        UIView.animate(withDuration: 0.3) {
+            let endPoint:CGPoint = CGPoint(x: 0, y: self.view.frame.height/3)
+            self.searchLocationsContainerView.frame = CGRect(origin: endPoint, size: frame.size)
+        }
+    }
+    
+    func processTextfieldText(_ sender:UITextField) {
+        if let input = sender.text {
+            searchForLocationWithText(text: input)
+        }
+    }
+    
+    private func searchForLocationWithText(text:String) {
+        dataFetcher?.sourceTextHasChanged(text)
+    }
+}
+
+// MARK:- GMSAutocompleteFetcherDelegate
+extension MapViewController: GMSAutocompleteFetcherDelegate {
+   
+    func didAutocomplete(with predictions: [GMSAutocompletePrediction]) {
+        tableData.removeAll()
+        secondaryTableData.removeAll()
+        fullAddressData.removeAll()
+        placeIDData.removeAll()
+        
+        for prediction in predictions {
+            
+            tableData.append(prediction.attributedPrimaryText.string)
+            fullAddressData.append(prediction.attributedFullText.string)
+            if let placeID = prediction.placeID {
+                placeIDData.append(placeID)
+            }
+            else {
+                fullAddressData.append("")
+            }
+            if let secondaryText = prediction.attributedSecondaryText?.string {
+                secondaryTableData.append(secondaryText)
+            }
+            else {
+                secondaryTableData.append("")
+            }
+            
+        }
+        tableView.reloadData()
+    }
+    
+    func didFailAutocompleteWithError(_ error: Error) {
+        //resultText?.text = error.localizedDescription
+        print(error.localizedDescription)
+    }
+}
+
+// MARK:- TableView Methods
+extension MapViewController:UITableViewDelegate {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 75
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        //remove marker from previous selection if it exists
+        clearMapExceptEventMarkers()
+        
+        //move search view down to give room for the mapView
+        let frame = searchLocationsContainerView.frame
+        UIView.animate(withDuration: 0.3) {
+            let endPoint:CGPoint = CGPoint(x: 0, y: 8 * self.view.frame.height/9)
+            self.searchLocationsContainerView.frame = CGRect(origin: endPoint, size: frame.size)
+        }
+        
+        
+        let selectedAddress:String = fullAddressData[indexPath.row]
+        if placeIDData[indexPath.row] == "" {
+            
+        }
+        else {
+            let url = "https://maps.googleapis.com/maps/api/place/details/json?placeid=\(placeIDData[indexPath.row])&key=AIzaSyB4pOS_SFVlZ78dl6rYDyzhkXWu7nrASk8"
+            let directionsURL = URL(string: url)
+            do {
+                let data = try Data(contentsOf: directionsURL!)
+                do {
+                    let json = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.mutableContainers)
+                    if let dict = json as? [String:AnyObject] {
+                        
+                        let result = dict["result"] as! Dictionary<String,Any>
+                        let geometry = result["geometry"] as! Dictionary<String,Any>
+                        let address:[String:Any] = geometry["location"] as! Dictionary<String, Any>
+                        let coord = CLLocationCoordinate2D(latitude: address["lat"] as! CLLocationDegrees, longitude: address["lng"] as! CLLocationDegrees)
+                        
+                        textField.text = selectedAddress
+                        
+                        self.tempMarker = GMSMarker(position: coord)
+                        self.tempMarker?.snippet = "Tap to create an event here\n\(selectedAddress)"
+                        self.tempMarker?.userData = "&\(selectedAddress)"
+                        self.tempMarker?.map = self.mapView
+                        self.mapView.animate(toLocation: coord)
+                        self.mapView.selectedMarker = self.tempMarker
+                        
+                    }
+                } catch {
+                    print("Invalid json")
+                }
+                
+            } catch {
+                print("Bad data")
+            }
+        }
+    }
+ 
+}
+
+extension MapViewController:UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return tableData.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "defaultCell")
+        cell.textLabel?.text = tableData[indexPath.row]
+        cell.textLabel?.highlightedTextColor = UIColor.white
+        cell.detailTextLabel?.text = secondaryTableData[indexPath.row]
+        cell.detailTextLabel?.highlightedTextColor = UIColor.white
+        
+        let selectedBGView:UIView = UIView()
+        selectedBGView.backgroundColor = Colors.blueGreen
+        cell.selectedBackgroundView = selectedBGView
+        
+        return cell
+    }
+}
+
+// MARK:- Gesture Delegate methods
+extension MapViewController:UIGestureRecognizerDelegate {
+    
+    enum GestureDirection {
+        case up,down,left,right
+    }
+    
+    func swipeRecognizer(gestureRecognizer: UIPanGestureRecognizer) {
+        
+        if gestureRecognizer.state == .began {
+            originalContainerPosition = searchLocationsContainerView.center
+        }
+        
+        if gestureRecognizer.state == .changed {
+            let translation = gestureRecognizer.translation(in: view)
+            if translation.y > 0 {
+                direction = .down
+            }
+            else if translation.y < 0 {
+                direction = .up
+            }
+            
+            let newCenter = CGPoint(x: searchLocationsContainerView.center.x, y: originalContainerPosition!.y + translation.y)
+            let refRect:UIView = UIView(frame: CGRect(origin: CGPoint.zero, size: searchLocationsContainerView.frame.size))
+            refRect.center = newCenter
+
+            if direction == .down {
+                searchLocationsContainerView.center = newCenter
+            }
+            else if direction == .up && refRect.frame.minY >= self.view.frame.height/3 {
+                searchLocationsContainerView.center = newCenter
+            }
+            
+        }
+        
+        if gestureRecognizer.state == .ended {
+            if let direction = direction {
+                if direction == .down {
+                    let frame = searchLocationsContainerView.frame
+                    UIView.animate(withDuration: 0.3) {
+                        let endPoint:CGPoint = CGPoint(x: 0, y: 8 * self.view.frame.height/9)
+                        self.searchLocationsContainerView.frame = CGRect(origin: endPoint, size: frame.size)
+                    }
+                }
+                else if direction == .up {
+                    let frame = searchLocationsContainerView.frame
+                    UIView.animate(withDuration: 0.3) {
+                        let endPoint:CGPoint = CGPoint(x: 0, y: self.view.frame.height/3)
+                        self.searchLocationsContainerView.frame = CGRect(origin: endPoint, size: frame.size)
+                    }
+                }
+            }
+            self.view.endEditing(true)
+        }
+        
+    }
 }

@@ -127,7 +127,13 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
         currentUser = User(data: UserData())
         
         //if the user created this event, his/her uid would not be in the list of invited uid's
+        
+        
+        //uncomment this if you want unfriended users to automatically be removed from the events you added them to
+        //CAUTION: It is buggy and will crash. Do not assume it works.
+        /*
         let createdByUser = !invitedFriendsUIDs.contains(currentUser!.userID)
+
         if createdByUser {
             var deletedIndices:[Int] = [Int]()
             for (index,friend) in invitedFriendsUIDs.enumerated() {
@@ -146,6 +152,7 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
                 count += 1
             }
         }
+         */
         
         InvitedFriends.invitedFriendsUIDs = invitedFriendsUIDs
         InvitedFriends.invitedFriendsUsernames = invitedFriendsUsernames
