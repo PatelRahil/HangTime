@@ -42,7 +42,7 @@ class DataViewController: UIViewController, UITextFieldDelegate {
 
     @IBAction func newAccountButton(_ sender: UIButton, forEvent event: UIEvent) {
         try! FIRAuth.auth()!.signOut()
-        self.performSegue(withIdentifier: "NewAccountSegue", sender: sender)
+        self.performSegue(withIdentifier: "CreateAccountSegue", sender: sender)
     }
     
     @IBOutlet weak var dontHaveAccountLabel: UILabel!
@@ -57,7 +57,6 @@ class DataViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        print("HEY HEY HEY HEY HEY HEY")
         checkIfUserIsLoggedIn()
         
         self.passwordTextBox.delegate = self
@@ -135,7 +134,7 @@ class DataViewController: UIViewController, UITextFieldDelegate {
         let userID = FIRAuth.auth()?.currentUser?.uid
         if let userID = userID {
         self.childRef?.child("User: \(userID)").observeSingleEvent(of: .value, with: { (snapshot) in
-            print("\n\n\n\nLOGGING IN USER\(snapshot.value!)\n\n\n\n")
+            if snapshot.exists() {
                     self.currentUser = User(snapshot: snapshot)
                     
                     var profilePic:UIImage = #imageLiteral(resourceName: "DefaultProfileImg")
@@ -161,6 +160,16 @@ class DataViewController: UIViewController, UITextFieldDelegate {
                         UserData.updateData(withUser: self.currentUser!, profilePic: profilePic)
                         self.performSegue(withIdentifier: "LoginSegue", sender: sender)
                     }
+            }
+            else {
+                print("TRIED TO LOG IN BUT ACCOUNT HAS NO DATA")
+                do {
+                try FIRAuth.auth()?.signOut()
+                }
+                catch {
+                    print("user not signed on in the first place")
+                }
+            }
         })
         /*
         self.childRef!.observeSingleEvent(of: .value, with: { snapshot in
@@ -202,9 +211,7 @@ class DataViewController: UIViewController, UITextFieldDelegate {
     }
     
     private func checkIfUserIsLoggedIn() {
-        print("BROOOOOO")
             authListener = FIRAuth.auth()?.addStateDidChangeListener { auth, user in
-                print("SOOOOOOO")
                 if let _ = user {
                 // User is signed in.
                     if !self.isLoading {

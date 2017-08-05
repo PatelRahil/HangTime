@@ -596,6 +596,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     private func updateMarkerView(uid:String, marker:GMSMarker) {
         
         let filePath = "Users/User: \(uid)/\("profilePicture")"
+        
         self.storageRef.child(filePath).data(withMaxSize: 10*1024*1024, completion: { (data, error) in
             if error == nil {
                 let userPhoto = UIImage(data: data!)
@@ -750,7 +751,7 @@ extension MapViewController:UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //remove marker from previous selection if it exists
         clearMapExceptEventMarkers()
-        
+        self.view.endEditing(true)
         //move search view down to give room for the mapView
         let frame = searchLocationsContainerView.frame
         UIView.animate(withDuration: 0.3) {

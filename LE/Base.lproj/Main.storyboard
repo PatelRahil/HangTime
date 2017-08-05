@@ -488,8 +488,8 @@
                         <outlet property="loginView" destination="s1b-V9-EN7" id="R20-PE-Dl6"/>
                         <outlet property="passwordTextBox" destination="cJy-Gb-PPT" id="ldO-nO-mjb"/>
                         <outlet property="usernameTextBox" destination="mT5-fq-B2m" id="SIs-hn-vq7"/>
-                        <segue destination="exr-63-aMy" kind="show" identifier="NewAccountSegue" id="xYg-fW-zc2"/>
                         <segue destination="TqV-cV-dkA" kind="show" identifier="LoginSegue" id="8kf-ku-17t"/>
+                        <segue destination="Z2A-2P-Lnv" kind="show" identifier="CreateAccountSegue" id="gt2-AD-yJB"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="GmD-Rr-ZGN" sceneMemberID="firstResponder"/>
@@ -569,9 +569,6 @@
                                 <rect key="frame" x="16" y="16" width="34" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Back"/>
-                                <connections>
-                                    <segue destination="S4R-Ja-viH" kind="show" id="gbR-32-eqa"/>
-                                </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3CL-NA-R1s">
                                 <rect key="frame" x="143" y="184" width="175" height="11"/>
@@ -612,12 +609,32 @@
                         <outlet property="UsernameTextBox" destination="327-cQ-Hae" id="ozD-zI-0eb"/>
                         <outlet property="emailButton" destination="iFW-cR-aCe" id="qC4-bZ-7Z6"/>
                         <outlet property="usernameTakenLbl" destination="3CL-NA-R1s" id="TBv-67-EI4"/>
-                        <segue destination="TqV-cV-dkA" kind="show" identifier="CreateAccountSegue" id="Fdl-S6-tSX"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EwP-YT-ek8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1160.8" y="-1119.4902548725638"/>
+            <point key="canvasLocation" x="-690" y="-1091"/>
+        </scene>
+        <!--Create AccountVC-->
+        <scene sceneID="MEa-SW-mha">
+            <objects>
+                <viewController id="Z2A-2P-Lnv" customClass="CreateAccountVC" customModule="LE" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="4r4-LK-18a"/>
+                        <viewControllerLayoutGuide type="bottom" id="4ln-Yr-4z6"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="zJp-yL-h5V">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <connections>
+                        <segue destination="TqV-cV-dkA" kind="show" identifier="CreateEventSegue" id="h4G-QJ-zNA"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dDS-iR-Gn6" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1041" y="-956"/>
         </scene>
         <!--Reveal View Controller-->
         <scene sceneID="Xlc-is-k1S">
@@ -1658,7 +1675,7 @@
         <image name="SlideMenuIcon" width="225" height="225"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="baM-Ze-IdE"/>
+        <segue reference="h4G-QJ-zNA"/>
         <segue reference="DLv-nX-Xau"/>
         <segue reference="81d-nb-Nx4"/>
     </inferredMetricsTieBreakers>

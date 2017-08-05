@@ -252,4 +252,5 @@ extension ProfileInfo {
             tableView.bringSubview(toFront: newView)
         })
     }
+
 }
