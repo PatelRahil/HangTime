@@ -564,7 +564,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     }
     
     private func setupMarkerView(profilePic: UIImage) -> UIImageView {
-        let markerOutline = UIImage(named: "CustomMarker.png")!
+        let markerOutline = UIImage(named: "newMarker.png")!
         let markerView = UIImageView()
 
         let size = CGSize(width: 60, height: 96)

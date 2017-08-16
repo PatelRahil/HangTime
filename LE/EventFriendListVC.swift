@@ -198,7 +198,6 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
             print(cell.gestureRecognizers)
         }
         else {
-            print("-----------------------------\nEDIT ISNT SELECTED")
             cell.selectionStyle = UITableViewCellSelectionStyle.none
             
             let tapGesture = UITapGestureRecognizer(target: self, action: #selector(cellTapped(_:)))
@@ -211,7 +210,6 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
             else {
                 cell.addGestureRecognizer(tapGesture)
             }
-            print("Gesture Recognizers:\n\(cell.gestureRecognizers)")
         }
         
         if cameFromEventDetailsVC {
@@ -302,6 +300,7 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
     }
     
     private func determineRSVPStatus() {
+        print(invitedFriendsUIDs)
         for userID in invitedFriendsUIDs {
             //default value
             rsvpStatusArray[userID] = 3
@@ -309,11 +308,14 @@ class EventFriendListVC: UITableViewController, UINavigationControllerDelegate {
             let userRef = FIRDatabase.database().reference(withPath: "Users")
             let invitedEventRef = userRef.child("User: \(userID)").child("invitedEvents").child(EventVariables.eventID)
             invitedEventRef.observe(.value, with: { (snapshot) in
-                
+                print(snapshot)
                 self.rsvpStatusArray[userID] = snapshot.value as? Int
+                
+                print(self.rsvpStatusArray)
                 self.editInvitedFriendsTableView.reloadData()
             })
         }
+        print(rsvpStatusArray)
     }
     
     @objc private func cellTapped(_ sender: UITapGestureRecognizer) {
