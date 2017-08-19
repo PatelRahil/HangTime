@@ -28,6 +28,10 @@
 	<string>Allow the app to access your location while running?</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Allow access to the photo library for the profile picture?</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

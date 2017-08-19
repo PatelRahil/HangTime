@@ -17,6 +17,10 @@ class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     var friendsUIDs:[String] = [String]()
     
     
+    var addedYouDic:[Int:[String:String]] = [Int:[String:String]]()
+    var addedYouProfilePicDic:[String:UIImage] = [String:UIImage]()
+    var addedYouUIDs:[String] = [String]()
+    
     @IBOutlet weak var OpenSideBar: UIButton!
     @IBOutlet weak var friendsListTableView: UITableView!
     
@@ -27,7 +31,7 @@ class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         friendsListTableView.dataSource = self
         
         
-        setupArrays()
+        //setupArrays()
         updateTableArray()
         
         
@@ -43,29 +47,90 @@ class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         updateTableArray()
         friendsListTableView.reloadData()
     }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if !ProfileInfo.isVisible {
-            self.navigationController?.navigationBar.isUserInteractionEnabled = true
+        if section == 0 {
+            if addedYouUIDs.count == 0 {
+                return 1
+            }
+            
+            else if addedYouUIDs.count > 3 {
+                return 3
+            }
+            
+            else {
+                return addedYouUIDs.count
+            }
         }
-        currentUser = User(data: UserData())
-        return tableDic.count
+        else {
+            if !ProfileInfo.isVisible {
+                self.navigationController?.navigationBar.isUserInteractionEnabled = true
+            }
+            currentUser = User(data: UserData())
+            return tableDic.count
+        }
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if section == 0 {
+            return "Added You"
+        }
+        else {
+            return "Friends"
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "friendCell") as! CustomFriendsListCell
         
-        let friendUID = friendsUIDs[indexPath.row]
-        let usernameDic = tableDic[indexPath.row]!
-        let username = usernameDic[friendUID]
+        var friendUID = ""
+        var usernameDic:[String:String] = [String:String]()
+        var username = ""
+        
+        
+        if indexPath.section == 0 {
+            if addedYouUIDs.count == 0 {
+                cell.ProfilePic.isHidden = true
+                cell.FriendBtn.isHidden = true
+                cell.UsernameLbl.textColor = UIColor.gray
+                cell.UsernameLbl.textAlignment = .right
+                cell.UsernameLbl.text = "No one yet..."
+                cell.tag = 0
+            }
+            else {
+                friendUID = addedYouUIDs[indexPath.row]
+                usernameDic = addedYouDic[indexPath.row]!
+                username = usernameDic[friendUID]!
+                
+                cell.ProfilePic.image = addedYouProfilePicDic[friendUID]
+                cell.UsernameLbl.text = username
+                
+                cell.tag = -indexPath.row - 1
+            }
+            
+        }
+        else {
+            print("--------------------------------------------")
+            print(tableDic)
+            friendUID = friendsUIDs[indexPath.row]
+            usernameDic = tableDic[indexPath.row]!
+            username = usernameDic[friendUID]!
+            
+            cell.ProfilePic.image = profilePicDic[friendUID]
+            cell.UsernameLbl.text = username
+            
+            cell.tag = indexPath.row + 1
+        }
         
         cell.isFriends = currentUser!.stillFriends(with: friendUID)
-        cell.UsernameLbl.text = username
-        cell.ProfilePic.image = profilePicDic[friendUID]
         setupFriendBtn(for: cell)
         
         cell.selectionStyle = .none
         
-        cell.tag = indexPath.row
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(cellTapped(_:)))
         tapGesture.delegate = self
         tapGesture.cancelsTouchesInView = false
@@ -103,6 +168,16 @@ class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
             tableDic[index] = [uid:"Loading..."]
             profilePicDic[uid] = #imageLiteral(resourceName: "DefaultProfileImg")
         }
+        
+        var count = 0
+        print(currentUser!.addedYouFriends)
+        for (uid,_) in currentUser!.addedYouFriends {
+            addedYouDic[count] = [uid:"Loading..."]
+            addedYouProfilePicDic[uid] = #imageLiteral(resourceName: "DefaultProfileImg")
+            addedYouUIDs.append(uid)
+            count += 1
+        }
+        
         friendsUIDs = currentUser!.friends
         friendsListTableView.reloadData()
     }
@@ -110,7 +185,7 @@ class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     private func updateTableArray() {
         for (index,uid) in currentUser!.friends.enumerated() {
             let userRef = FIRDatabase.database().reference(withPath: "Users").child("User: \(uid)")
-            userRef.observeSingleEvent(of: .value, with: { (snapshot) in
+            userRef.observeSingleEvent(of: .value, with: { [index,uid](snapshot) in
                 let userInfo:[String:Any] = snapshot.value as! [String:Any]
                 let username = userInfo["username"] as! String
                 self.tableDic[index] = [uid:username]
@@ -119,13 +194,35 @@ class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
             
             let filePath = "Users/User: \(uid)/profilePicture"
             let profilePicRef = FIRStorage.storage().reference(withPath: filePath)
-            profilePicRef.data(withMaxSize: 10*1024*1024, completion: { (data, error) in
+            profilePicRef.data(withMaxSize: 10*1024*1024, completion: { [uid](data, error) in
                 if error == nil {
                     let profilePic:UIImage = UIImage(data: data!)!
                     self.profilePicDic[uid] = profilePic
                 }
                 self.friendsListTableView.reloadData()
             })
+        }
+        
+        var count = 0
+        for (uid,_) in currentUser!.addedYouFriends {
+            let userRef = FIRDatabase.database().reference(withPath: "Users").child("User: \(uid)")
+            userRef.observeSingleEvent(of: .value, with: { [count,uid](snapshot) in
+                let userInfo:[String:Any] = snapshot.value as! [String:Any]
+                let username = userInfo["username"] as! String
+                self.addedYouDic[count] = [uid:username]
+                self.friendsListTableView.reloadData()
+            })
+            
+            let filePath = "Users/User: \(uid)/profilePicture"
+            let profilePicRef = FIRStorage.storage().reference(withPath: filePath)
+            profilePicRef.data(withMaxSize: 10*1024*1024, completion: { [uid](data, error) in
+                if error == nil {
+                    let profilePic:UIImage = UIImage(data: data!)!
+                    self.addedYouProfilePicDic[uid] = profilePic
+                }
+                self.friendsListTableView.reloadData()
+            })
+            count += 1
         }
     }
     
@@ -149,21 +246,45 @@ class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     }
     
     @objc private func friendBtnPressed(sender:Any) {
+        print("BUTTON TAPPED")
         let cell = (sender as! UIButton).superview?.superview as! CustomFriendsListCell
-        let row = friendsListTableView.indexPath(for: cell)?.row
+        if cell.tag == 0 {
+            return
+        }
+        
+        let indexPath = friendsListTableView.indexPath(for: cell)
         var userID = ""
-        let tempDic = tableDic[row!]
-        for (key,_) in tempDic! {
+        
+        var tempDic:[String:String] = [String:String]()
+        
+        if indexPath?.section == 0 {
+            tempDic = addedYouDic[(indexPath?.row)!]!
+        }
+        else {
+            tempDic = tableDic[(indexPath?.row)!]!
+        }
+        
+        for (key,_) in tempDic {
             userID = key
         }
         
         if cell.isFriends! {
-        currentUser?.removeFriend(uid: userID)
-        UserData.updateData(withUser: currentUser!)
+            currentUser?.removeFriend(uid: userID)
+            UserData.updateData(withUser: currentUser!)
         }
         else {
             currentUser?.addFriend(uid: userID)
             UserData.updateData(withUser: currentUser!)
+        }
+        
+        if indexPath?.section == 0 {
+            let index = addedYouUIDs.index(of: userID)
+            addedYouUIDs.remove(at: index!)
+            addedYouDic.removeValue(forKey: indexPath!.row)
+            profilePicDic.removeValue(forKey: userID)
+            
+            setupArrays()
+            updateTableArray()
         }
         
         let userRef = FIRDatabase.database().reference(withPath: "Users").child("User: \(currentUser!.userID)")
@@ -176,10 +297,25 @@ class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         let tapLocation = sender.location(in: self.friendsListTableView)
         let indexPath = friendsListTableView.indexPathForRow(at: tapLocation)
         let cell = friendsListTableView.cellForRow(at: indexPath!)
-        let uid = friendsUIDs[cell!.tag]
-        let profilePic = profilePicDic[uid]
+        var uid = ""
+        var profilePic = #imageLiteral(resourceName: "DefaultProfileImg")
         
-        ProfileInfo.presentOnTableView(tableView: self.friendsListTableView, userID: uid, superViewFrame: self.view.frame, currentUser: self.currentUser!, profilePic: profilePic!)
+        if cell!.tag == 0 {
+            return
+        }
+        else if cell!.tag < 0 {
+            //section 0
+            uid = addedYouUIDs[cell!.tag + 1]
+            profilePic = addedYouProfilePicDic[uid]!
+        }
+        else {
+            //section 1
+            uid = friendsUIDs[cell!.tag - 1]
+            profilePic = profilePicDic[uid]!
+        }
+        
+        
+        ProfileInfo.presentOnTableView(tableView: self.friendsListTableView, userID: uid, superViewFrame: self.view.frame, currentUser: self.currentUser!, profilePic: profilePic)
         self.navigationController?.navigationBar.isUserInteractionEnabled = false
         
     }

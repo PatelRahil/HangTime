@@ -18,6 +18,7 @@ class User {
     var createdEvents:[String]
     var profilePicDownloadLink:String
     var invitedEvents:[String:Int] = [String:Int]()
+    var addedYouFriends:[String:Int] = [String:Int]()
     
     var profilePic:UIImage? = #imageLiteral(resourceName: "DefaultProfileImg")
     
@@ -28,6 +29,7 @@ class User {
         self.createdEvents = []
         self.profilePicDownloadLink = ""
         self.invitedEvents = [String:Int]()
+        self.addedYouFriends = [String:Int]()
     }
     
     init (snapshot: FIRDataSnapshot) {
@@ -45,6 +47,10 @@ class User {
             self.invitedEvents = invitedEvents
         }
         
+        if let addedYouFriends = snapshotValue["addedYouFriends"] as? [String:Int] {
+            self.addedYouFriends = addedYouFriends
+        }
+        
     }
     
     init (data:UserData) {
@@ -55,10 +61,20 @@ class User {
         profilePicDownloadLink = data._profilePicDownloadLink!
         profilePic = data._profilePic!
         invitedEvents = data._invitedEvents!
+        addedYouFriends = data._addedYouFriends!
     }
     
     func addFriend(uid:String) {
         self.friends.append(uid)
+        
+        let friendRef = FIRDatabase.database().reference(withPath: "Users/User: \(uid)/addedYouFriends/\(self.getUserID())")
+        friendRef.setValue(0)
+        
+        if addedYouFriends[uid] != nil {
+            addedYouFriends.removeValue(forKey: uid)
+            let addedYouRef = FIRDatabase.database().reference(withPath: "Users/User: \(self.userID)/addedYouFriends/\(uid)")
+            addedYouRef.removeValue()
+        }
     }
     func removeFriend(uid:String) {
         for (index,friend) in self.friends.enumerated() {
@@ -66,6 +82,9 @@ class User {
                 friends.remove(at: index)
             }
         }
+        
+        let friendRef = FIRDatabase.database().reference(withPath: "Users/User: \(uid)/addedYouFriends/\(self.getUserID())")
+        friendRef.removeValue()
     }
     func stillFriends(with uid:String) -> Bool {
         return friends.contains(uid)
@@ -90,7 +109,8 @@ class User {
             "username":username,
             "createdEvents": createdEventsStringRep,
             "profilePicture": profilePicDownloadLink,
-            "invitedEvents": invitedEvents
+            "invitedEvents": invitedEvents,
+            "addedYouFriends": addedYouFriends
         ]
     }
 }
@@ -105,6 +125,7 @@ struct UserData {
     static var profilePicDownloadLink:String? = nil
     static var profilePic:UIImage? = #imageLiteral(resourceName: "DefaultProfileImg")
     static var invitedEvents:[String:Int]? = nil
+    static var addedYouFriends:[String:Int]? = nil
     
     var _userID:String? = nil
     var _friends:[String]? = nil
@@ -113,6 +134,7 @@ struct UserData {
     var _profilePicDownloadLink:String? = nil
     var _profilePic:UIImage? = #imageLiteral(resourceName: "DefaultProfileImg")
     var _invitedEvents:[String:Int]? = nil
+    var _addedYouFriends:[String:Int]? = nil
     ///Want to set or change profile picture
     static func updateData(withUser user:User) {
         userID = user.userID
@@ -121,6 +143,7 @@ struct UserData {
         createdEvents = user.createdEvents
         profilePicDownloadLink = user.profilePicDownloadLink
         invitedEvents = user.invitedEvents
+        addedYouFriends = user.addedYouFriends
     }
     
     ///Profile picture does not need to change
@@ -132,6 +155,7 @@ struct UserData {
         profilePicDownloadLink = user.profilePicDownloadLink
         profilePic = image
         invitedEvents = user.invitedEvents
+        addedYouFriends = user.addedYouFriends
     }
     
     init() {
@@ -142,6 +166,7 @@ struct UserData {
         _profilePicDownloadLink = UserData.profilePicDownloadLink
         _profilePic = UserData.profilePic
         _invitedEvents = UserData.invitedEvents
+        _addedYouFriends = UserData.addedYouFriends
         
     }
 }
