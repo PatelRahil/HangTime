@@ -22,7 +22,7 @@
 		5A7646A21DD7B5F300503F07 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5A7646A01DD7B5F300503F07 /* LaunchScreen.storyboard */; };
 		5A7646AD1DD7B5F300503F07 /* LETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7646AC1DD7B5F300503F07 /* LETests.swift */; };
 		5A7646B81DD7B5F300503F07 /* LEUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7646B71DD7B5F300503F07 /* LEUITests.swift */; };
-		5A9EDE101F48EFAB00378E68 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5A9EDE0F1F48EFAB00378E68 /* GoogleService-Info.plist */; };
+		5A9EDE131F48FBFC00378E68 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5A9EDE121F48FBFC00378E68 /* GoogleService-Info.plist */; };
 		5AA516BB1EDCE18700686A65 /* EventFriendListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA516BA1EDCE18700686A65 /* EventFriendListVC.swift */; };
 		5AA984A41F09C309000B9FA8 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA984A31F09C308000B9FA8 /* Colors.swift */; };
 		5AB22FED1EE9E271007F802B /* EventDetailsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AB22FEC1EE9E271007F802B /* EventDetailsVC.swift */; };
@@ -84,8 +84,8 @@
 		5A7646B31DD7B5F300503F07 /* LEUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LEUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5A7646B71DD7B5F300503F07 /* LEUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LEUITests.swift; sourceTree = "<group>"; };
 		5A7646B91DD7B5F300503F07 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5A9EDE0F1F48EFAB00378E68 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		5A9EDE111F48F89B00378E68 /* LE.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LE.entitlements; sourceTree = "<group>"; };
+		5A9EDE121F48FBFC00378E68 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		5AA516BA1EDCE18700686A65 /* EventFriendListVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventFriendListVC.swift; sourceTree = "<group>"; };
 		5AA984A31F09C308000B9FA8 /* Colors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		5AB22FEC1EE9E271007F802B /* EventDetailsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventDetailsVC.swift; sourceTree = "<group>"; };
@@ -185,7 +185,7 @@
 				5A56671B1EC0C8C3001F5B55 /* SWRevealViewController.h */,
 				5A56671C1EC0C8C3001F5B55 /* SWRevealViewController.m */,
 				5A76469E1DD7B5F300503F07 /* Assets.xcassets */,
-				5A9EDE0F1F48EFAB00378E68 /* GoogleService-Info.plist */,
+				5A9EDE121F48FBFC00378E68 /* GoogleService-Info.plist */,
 				5A7646A01DD7B5F300503F07 /* LaunchScreen.storyboard */,
 				5A7646A31DD7B5F300503F07 /* Info.plist */,
 				5A56671A1EC0C8C3001F5B55 /* LE-Bridging-Header.h */,
@@ -361,7 +361,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5A7646A21DD7B5F300503F07 /* LaunchScreen.storyboard in Resources */,
-				5A9EDE101F48EFAB00378E68 /* GoogleService-Info.plist in Resources */,
+				5A9EDE131F48FBFC00378E68 /* GoogleService-Info.plist in Resources */,
 				5A76469F1DD7B5F300503F07 /* Assets.xcassets in Resources */,
 				5AFFBF031DE3D5E600D399C7 /* Main.storyboard in Resources */,
 			);
@@ -705,7 +705,7 @@
 				DEVELOPMENT_TEAM = H9E6SLMQ79;
 				INFOPLIST_FILE = LE/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.invyte.invyte;
+				PRODUCT_BUNDLE_IDENTIFIER = com.InvyteLLC.Invyte;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "LE/LE-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -724,7 +724,7 @@
 				DEVELOPMENT_TEAM = H9E6SLMQ79;
 				INFOPLIST_FILE = LE/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.invyte.invyte;
+				PRODUCT_BUNDLE_IDENTIFIER = com.InvyteLLC.Invyte;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "LE/LE-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;

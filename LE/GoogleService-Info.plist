@@ -7,9 +7,9 @@
 	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
 	<string>ca-app-pub-3940256099942544/4411468910</string>
 	<key>CLIENT_ID</key>
-	<string>284170867902-159lbpv9j7gm4j5m44cf3in6ifs2g3i0.apps.googleusercontent.com</string>
+	<string>284170867902-2pth9uspmu90sslqnii1ifu9tflhnp8u.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.284170867902-159lbpv9j7gm4j5m44cf3in6ifs2g3i0</string>
+	<string>com.googleusercontent.apps.284170867902-2pth9uspmu90sslqnii1ifu9tflhnp8u</string>
 	<key>API_KEY</key>
 	<string>AIzaSyBdRILVGsRfaxgG8IGg_hg2pQRFD4dKaKU</string>
 	<key>GCM_SENDER_ID</key>
@@ -17,7 +17,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.invyte.invyte</string>
+	<string>com.InvyteLLC.Invyte</string>
 	<key>PROJECT_ID</key>
 	<string>codedayle-b3030</string>
 	<key>STORAGE_BUCKET</key>
@@ -33,7 +33,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true/>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:284170867902:ios:0a529183a3d0c37b</string>
+	<string>1:284170867902:ios:c4494b9c0662c5a1</string>
 	<key>DATABASE_URL</key>
 	<string>https://codedayle-b3030.firebaseio.com</string>
 </dict>
