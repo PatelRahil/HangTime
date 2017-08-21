@@ -20,6 +20,11 @@ class SettingsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
             try? FIRAuth.auth()?.signOut()
             
             if FIRAuth.auth()?.currentUser == nil {
+                let currentUser = User(data: UserData())
+                currentUser.removeToken(token: AppData.token)
+                let userRef = FIRDatabase.database().reference(withPath: "Users/User: \(currentUser.getUserID())")
+                userRef.setValue(currentUser.toAnyObject())
+                
                 let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "DataViewController") as! DataViewController
                 self.present(vc, animated: true, completion: nil)
                 

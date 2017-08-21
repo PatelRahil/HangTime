@@ -136,7 +136,11 @@ class DataViewController: UIViewController, UITextFieldDelegate {
         self.childRef?.child("User: \(userID)").observeSingleEvent(of: .value, with: { (snapshot) in
             if snapshot.exists() {
                     self.currentUser = User(snapshot: snapshot)
-                    
+                    self.currentUser?.addToken(token: AppData.token)
+                    let currentUserRef = FIRDatabase.database().reference(withPath: "Users/User: \(self.currentUser!.getUserID())")
+                    print(AppData.token)
+                    currentUserRef.setValue(self.currentUser!.toAnyObject())
+                
                     var profilePic:UIImage = #imageLiteral(resourceName: "DefaultProfileImg")
                     if self.currentUser!.profilePicDownloadLink != "" {
                         print("ProfilePicDownloadLink is not nil")
@@ -149,6 +153,7 @@ class DataViewController: UIViewController, UITextFieldDelegate {
                             else {
                                 profilePic = #imageLiteral(resourceName: "DefaultProfileImg")
                             }
+                            
                             UserData.updateData(withUser: self.currentUser!, profilePic: profilePic)
                             print("ABOUT TO PERFORM SEGUE")
                             self.performSegue(withIdentifier: "LoginSegue", sender: sender)

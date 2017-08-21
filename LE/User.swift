@@ -19,6 +19,7 @@ class User {
     var profilePicDownloadLink:String
     var invitedEvents:[String:Int] = [String:Int]()
     var addedYouFriends:[String:Int] = [String:Int]()
+    var pushTokens:[String:Int] = [String:Int]()
     
     var profilePic:UIImage? = #imageLiteral(resourceName: "DefaultProfileImg")
     
@@ -30,6 +31,7 @@ class User {
         self.profilePicDownloadLink = ""
         self.invitedEvents = [String:Int]()
         self.addedYouFriends = [String:Int]()
+        self.pushTokens = [String:Int]()
     }
     
     init (snapshot: FIRDataSnapshot) {
@@ -51,6 +53,10 @@ class User {
             self.addedYouFriends = addedYouFriends
         }
         
+        if let pushTokens = snapshotValue["pushTokens"] as? [String:Int] {
+            self.pushTokens = pushTokens
+        }
+        
     }
     
     init (data:UserData) {
@@ -62,6 +68,7 @@ class User {
         profilePic = data._profilePic!
         invitedEvents = data._invitedEvents!
         addedYouFriends = data._addedYouFriends!
+        pushTokens = data._pushTokens!
     }
     
     func addFriend(uid:String) {
@@ -98,7 +105,12 @@ class User {
     func getUserID() -> String {
         return userID
     }
-    
+    func addToken(token tkn:String) {
+        pushTokens[tkn] = 0
+    }
+    func removeToken(token tkn:String) {
+        pushTokens.removeValue(forKey: tkn)
+    }
     func toAnyObject() -> Any {
         let friendsStringRep = friends.joined(separator: ",")
         let createdEventsStringRep = createdEvents.joined(separator: ",")
@@ -110,7 +122,8 @@ class User {
             "createdEvents": createdEventsStringRep,
             "profilePicture": profilePicDownloadLink,
             "invitedEvents": invitedEvents,
-            "addedYouFriends": addedYouFriends
+            "addedYouFriends": addedYouFriends,
+            "pushTokens": pushTokens
         ]
     }
 }
@@ -126,6 +139,7 @@ struct UserData {
     static var profilePic:UIImage? = #imageLiteral(resourceName: "DefaultProfileImg")
     static var invitedEvents:[String:Int]? = nil
     static var addedYouFriends:[String:Int]? = nil
+    static var pushTokens:[String:Int]? = nil
     
     var _userID:String? = nil
     var _friends:[String]? = nil
@@ -135,6 +149,7 @@ struct UserData {
     var _profilePic:UIImage? = #imageLiteral(resourceName: "DefaultProfileImg")
     var _invitedEvents:[String:Int]? = nil
     var _addedYouFriends:[String:Int]? = nil
+    var _pushTokens:[String:Int]? = nil
     ///Want to set or change profile picture
     static func updateData(withUser user:User) {
         userID = user.userID
@@ -144,6 +159,7 @@ struct UserData {
         profilePicDownloadLink = user.profilePicDownloadLink
         invitedEvents = user.invitedEvents
         addedYouFriends = user.addedYouFriends
+        pushTokens = user.pushTokens
     }
     
     ///Profile picture does not need to change
@@ -156,6 +172,7 @@ struct UserData {
         profilePic = image
         invitedEvents = user.invitedEvents
         addedYouFriends = user.addedYouFriends
+        pushTokens = user.pushTokens
     }
     
     init() {
@@ -167,6 +184,6 @@ struct UserData {
         _profilePic = UserData.profilePic
         _invitedEvents = UserData.invitedEvents
         _addedYouFriends = UserData.addedYouFriends
-        
+        _pushTokens = UserData.pushTokens
     }
 }

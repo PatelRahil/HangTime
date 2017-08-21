@@ -274,6 +274,7 @@ class CreateAccountVC:UIViewController {
                     self.userID = (user?.uid)!
                     let userRef = FIRDatabase.database().reference(withPath: "Users/User: \(self.userID)")
                     let currentUser:User = User(uid: self.userID, username: self.username)
+                    currentUser.addToken(token: AppData.token)
                     
                     userRef.setValue(currentUser.toAnyObject())
                     UserData.updateData(withUser: currentUser)

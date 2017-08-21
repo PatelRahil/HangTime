@@ -102,6 +102,7 @@ class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
                 cell.tag = 0
             }
             else {
+                print(usernameDic)
                 friendUID = addedYouUIDs[indexPath.row]
                 usernameDic = addedYouDic[indexPath.row]!
                 username = usernameDic[friendUID]!
