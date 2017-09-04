@@ -111,6 +111,12 @@ class User {
     func removeToken(token tkn:String) {
         pushTokens.removeValue(forKey: tkn)
     }
+    func clearAddFriends() {
+        addedYouFriends.removeAll()
+    }
+    func removeFromAddFriends(with uid:String) {
+        addedYouFriends.removeValue(forKey: uid)
+    }
     func toAnyObject() -> Any {
         let friendsStringRep = friends.joined(separator: ",")
         let createdEventsStringRep = createdEvents.joined(separator: ",")

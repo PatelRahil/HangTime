@@ -49,6 +49,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
+        UIApplication.shared.applicationIconBadgeNumber = 0
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
@@ -60,8 +61,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     }
 
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        print("Message ID: \(userInfo["gcm_message_id"])")
         print(userInfo)
+        let aps = userInfo["aps"] as! [AnyHashable:Any]
+        UIApplication.shared.applicationIconBadgeNumber = (aps["badge"] as! Int) + 1
     }
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {

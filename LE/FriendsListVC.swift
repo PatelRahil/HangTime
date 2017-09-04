@@ -16,7 +16,6 @@ class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     var profilePicDic:[String:UIImage] = [String:UIImage]()
     var friendsUIDs:[String] = [String]()
     
-    
     var addedYouDic:[Int:[String:String]] = [Int:[String:String]]()
     var addedYouProfilePicDic:[String:UIImage] = [String:UIImage]()
     var addedYouUIDs:[String] = [String]()
@@ -42,13 +41,28 @@ class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     override func viewWillAppear(_ animated: Bool) {
         tableDic = [Int:[String:String]]()
         profilePicDic = [String:UIImage]()
+        addedYouUIDs = [String]()
+        addedYouDic = [Int:[String:String]]()
         currentUser = User(data: UserData())
         setupArrays()
         updateTableArray()
         friendsListTableView.reloadData()
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        for uid in addedYouUIDs {
+            if currentUser!.stillFriends(with: uid) {
+                currentUser?.removeFromAddFriends(with: uid)
+            }
+        }
+        let userRef = FIRDatabase.database().reference(withPath: "Users/User: \(currentUser!.getUserID())")
+        userRef.setValue(currentUser?.toAnyObject())
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        print("UPDATING NUMBER OF ROWS")
+        print(addedYouUIDs)
+        print(addedYouDic)
         if section == 0 {
             if addedYouUIDs.count == 0 {
                 return 1
@@ -102,9 +116,12 @@ class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
                 cell.tag = 0
             }
             else {
-                print(usernameDic)
+                print("-------------------------------------")
+                print(addedYouDic)
                 friendUID = addedYouUIDs[indexPath.row]
                 usernameDic = addedYouDic[indexPath.row]!
+                print(friendUID)
+                print(usernameDic)
                 username = usernameDic[friendUID]!
                 
                 cell.ProfilePic.image = addedYouProfilePicDic[friendUID]
@@ -121,6 +138,10 @@ class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
             usernameDic = tableDic[indexPath.row]!
             username = usernameDic[friendUID]!
             
+            cell.ProfilePic.isHidden = false
+            cell.FriendBtn.isHidden = false
+            cell.UsernameLbl.textColor = UIColor.black
+            cell.UsernameLbl.textAlignment = .left
             cell.ProfilePic.image = profilePicDic[friendUID]
             cell.UsernameLbl.text = username
             
@@ -128,14 +149,22 @@ class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         }
         
         cell.isFriends = currentUser!.stillFriends(with: friendUID)
-        setupFriendBtn(for: cell)
         
         cell.selectionStyle = .none
+        
+        //cleans previous gestures from the cell
+        if let gestures = cell.gestureRecognizers {
+            for gesture in gestures {
+                cell.removeGestureRecognizer(gesture)
+            }
+        }
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(cellTapped(_:)))
         tapGesture.delegate = self
         tapGesture.cancelsTouchesInView = false
         cell.addGestureRecognizer(tapGesture)
+        
+        setupFriendBtn(for: cell, indexPath: indexPath, tapGesture: tapGesture)
         
         return cell
     }
@@ -227,21 +256,34 @@ class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         }
     }
     
-    private func setupFriendBtn(for cell:CustomFriendsListCell) {
+    private func setupFriendBtn(for cell:CustomFriendsListCell, indexPath:IndexPath, tapGesture:UITapGestureRecognizer) {
         if cell.isFriends! {
-            cell.FriendBtn.setTitle("Friends", for: .normal)
-            cell.FriendBtn.setTitleColor(Colors.blueGreen, for: .normal)
-            cell.FriendBtn.backgroundColor = UIColor.white
+            if indexPath.section == 1 {
+                cell.FriendBtn.setTitle("Friends", for: .normal)
+                cell.FriendBtn.setTitleColor(Colors.blueGreen, for: .normal)
+                cell.FriendBtn.backgroundColor = UIColor.white
+                cell.FriendBtn.layer.borderColor = Colors.blueGreen.cgColor
+                cell.FriendBtn.layer.borderWidth = 1
+            }
+            else {
+                cell.FriendBtn.setTitle("Added You Back", for: .normal)
+                cell.FriendBtn.setTitleColor(Colors.blueGreen, for: .normal)
+                cell.FriendBtn.backgroundColor = UIColor.white
+                cell.FriendBtn.isUserInteractionEnabled = false
+                cell.FriendBtn.layer.borderWidth = 0
+                cell.removeGestureRecognizer(tapGesture)
+                
+            }
         }
         else {
             cell.FriendBtn.setTitle("Add", for: .normal)
             cell.FriendBtn.setTitleColor(UIColor.white, for: .normal)
             cell.FriendBtn.backgroundColor = Colors.blueGreen
+            cell.FriendBtn.layer.borderColor = Colors.blueGreen.cgColor
+            cell.FriendBtn.layer.borderWidth = 1
         }
         
         cell.FriendBtn.titleLabel?.font = UIFont.boldSystemFont(ofSize: (cell.FriendBtn.titleLabel?.font.pointSize)!)
-        cell.FriendBtn.layer.borderColor = Colors.blueGreen.cgColor
-        cell.FriendBtn.layer.borderWidth = 1
         cell.FriendBtn.layer.cornerRadius = 4
         cell.FriendBtn.addTarget(self, action: #selector(friendBtnPressed(sender:)), for: .touchUpInside)
     }
@@ -278,20 +320,26 @@ class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
             UserData.updateData(withUser: currentUser!)
         }
         
-        if indexPath?.section == 0 {
+        let userRef = FIRDatabase.database().reference(withPath: "Users").child("User: \(currentUser!.userID)")
+        userRef.setValue(currentUser!.toAnyObject())
+        
+        if indexPath?.section == 0 /*&& cell.isFriends!*/ {
+            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+            print(addedYouUIDs)
+            print(addedYouDic)
             let index = addedYouUIDs.index(of: userID)
-            addedYouUIDs.remove(at: index!)
-            addedYouDic.removeValue(forKey: indexPath!.row)
+            print(index!)
+            addedYouUIDs.removeAll()
+            //addedYouUIDs.remove(at: index!)
+            addedYouDic.removeValue(forKey: index!)
             profilePicDic.removeValue(forKey: userID)
             
             setupArrays()
             updateTableArray()
         }
         
-        let userRef = FIRDatabase.database().reference(withPath: "Users").child("User: \(currentUser!.userID)")
-        userRef.setValue(currentUser!.toAnyObject())
-        
         friendsListTableView.reloadData()
+        //friendsListTableView.reloadRows(at: [indexPath!], with: .automatic)
     }
     
     @objc private func cellTapped(_ sender: UITapGestureRecognizer) {
@@ -306,7 +354,7 @@ class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         }
         else if cell!.tag < 0 {
             //section 0
-            uid = addedYouUIDs[cell!.tag + 1]
+            uid = addedYouUIDs[-(cell!.tag + 1)]
             profilePic = addedYouProfilePicDic[uid]!
         }
         else {
