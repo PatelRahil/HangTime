@@ -107,6 +107,7 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
         let cell = AddFriendListTblView.dequeueReusableCell(withIdentifier: "friendCell", for: indexPath) as! CustomTableViewCell
         cell.AddFriendBtn.removeTarget(nil, action: nil, for: .allEvents)
         
@@ -120,7 +121,9 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
         cell.AddFriendBtn.layer.cornerRadius = 4
         cell.AddFriendBtn.titleLabel?.font = UIFont.boldSystemFont(ofSize: (cell.AddFriendBtn.titleLabel?.font.pointSize)!)
         
-        if (isAlreadyFriend(userID: allUserID[indexPath.row])) {
+        //Below line fixes a bug where, after adding or removing a friend, the user's friends list would revert to its old value.
+        currentUser = User(data: UserData())
+        if (currentUser!.stillFriends(with: allUserID[indexPath.row])) {
             cell.AddFriendBtn.removeTarget(self, action: #selector(addFriend(_:)), for: .touchUpInside)
             cell.AddFriendBtn.setTitle("Friends", for: .normal)
             cell.AddFriendBtn.setTitleColor(Colors.blueGreen, for: .normal)
@@ -152,13 +155,11 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         let tableViewIfButtonIsTapped = touch.view?.superview?.superview?.superview?.superview
         if tableViewIfButtonIsTapped == AddFriendListTblView {
-            print("Touch in tableview")
             let touchPosition = touch.location(in: AddFriendListTblView)
             let indexPath = AddFriendListTblView.indexPathForRow(at: touchPosition)
             if let indexPath = indexPath {
                 let cell:CustomTableViewCell = AddFriendListTblView.cellForRow(at: indexPath) as! CustomTableViewCell
                 if touch.view == cell.AddFriendBtn {
-                    print("touch in button")
                     return false
                 }
             }
@@ -167,7 +168,11 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
         return true
     }
     
+    
     func isAlreadyFriend(userID:String) -> Bool {
+        print(currentUser!.friends.contains(userID))
+        print(userID)
+        print(currentUser!.friends)
         return currentUser!.friends.contains(userID)
     }
     
@@ -175,6 +180,7 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
         let pickedUserID = allUserID[sender.tag]
         if (!isAlreadyFriend(userID: pickedUserID)) {
             currentUser?.addFriend(uid: pickedUserID)
+            
             let userRef = self.childRef.child("User: \(currentUser!.userID)")
             userRef.setValue(currentUser!.toAnyObject())
             UserData.updateData(withUser: currentUser!)
@@ -185,9 +191,12 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
     }
     
     @objc private func removeFriend(_ sender:UIButton) {
+        print("Friend Removed!")
         let pickedUserID = allUserID[sender.tag]
         if isAlreadyFriend(userID: pickedUserID) {
             currentUser?.removeFriend(uid: pickedUserID)
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            print(currentUser!.friends)
             let userRef = self.childRef.child("User: \(currentUser!.userID)")
             userRef.setValue(currentUser!.toAnyObject())
             UserData.updateData(withUser: currentUser!)
