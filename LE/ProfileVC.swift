@@ -187,7 +187,7 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
         profilePic = currentUser!.profilePic
         var counter = 0
         for (key,str) in currentUser!.toAnyObject() as! Dictionary<String,Any> {
-            if (key != "friends" && key != "UserID" && key != "createdEvents" && key != "profilePicture" && key != "invitedEvents" && key != "addedYouFriends") {
+            if (key != "friends" && key != "UserID" && key != "createdEvents" && key != "profilePicture" && key != "invitedEvents" && key != "addedYouFriends" && key != "pushTokens") {
                 counter += 1
                 self.userInfoArray[counter] = str as! String
             }

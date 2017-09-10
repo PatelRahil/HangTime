@@ -218,7 +218,6 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         _ = self.rootRef.child("Users").queryOrdered(byChild: "username").queryStarting(atValue:SearchBar.text!).queryEnding(atValue: "\(SearchBar.text!)~").observeSingleEvent(of: .value, with: { (snapshot) in
-        
         //let databaseRefQuery = self.rootRef.child("Users").queryOrdered(byChild: "username").queryEqual(toValue:SearchBar.text!).observeSingleEvent(of: .value, with: { (snapshot) in
             if ( snapshot.value is NSNull ) {
  

@@ -205,11 +205,12 @@ extension EventsListVC {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "EmptySectionCell")!
                 cell.textLabel?.text = "You haven't created any events yet."
                 cell.textLabel?.textColor = UIColor.lightGray
-                
+                cell.isUserInteractionEnabled = false
                 return cell
             }
             else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "CreatedEvents") as! CustomCreatedEventsCell
+                cell.isUserInteractionEnabled = true
                 let event = createdEvents[indexPath.row]
                 let publicPrivate:String = event.isPublic ? "Public":"Private"
                 let description = "\"\(event.description)\""
@@ -232,11 +233,13 @@ extension EventsListVC {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "EmptySectionCell")!
                 cell.textLabel?.text = "You haven't been invited to any events yet."
                 cell.textLabel?.textColor = UIColor.lightGray
+                cell.isUserInteractionEnabled = false
                 
                 return cell
             }
             else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "InvitedEvents") as! CustomInvitedEventsCell
+                cell.isUserInteractionEnabled = true
                 let event = invitedEvents[indexPath.row]
                 let eventCreatorPic = eventCreatorProfilePics[event.createdByUID]
                 let eventCreatorUsername = eventCreatorUsernames[event.createdByUID]
@@ -259,6 +262,7 @@ extension EventsListVC {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
         let event:Event = indexPath.section == 0 ? createdEvents[indexPath.row] : invitedEvents[indexPath.row]
         var eventID:String = ""
         if indexPath.section == 0 && !currentUser!.createdEvents.isEmpty {
