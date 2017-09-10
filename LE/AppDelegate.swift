@@ -35,6 +35,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             
         }
         
+        clearBadgeNumber()
+        
         return true
     }
     
@@ -55,6 +57,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+        clearBadgeNumber()
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
@@ -74,5 +77,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         }
     }
     
+    private func clearBadgeNumber() {
+        if let token = FIRInstanceID.instanceID().token() {
+            if let currentUserID = FIRAuth.auth()?.currentUser?.uid {
+                let path = "Users/User: \(currentUserID)/pushTokens/\(token)"
+                let ref = FIRDatabase.database().reference(withPath: path)
+                ref.setValue(0)
+                
+                UIApplication.shared.applicationIconBadgeNumber = 0
+
+            }
+            else {
+                //User not logged in
+            }
+        }
+        else {
+            //no device token for this device is registered
+        }
+    }
 }
 
