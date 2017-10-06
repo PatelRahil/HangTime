@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="S4R-Ja-viH">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="S4R-Ja-viH">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
         <capability name="Alignment constraints to the first baseline" minToolsVersion="6.0"/>
         <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
@@ -109,7 +109,7 @@
         <scene sceneID="Lj8-DD-jBs">
             <objects>
                 <navigationController id="spG-fK-3af" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="ERP-s5-45n">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="ERP-s5-45n">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -462,12 +462,29 @@
                                     <constraint firstAttribute="trailing" secondItem="YtG-4F-wnG" secondAttribute="trailing" constant="3" id="vVM-LJ-kpC"/>
                                 </constraints>
                             </view>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Invyte" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="cF2-Le-7mQ">
-                                <rect key="frame" x="133" y="28" width="110" height="48"/>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="cF2-Le-7mQ">
+                                <rect key="frame" x="188" y="28" width="0.0" height="0.0"/>
                                 <fontDescription key="fontDescription" name="Helvetica" family="Helvetica" pointSize="41"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xwc-iQ-ZND">
+                                <rect key="frame" x="109" y="343" width="157" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="H3E-UR-7Ck"/>
+                                </constraints>
+                                <state key="normal" title="Forgot your password?"/>
+                                <connections>
+                                    <segue destination="1of-qX-Ybl" kind="show" id="HtJ-zT-MdX"/>
+                                </connections>
+                            </button>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="InvyteTitle" translatesAutoresizingMaskIntoConstraints="NO" id="8PK-pc-g90">
+                                <rect key="frame" x="-40" y="68" width="454" height="128"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="454" id="fJB-AI-ZsL"/>
+                                    <constraint firstAttribute="height" constant="128" id="unT-vF-78n"/>
+                                </constraints>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" red="0.10196078431372549" green="0.49411764705882355" blue="0.49411764705882355" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
@@ -477,6 +494,10 @@
                             <constraint firstItem="s1b-V9-EN7" firstAttribute="leading" secondItem="ZwX-cT-FIQ" secondAttribute="leading" id="IQ7-h6-XJS"/>
                             <constraint firstItem="cF2-Le-7mQ" firstAttribute="centerX" secondItem="ZwX-cT-FIQ" secondAttribute="centerX" id="RSz-cU-fDH"/>
                             <constraint firstAttribute="trailing" secondItem="s1b-V9-EN7" secondAttribute="trailing" id="V54-WD-u7d"/>
+                            <constraint firstItem="s1b-V9-EN7" firstAttribute="top" secondItem="8PK-pc-g90" secondAttribute="bottom" constant="8" symbolic="YES" id="Xes-LP-q5A"/>
+                            <constraint firstItem="xwc-iQ-ZND" firstAttribute="centerX" secondItem="cF2-Le-7mQ" secondAttribute="centerX" id="egk-JO-Ppf"/>
+                            <constraint firstItem="8PK-pc-g90" firstAttribute="centerX" secondItem="xwc-iQ-ZND" secondAttribute="centerX" id="emi-7k-qBu"/>
+                            <constraint firstItem="xwc-iQ-ZND" firstAttribute="top" secondItem="YtG-4F-wnG" secondAttribute="bottom" constant="9" id="fQf-dQ-dmX"/>
                             <constraint firstItem="s1b-V9-EN7" firstAttribute="centerX" secondItem="cF2-Le-7mQ" secondAttribute="centerX" id="i77-7l-bVp"/>
                         </constraints>
                     </view>
@@ -490,11 +511,102 @@
                         <outlet property="usernameTextBox" destination="mT5-fq-B2m" id="SIs-hn-vq7"/>
                         <segue destination="TqV-cV-dkA" kind="show" identifier="LoginSegue" id="8kf-ku-17t"/>
                         <segue destination="Z2A-2P-Lnv" kind="show" identifier="CreateAccountSegue" id="gt2-AD-yJB"/>
+                        <segue destination="1of-qX-Ybl" kind="show" identifier="ResetPasswordSegue" id="v4w-ye-VtY"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="GmD-Rr-ZGN" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="447.19999999999999" y="-243.32833583208398"/>
+        </scene>
+        <!--Reset PasswordVC-->
+        <scene sceneID="XFy-E9-zrB">
+            <objects>
+                <viewController id="1of-qX-Ybl" customClass="ResetPasswordVC" customModule="LE" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="rib-c4-kmR"/>
+                        <viewControllerLayoutGuide type="bottom" id="JHk-Fg-Tif"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="tNE-0k-hlx">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Enter your email here" textAlignment="center" clearsOnBeginEditing="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="br4-be-h9B">
+                                <rect key="frame" x="16" y="318" width="343" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="O62-Ii-Iif"/>
+                                </constraints>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" keyboardType="emailAddress"/>
+                            </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Reset Password" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jOv-T6-ecW">
+                                <rect key="frame" x="16" y="52" width="343" height="171"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="37"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fDJ-uv-jsX">
+                                <rect key="frame" x="16" y="289" width="343" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="119-d4-XFs"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KWN-lI-yCA">
+                                <rect key="frame" x="7" y="28" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Back"/>
+                                <connections>
+                                    <segue destination="S4R-Ja-viH" kind="show" id="js1-nL-cis"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iQC-aP-lrv">
+                                <rect key="frame" x="16" y="356" width="343" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="Vpr-dx-O9l"/>
+                                </constraints>
+                                <state key="normal" title="Reset"/>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="fDJ-uv-jsX" firstAttribute="top" secondItem="jOv-T6-ecW" secondAttribute="bottom" constant="66" id="1so-ei-7Zp"/>
+                            <constraint firstItem="br4-be-h9B" firstAttribute="top" secondItem="fDJ-uv-jsX" secondAttribute="bottom" constant="8" symbolic="YES" id="4PX-X8-sFv"/>
+                            <constraint firstItem="jOv-T6-ecW" firstAttribute="leading" secondItem="fDJ-uv-jsX" secondAttribute="leading" id="8mv-co-tXe"/>
+                            <constraint firstItem="jOv-T6-ecW" firstAttribute="trailing" secondItem="fDJ-uv-jsX" secondAttribute="trailing" id="96z-sz-IjP"/>
+                            <constraint firstItem="iQC-aP-lrv" firstAttribute="top" secondItem="br4-be-h9B" secondAttribute="bottom" constant="8" symbolic="YES" id="9Jt-aM-lXE"/>
+                            <constraint firstItem="br4-be-h9B" firstAttribute="centerY" secondItem="tNE-0k-hlx" secondAttribute="centerY" id="I1l-Ab-hC8"/>
+                            <constraint firstItem="jOv-T6-ecW" firstAttribute="leading" secondItem="tNE-0k-hlx" secondAttribute="leadingMargin" id="Na7-yf-U6j"/>
+                            <constraint firstItem="fDJ-uv-jsX" firstAttribute="leading" secondItem="br4-be-h9B" secondAttribute="leading" id="Rj0-8v-dVR"/>
+                            <constraint firstItem="jOv-T6-ecW" firstAttribute="top" secondItem="rib-c4-kmR" secondAttribute="bottom" constant="32" id="UcX-J2-1Ji"/>
+                            <constraint firstItem="fDJ-uv-jsX" firstAttribute="trailing" secondItem="br4-be-h9B" secondAttribute="trailing" id="YXq-b0-pBD"/>
+                            <constraint firstItem="br4-be-h9B" firstAttribute="trailing" secondItem="iQC-aP-lrv" secondAttribute="trailing" id="dHO-aR-sav"/>
+                            <constraint firstItem="br4-be-h9B" firstAttribute="leading" secondItem="iQC-aP-lrv" secondAttribute="leading" id="lOx-pm-3RJ"/>
+                            <constraint firstItem="jOv-T6-ecW" firstAttribute="trailing" secondItem="tNE-0k-hlx" secondAttribute="trailingMargin" id="o6D-U0-ecc"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="O8f-uM-NSs">
+                        <barButtonItem key="leftBarButtonItem" style="plain" id="QRD-iL-Ihu">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="VFk-eh-xzd">
+                                <rect key="frame" x="16" y="7" width="48" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Cancel"/>
+                            </button>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="backButton" destination="KWN-lI-yCA" id="tc5-uc-k8M"/>
+                        <outlet property="emailTextbox" destination="br4-be-h9B" id="QZi-f7-ywz"/>
+                        <outlet property="instructionsLabel" destination="fDJ-uv-jsX" id="OkY-Js-XhA"/>
+                        <outlet property="resetButton" destination="iQC-aP-lrv" id="LUH-nn-jXl"/>
+                        <outlet property="titleLabel" destination="jOv-T6-ecW" id="7V8-DP-n6n"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2ae-uz-T0G" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1932" y="599.55022488755628"/>
         </scene>
         <!--New Account Controller-->
         <scene sceneID="nzH-z6-NBS">
@@ -630,6 +742,7 @@
                     </view>
                     <connections>
                         <segue destination="TqV-cV-dkA" kind="show" identifier="CreateEventSegue" id="h4G-QJ-zNA"/>
+                        <segue destination="S4R-Ja-viH" kind="show" identifier="BackToLoginSegue" id="omC-lr-7SC"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dDS-iR-Gn6" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -875,7 +988,7 @@
             <objects>
                 <navigationController id="MRL-5m-xYO" sceneMemberID="viewController">
                     <value key="contentSizeForViewInPopover" type="size" width="375" height="667"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="9HW-si-DRr">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="9HW-si-DRr">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <edgeInsets key="layoutMargins" top="8" left="8" bottom="8" right="8"/>
@@ -1619,7 +1732,7 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="rMj-ae-PVL" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="1p0-XK-Sgr">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="1p0-XK-Sgr">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -1637,7 +1750,7 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="q1P-JG-WpV" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="E3N-rx-cKV">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="E3N-rx-cKV">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -1655,7 +1768,7 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="X6e-ef-2N7" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="hSk-vy-wF4">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="hSk-vy-wF4">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -1671,12 +1784,15 @@
     </scenes>
     <resources>
         <image name="DefaultProfileImg" width="121" height="121"/>
+        <image name="InvyteTitle" width="768" height="200"/>
         <image name="PlusImg" width="459" height="444"/>
         <image name="SlideMenuIcon" width="225" height="225"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="h4G-QJ-zNA"/>
-        <segue reference="DLv-nX-Xau"/>
+        <segue reference="8kf-ku-17t"/>
+        <segue reference="js1-nL-cis"/>
+        <segue reference="v4w-ye-VtY"/>
         <segue reference="81d-nb-Nx4"/>
+        <segue reference="DLv-nX-Xau"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -9,6 +9,7 @@
 import UIKit
 import Firebase
 import FirebaseStorage
+import FirebaseMessaging
 import GoogleMaps
 
 class DataViewController: UIViewController, UITextFieldDelegate {
@@ -19,6 +20,7 @@ class DataViewController: UIViewController, UITextFieldDelegate {
     var storageRef:FIRStorageReference?
     
     var currentUser:User? = nil
+    let titleImage:UIImageView = UIImageView(image: #imageLiteral(resourceName: "InvyteTitle"))
 
     @IBOutlet weak var loginView: UIView!
     @IBOutlet weak var inputContainerView: UIView!
@@ -56,6 +58,8 @@ class DataViewController: UIViewController, UITextFieldDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.isNavigationBarHidden = true
+
         // Do any additional setup after loading the view, typically from a nib.
         checkIfUserIsLoggedIn()
         
@@ -82,6 +86,10 @@ class DataViewController: UIViewController, UITextFieldDelegate {
         print("FRAMES")
         print(loginBtn.frame)
         print(inputContainerView.frame)
+        
+        let imageFrame:CGRect = CGRect(x: 0, y: view.frame.height/15, width: view.frame.width, height: view.frame.height/6)
+        titleImage.frame = imageFrame
+        //view.addSubview(titleImage)
     }
     
 
@@ -94,6 +102,7 @@ class DataViewController: UIViewController, UITextFieldDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         //self.dataLabel!.text = dataObject
+        navigationController?.isNavigationBarHidden = true
     }
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -109,7 +118,9 @@ class DataViewController: UIViewController, UITextFieldDelegate {
                 "The email and password you entered do not match our records. Please try again.", preferredStyle: UIAlertControllerStyle.alert)
             alertController.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
             //Change from nil to allow user to reset password
-            alertController.addAction(UIAlertAction(title: "Forgot password?", style: UIAlertActionStyle.cancel, handler: nil))
+            alertController.addAction(UIAlertAction(title: "Forgot Password?", style: UIAlertActionStyle.cancel, handler: { (alert) in
+                self.performSegue(withIdentifier: "ResetPasswordSegue", sender: nil)
+            }))
             
             self.present(alertController, animated: true, completion: nil)
             
@@ -154,15 +165,20 @@ class DataViewController: UIViewController, UITextFieldDelegate {
                                 profilePic = #imageLiteral(resourceName: "DefaultProfileImg")
                             }
                             
+                            self.currentUser?.addToken(token: AppData.token)
+
                             UserData.updateData(withUser: self.currentUser!, profilePic: profilePic)
                             print("ABOUT TO PERFORM SEGUE")
+                            self.registerDeviceToken()
                             self.performSegue(withIdentifier: "LoginSegue", sender: sender)
                         })
                         
                     }
                     else {
+                        self.currentUser?.addToken(token: AppData.token)
                         
                         UserData.updateData(withUser: self.currentUser!, profilePic: profilePic)
+                        self.registerDeviceToken()
                         self.performSegue(withIdentifier: "LoginSegue", sender: sender)
                     }
             }
@@ -231,7 +247,25 @@ class DataViewController: UIViewController, UITextFieldDelegate {
                 }
             }
     }
-
+    
+    private func registerDeviceToken() {
+        if let token = FIRInstanceID.instanceID().token() {
+            if let currentUserID = FIRAuth.auth()?.currentUser?.uid {
+                let path = "Users/User: \(currentUserID)/pushTokens/\(token)"
+                let ref = FIRDatabase.database().reference(withPath: path)
+                ref.setValue(0)
+                
+                UIApplication.shared.applicationIconBadgeNumber = 0
+                
+            }
+            else {
+                //User not logged in
+            }
+        }
+        else {
+            //no device token for this device is registered
+        }
+    }
     
 }
 

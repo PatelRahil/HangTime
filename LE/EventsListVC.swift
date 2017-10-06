@@ -24,17 +24,23 @@ class EventsListVC: UIViewController, UITableViewDelegate, UITableViewDataSource
     @IBOutlet weak var OpenSideBar: UIButton!
     
     override func viewDidLoad() {
+        print(UserData.createdEvents)
         currentUser = User.init(data: UserData())
-        
-        setupArrays()
-        downloadCreatedEvents()
-        downloadInvitedEvents()
-        
-        eventsListTableView.delegate = self
-        eventsListTableView.dataSource = self
-        eventsListTableView.separatorColor = Colors.blueGreen
+        print(currentUser?.createdEvents)
         self.view.addGestureRecognizer(revealViewController().panGestureRecognizer())
         OpenSideBar.addTarget(self.revealViewController(), action: #selector(SWRevealViewController.revealToggle(_:)), for: .touchUpInside)
+
+        //makes sure the events list contains an updated list, in case an event is deleted before UserData has a chance to update
+        currentUser?.updateUserFromDatabase(completionHandler: {
+            self.setupArrays()
+            self.downloadCreatedEvents()
+            self.downloadInvitedEvents()
+            
+            self.eventsListTableView.delegate = self
+            self.eventsListTableView.dataSource = self
+            self.eventsListTableView.separatorColor = Colors.blueGreen
+        })
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -77,9 +83,9 @@ class EventsListVC: UIViewController, UITableViewDelegate, UITableViewDataSource
                         self.downloadPhoto(of: event.createdByUID, count: preCount)
                         self.invitedEvents[preCount] = event
                 
-                        //self.eventsListTableView.reloadData()
+                        self.eventsListTableView.reloadData()
                         //to imporove performace, only reload the row that contain's this event's information
-                        self.eventsListTableView.reloadRows(at: [IndexPath.init(row: preCount, section: 1)], with: .fade)
+                        //self.eventsListTableView.reloadRows(at: [IndexPath.init(row: preCount, section: 1)], with: .fade)
                     }
                     else {
                         print(id)
@@ -101,9 +107,9 @@ class EventsListVC: UIViewController, UITableViewDelegate, UITableViewDataSource
                     let event = Event(snapshot: snapshot)
                     self.createdEvents[preCount] = event
                 
-                //self.eventsListTableView.reloadData()
+                    self.eventsListTableView.reloadData()
                 //to improve performace, only reload the row that contain's this event's information
-                    self.eventsListTableView.reloadRows(at: [IndexPath.init(row: preCount, section: 0)], with: .fade)
+                    //self.eventsListTableView.reloadRows(at: [IndexPath.init(row: preCount, section: 0)], with: .fade)
                 }
                 else {
                     print(id)

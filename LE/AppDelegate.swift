@@ -34,7 +34,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             }
             
         }
-        
+        if let token = FIRInstanceID.instanceID().token() {
+            AppData.token = token
+        }
         clearBadgeNumber()
         
         return true

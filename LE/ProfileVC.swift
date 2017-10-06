@@ -11,15 +11,17 @@ import Firebase
 import FirebaseStorage
 import UIKit
 
-class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverPresentationControllerDelegate {
     let rootRef = FIRDatabase.database().reference()
     let childRef = FIRDatabase.database().reference(withPath: "Users")
     let storageRef = FIRStorage.storage().reference()
+    let dimmedBackground = UIView()
+    var dimmedBackgroundIsVisible = false
     var currentUser:User? = nil
     var tableArray = [" ", "Username", "Email"]
     var userInfoArray = [" ", " "]
     var profilePic: UIImage? = #imageLiteral(resourceName: "DefaultProfileImg")
-
+    
     
     @IBOutlet weak var OpenSideBar: UIButton!
     @IBOutlet weak var ProfileTableView: UITableView!
@@ -34,6 +36,15 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
             self.showPicker(withType: .photoLibrary)
         }))
         ac.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        
+        //this happens if the user is on an ipad
+        if let popoverController = ac.popoverPresentationController {
+            popoverController.sourceView = self.view
+            popoverController.sourceRect = CGRect(x: view.bounds.midX, y: 15*view.bounds.height/16, width: 0, height: 0)
+            popoverController.permittedArrowDirections = []
+            addDimmedBackground()
+            popoverController.delegate = self
+        }
         
         self.present(ac, animated: true, completion: nil)
     }
@@ -203,6 +214,8 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
         picker.sourceType = sourceType
         picker.allowsEditing = true
         self.present(picker, animated: true, completion: nil)
+        
+        //removeDimmedBackground()
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
@@ -242,6 +255,10 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
         UserData.updateData(withUser: currentUser!, profilePic: profilePic!)
     }
     
+    func popoverPresentationControllerDidDismissPopover(_ popoverPresentationController: UIPopoverPresentationController) {
+        removeDimmedBackground()
+    }
+    
     private func layoutProfilePic(with cell:CustomProfilePicCell) {
         
         let gradient = CAGradientLayer()
@@ -267,6 +284,21 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
         cell.ProfilePicture.layer.cornerRadius = cell.ProfilePicture.bounds.size.width/2.0
         cell.ProfilePicture.layer.addSublayer(gradient)
         
+    }
+    
+    private func addDimmedBackground() {
+        dimmedBackgroundIsVisible = true
+        let frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
+        dimmedBackground.frame = frame
+        dimmedBackground.backgroundColor = UIColor.init(r: 0, g: 0, b: 0, a: 0.5)
+        view.addSubview(dimmedBackground)
+    }
+    
+    @objc private func removeDimmedBackground() {
+        if dimmedBackgroundIsVisible {
+            dimmedBackground.removeFromSuperview()
+            dimmedBackgroundIsVisible = false
+        }
     }
     
     func respondToErrors(error: Error) {

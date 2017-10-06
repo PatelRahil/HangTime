@@ -117,6 +117,24 @@ class User {
     func removeFromAddFriends(with uid:String) {
         addedYouFriends.removeValue(forKey: uid)
     }
+    func updateUserFromDatabase(completionHandler: @escaping () -> ()) {
+        let ref = FIRDatabase.database().reference(withPath: "Users/User: \(userID)")
+        print("Users/User:\(userID)")
+        ref.observeSingleEvent(of: .value, with: { (snapshot) in
+            let updatedUser = User(snapshot: snapshot)
+            if let profilePic = self.profilePic {
+                UserData.updateData(withUser: updatedUser, profilePic: profilePic)
+                completionHandler()
+            }
+            else {
+                UserData.updateData(withUser: updatedUser)
+                completionHandler()
+            }
+            
+            self.updateUser(with: UserData())
+        })
+        
+    }
     func toAnyObject() -> Any {
         let friendsStringRep = friends.joined(separator: ",")
         let createdEventsStringRep = createdEvents.joined(separator: ",")
@@ -131,6 +149,18 @@ class User {
             "addedYouFriends": addedYouFriends,
             "pushTokens": pushTokens
         ]
+    }
+    
+    private func updateUser(with data:UserData) {
+        userID = data._userID!
+        friends = data._friends!
+        username = data._username!
+        createdEvents = data._createdEvents!
+        profilePicDownloadLink = data._profilePicDownloadLink!
+        profilePic = data._profilePic!
+        invitedEvents = data._invitedEvents!
+        addedYouFriends = data._addedYouFriends!
+        pushTokens = data._pushTokens!
     }
 }
 

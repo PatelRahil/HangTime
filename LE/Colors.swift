@@ -12,7 +12,9 @@ struct Colors {
     
     //possible color theme colors
     static let mintGreen = UIColor.init(r: 38, g: 192, b: 92, a: 1) //minty green
-    static let darkGreen = UIColor.init(r: 38, g: 168, b: 92, a: 1) //dark green
+    //static let darkGreen = UIColor.init(r: 0, g: 110, b: 50, a: 1) //dark green
+    static let darkMintGreen = UIColor.init(r: 0, g: 161, b: 112, a: 1) //dark minty green
+
     static let purple = UIColor.init(r: 153, g: 50, b: 204, a: 1) //purple
     static let indigo = UIColor.init(r: 75, g: 0, b: 130, a: 1) //indigo
     static let darkRed = UIColor.init(r: 203, g: 37, b: 37, a: 1) //dark red
@@ -20,7 +22,7 @@ struct Colors {
     static let salmon = UIColor.init(r: 245, g: 84, b: 73, a: 1) //salmon
     //current color theme
     static let blueGreen = UIColor.init(r: 26, g: 126, b: 126, a: 1) //bluegreen
-    
+        
     //For gradient
     static let yellow = UIColor.init(r: 25, g: 200, b: 0, a: 1)
     

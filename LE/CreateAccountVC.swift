@@ -23,6 +23,7 @@ class CreateAccountVC:UIViewController {
     let nextBtn:UIButton = UIButton()
     let takePictureBtn:UIButton = UIButton()
     let photoAlbumBtn:UIButton = UIButton()
+    let backButton:UIButton = UIButton()
     
     //User data
     var username:String = ""
@@ -33,20 +34,29 @@ class CreateAccountVC:UIViewController {
     
     //Other
     var uiLaidOut = false
+    let passwordInfoLbl:UILabel = UILabel()
+    let usernameInfoLbl:UILabel = UILabel()
+    let agreementView:UITextView = UITextView()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         layoutBackground()
         layoutUIElements()
         configureButtons()
+        layoutAgreement()
         
         view.addSubview(emailTxtField)
         view.addSubview(usernameTxtField)
         view.addSubview(passwordTxtField)
         view.addSubview(confirmPasswordTxtField)
+        view.addSubview(passwordInfoLbl)
+        view.addSubview(usernameInfoLbl)
         view.addSubview(nextBtn)
+        view.addSubview(agreementView)
         view.addSubview(createAccountBtn)
         view.addSubview(takePictureBtn)
         view.addSubview(photoAlbumBtn)
+        view.addSubview(backButton)
         view.addSubview(imgView)
         
         createAccountBtn.isHidden = true
@@ -90,6 +100,21 @@ class CreateAccountVC:UIViewController {
         let imgViewFrame:CGRect = CGRect(x: fieldXPos, y: imgViewYPos, width: fieldWidth, height: fieldWidth)
         imgView.frame = imgViewFrame
         
+        let passwordInfoLblYPos:CGFloat = view.frame.height - (fieldHeight/2)
+        let passwordInfoLblFrame:CGRect = CGRect(x: view.frame.width/4, y: passwordInfoLblYPos, width: view.frame.width/2, height: (fieldHeight/2))
+        passwordInfoLbl.frame = passwordInfoLblFrame
+        
+        let usernameInfoLblYPos:CGFloat = view.frame.height - (2*(fieldHeight/2))
+        let usernameInfoLblFrame:CGRect = CGRect(x: view.frame.width/4, y: usernameInfoLblYPos, width: view.frame.width/2, height: (fieldHeight/2))
+        usernameInfoLbl.frame = usernameInfoLblFrame
+        
+        passwordInfoLbl.adjustsFontSizeToFitWidth = true
+        usernameInfoLbl.adjustsFontSizeToFitWidth = true
+        passwordInfoLbl.text = "**Password must be more than 6 characters"
+        usernameInfoLbl.text = "*Username can only contain letters and numbers"
+        passwordInfoLbl.textAlignment = .center
+        usernameInfoLbl.textAlignment = .center
+        
         emailTxtField.adjustsFontSizeToFitWidth = true
         emailTxtField.clearButtonMode = .whileEditing
         emailTxtField.textAlignment = .center
@@ -99,13 +124,13 @@ class CreateAccountVC:UIViewController {
         
         usernameTxtField.clearButtonMode = .whileEditing
         usernameTxtField.textAlignment = .center
-        usernameTxtField.placeholder = "Username"
+        usernameTxtField.placeholder = "Username*"
         usernameTxtField.delegate = self
         addBorder(textField: usernameTxtField)
         
         passwordTxtField.clearButtonMode = .whileEditing
         passwordTxtField.textAlignment = .center
-        passwordTxtField.placeholder = "Password"
+        passwordTxtField.placeholder = "Password**"
         passwordTxtField.delegate = self
         passwordTxtField.isSecureTextEntry = true
         addBorder(textField: passwordTxtField)
@@ -142,29 +167,86 @@ class CreateAccountVC:UIViewController {
         let photoAlbumFrame:CGRect = CGRect(x: photoAlbumXPos, y: confirmPasswordTxtField.frame.minY, width: takePictureBtnWidth, height: buttonHeight)
         photoAlbumBtn.frame = photoAlbumFrame
         
+        backButton.frame = CGRect(x: 5, y: 28, width: 50, height: 30)
+        backButton.backgroundColor = Colors.darkMintGreen
+        backButton.layer.cornerRadius = 5
+        backButton.setTitleColor(UIColor.white, for: .normal)
+        backButton.setTitle("Back", for: .normal)
+        backButton.titleLabel?.font = UIFont.systemFont(ofSize: 15)
+        backButton.showsTouchWhenHighlighted = true
+        backButton.layer.shadowOffset = CGSize(width: 1, height: 1)
+        backButton.layer.shadowOpacity = 0.5
+        backButton.layer.shadowRadius = 2
+        backButton.addTarget(self, action: #selector(backTapped(sender:)), for: .touchUpInside)
         
         nextBtn.backgroundColor = Colors.blueGreen
         nextBtn.layer.cornerRadius = 8
         nextBtn.tag = 0
         nextBtn.setTitle("Create Account", for: .normal)
+        nextBtn.layer.shadowOffset = CGSize(width: 1, height: 1)
+        nextBtn.layer.shadowOpacity = 0.5
+        nextBtn.layer.shadowRadius = 2
         nextBtn.addTarget(self, action: #selector(nextTapped(sender:)), for: .touchUpInside)
         
         createAccountBtn.backgroundColor = Colors.blueGreen
         createAccountBtn.layer.cornerRadius = 8
         createAccountBtn.setTitle("Skip", for: .normal)
+        createAccountBtn.layer.shadowOffset = CGSize(width: 1, height: 1)
+        createAccountBtn.layer.shadowOpacity = 0.5
+        createAccountBtn.layer.shadowRadius = 2
         createAccountBtn.addTarget(self, action: #selector(createAccountTapped(sender:)), for: .touchUpInside)
         
         takePictureBtn.backgroundColor = Colors.blueGreen
         takePictureBtn.layer.cornerRadius = 8
         takePictureBtn.setTitle("Take Picture", for: .normal)
+        takePictureBtn.layer.shadowOffset = CGSize(width: 1, height: 1)
+        takePictureBtn.layer.shadowOpacity = 0.5
+        takePictureBtn.layer.shadowRadius = 2
         takePictureBtn.addTarget(self, action: #selector(takePhoto(sender:)), for: .touchUpInside)
         
         photoAlbumBtn.backgroundColor = Colors.blueGreen
         photoAlbumBtn.layer.cornerRadius = 8
         photoAlbumBtn.setTitle("Choose Photo", for: .normal)
+        photoAlbumBtn.layer.shadowOffset = CGSize(width: 1, height: 1)
+        photoAlbumBtn.layer.shadowOpacity = 0.5
+        photoAlbumBtn.layer.shadowRadius = 2
         photoAlbumBtn.addTarget(self, action: #selector(choosePhoto(sender:)), for: .touchUpInside)
     }
     
+    private func layoutAgreement() {
+        let xPos:CGFloat = 0
+        let yPos:CGFloat = nextBtn.frame.maxY
+        let width:CGFloat = view.frame.width
+        let height:CGFloat = nextBtn.frame.height
+        let frame:CGRect = CGRect(x: xPos, y: yPos, width: width, height: height)
+        agreementView.frame = frame
+        
+        let agreementText = "By creating an account, you agree to the Terms and Conditions and the Privacy Policy"
+        let termsAndConditionsRange:NSRange = NSMakeRange(41, 20) //agreementText.range(of: "Terms and Conditions")
+        let privacyPolicyRange:NSRange = NSMakeRange(70, 14)//agreementText.range(of: "Privacy Policy")
+        
+        let paragraphStyle = NSMutableParagraphStyle.init()
+        paragraphStyle.alignment = .center
+        
+        let attributedAgreementText = NSMutableAttributedString(string: agreementText, attributes: [NSParagraphStyleAttributeName: paragraphStyle])
+        
+        attributedAgreementText.addAttribute(NSLinkAttributeName, value: "https://www.invyteapp.com/tc", range: termsAndConditionsRange)
+        //attributedAgreementText.addAttribute(NSUnderlineStyleAttributeName, value: NSNumber(value:1), range: termsAndConditionsRange)
+        //attributedAgreementText.addAttribute(NSUnderlineColorAttributeName, value: UIColor.orange, range: termsAndConditionsRange)
+        attributedAgreementText.addAttribute(NSLinkAttributeName, value: /*"www.invyteapp.com/privacy"*/"https://www.google.com", range: privacyPolicyRange)
+        //attributedAgreementText.addAttribute(NSUnderlineStyleAttributeName, value: NSNumber(value:1), range: privacyPolicyRange)
+        //attributedAgreementText.addAttribute(NSUnderlineColorAttributeName, value: UIColor.orange, range: privacyPolicyRange)
+
+        agreementView.textAlignment = .center
+        agreementView.attributedText = attributedAgreementText
+        agreementView.backgroundColor = UIColor.clear
+        agreementView.dataDetectorTypes = .link
+        agreementView.isEditable = false
+        agreementView.isSelectable = true
+        agreementView.delegate = self
+        
+        
+    }
     private func addBorder(textField:UITextField) {
         let border = CALayer()
         let width = CGFloat(1.0)
@@ -264,8 +346,11 @@ class CreateAccountVC:UIViewController {
                     self.confirmPasswordTxtField.isHidden = true
                     self.usernameTxtField.isHidden = true
                     self.nextBtn.isHidden = true
-                    self.createAccountBtn.isHidden = false
+                    self.passwordInfoLbl.isHidden = true
+                    self.usernameInfoLbl.isHidden = true
+                    self.agreementView.isHidden = true
                     //show profile picture stuff
+                    self.createAccountBtn.isHidden = false
                     self.imgView.isHidden = false
                     self.photoAlbumBtn.isHidden = false
                     self.takePictureBtn.isHidden = false
@@ -304,6 +389,10 @@ class CreateAccountVC:UIViewController {
     
     @objc private func choosePhoto(sender:UIButton) {
         showPicker(withType: .photoLibrary)
+    }
+    
+    @objc private func backTapped(sender:UIButton) {
+        performSegue(withIdentifier: "BackToLoginSegue", sender: sender)
     }
 }
 
@@ -349,5 +438,12 @@ extension CreateAccountVC:UIImagePickerControllerDelegate, UINavigationControlle
             //not a UIImage or for some reason profilePic is nil
             print(info)
         }
+    }
+}
+
+extension CreateAccountVC:UITextViewDelegate {
+    func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+        print("Interacting with link")
+        return true
     }
 }
