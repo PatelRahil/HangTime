@@ -228,12 +228,12 @@ class CreateAccountVC:UIViewController {
         let paragraphStyle = NSMutableParagraphStyle.init()
         paragraphStyle.alignment = .center
         
-        let attributedAgreementText = NSMutableAttributedString(string: agreementText, attributes: [NSParagraphStyleAttributeName: paragraphStyle])
+        let attributedAgreementText = NSMutableAttributedString(string: agreementText, attributes: [NSAttributedStringKey.paragraphStyle: paragraphStyle])
         
-        attributedAgreementText.addAttribute(NSLinkAttributeName, value: "https://www.invyteapp.com/tc", range: termsAndConditionsRange)
+        attributedAgreementText.addAttribute(NSAttributedStringKey.link, value: "https://www.invyteapp.com/tc", range: termsAndConditionsRange)
         //attributedAgreementText.addAttribute(NSUnderlineStyleAttributeName, value: NSNumber(value:1), range: termsAndConditionsRange)
         //attributedAgreementText.addAttribute(NSUnderlineColorAttributeName, value: UIColor.orange, range: termsAndConditionsRange)
-        attributedAgreementText.addAttribute(NSLinkAttributeName, value: /*"www.invyteapp.com/privacy"*/"https://www.google.com", range: privacyPolicyRange)
+        attributedAgreementText.addAttribute(NSAttributedStringKey.link, value: /*"www.invyteapp.com/privacy"*/"https://www.invyteapp.com/privacy", range: privacyPolicyRange)
         //attributedAgreementText.addAttribute(NSUnderlineStyleAttributeName, value: NSNumber(value:1), range: privacyPolicyRange)
         //attributedAgreementText.addAttribute(NSUnderlineColorAttributeName, value: UIColor.orange, range: privacyPolicyRange)
 

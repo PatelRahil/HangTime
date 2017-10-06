@@ -695,7 +695,7 @@ extension MapViewController:UITextFieldDelegate {
         }
     }
     
-    func processTextfieldText(_ sender:UITextField) {
+    @objc func processTextfieldText(_ sender:UITextField) {
         if let input = sender.text {
             searchForLocationWithText(text: input)
         }
@@ -827,7 +827,7 @@ extension MapViewController:UIGestureRecognizerDelegate {
         case up,down,left,right
     }
     
-    func swipeRecognizer(gestureRecognizer: UIPanGestureRecognizer) {
+    @objc func swipeRecognizer(gestureRecognizer: UIPanGestureRecognizer) {
         
         if gestureRecognizer.state == .began {
             originalContainerPosition = searchLocationsContainerView.center

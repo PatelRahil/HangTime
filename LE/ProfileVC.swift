@@ -26,7 +26,7 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
     @IBOutlet weak var OpenSideBar: UIButton!
     @IBOutlet weak var ProfileTableView: UITableView!
     
-    func changeProfilePicture(tapGestureRecognizer: UITapGestureRecognizer) {
+    @objc func changeProfilePicture(tapGestureRecognizer: UITapGestureRecognizer) {
         //let tappedImage = tapGestureRecognizer.view as! UIImageView
         let ac = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         ac.addAction(UIAlertAction(title: "Take Photo", style: .default, handler: { (action) in

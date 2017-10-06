@@ -366,7 +366,7 @@ class EventDetailsVC:UIViewController, UITableViewDelegate, UITableViewDataSourc
 
             if indexPath.row-2 < eventInfo.count && shouldChangeInfoText {
                 cell.EventDataTextField.text = eventInfo[indexPath.row-2]
-                cell.EventDataTextField.attributedPlaceholder = NSAttributedString(string: eventInfo[indexPath.row-2], attributes: [NSForegroundColorAttributeName:UIColor.black])
+                cell.EventDataTextField.attributedPlaceholder = NSAttributedString(string: eventInfo[indexPath.row-2], attributes: [NSAttributedStringKey.foregroundColor:UIColor.black])
             }
             
             if isEditSelected {

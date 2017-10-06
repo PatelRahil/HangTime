@@ -86,7 +86,7 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
         }
     }
     
-    func removeAllCells() {
+    @objc func removeAllCells() {
         TableArray.removeAll()
         TableArray.append("")
         allUserID.removeAll()

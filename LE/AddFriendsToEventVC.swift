@@ -133,7 +133,7 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
         currentUser = User(data: UserData())
     }
     
-    func removeAllCells() {
+    @objc func removeAllCells() {
         TableArray.removeAll()
         TableArray.append("")
         allUserID.removeAll()
@@ -199,7 +199,7 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
         return isAlreadyAdded
     }
     
-    func addFriendToEvent(_ sender:UIButton) {
+    @objc func addFriendToEvent(_ sender:UIButton) {
         let pickedUserID = allUserID[sender.tag]
         if (!isAlreadyAdded(userID: pickedUserID)) {
             addedFriends.append(pickedUserID)
