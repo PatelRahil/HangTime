@@ -8,6 +8,7 @@
 
 import Foundation
 import Firebase
+import UserNotifications
 
 class SettingsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
@@ -34,7 +35,7 @@ class SettingsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     }
     
     let notificationTableArray = ["Push Notifications"]
-    let supportTableArray  = ["FAQs", "Privacy Policy"]
+    let supportTableArray  = ["Terms and Conditions", "Privacy Policy"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,6 +58,11 @@ class SettingsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         setupTableViewFrame()
         setupLogoutButtonFrame()
 
+        self.view.layoutIfNeeded()
+        print(OpenSideBar.frame.width)
+        let pos = OpenSideBar.frame.origin
+        OpenSideBar.frame = CGRect(origin: pos, size: CGSize(width: 44, height: 44))
+        
     }
     
     private func setupTableViewFrame() {
@@ -118,8 +124,12 @@ extension SettingsVC {
             switch indexPath.row {
             case 0:
                 print("FAQs tapped")
+                let url =  URL(string: "https://www.invyteapp.com/tc")!
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
             case 1:
                 print("Privacy Policy tapped")
+                let url =  URL(string: "https://www.invyteapp.com/privacy")!
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
             default:
                 break
             }
@@ -168,20 +178,33 @@ extension SettingsVC {
 class CustomSettingsCell:UITableViewCell {
     
     
-    @IBOutlet weak var cellSwitch: UISwitch! {
-        willSet {
-            print("ITS ABOUT TO CHANGE TO \(newValue)")
+    @IBOutlet weak var cellSwitch: UISwitch!
+    
+    @IBAction func notificationSwitchChanged(_ sender: Any) {
+        print("VALUE CHANGED")
+        if cellSwitch.isOn {
+            print("Turn On")
+            UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .alert, .sound]) { (granted, error) in
+                
+                if granted {
+                    print("Granted")
+                    UIApplication.shared.registerForRemoteNotifications()
+                }
+                
+            }
         }
-        didSet {
-            print("It just changed from \(oldValue)")
+        else {
+            print("Turn Off")
+            UIApplication.shared.unregisterForRemoteNotifications()
         }
     }
+    
     
     override func layoutSubviews() {
         super.layoutSubviews()
         
         if let cellSwitch = cellSwitch {
-            let tableView:UITableView = superview?.superview as! UITableView
+            let tableView:UITableView = superview as! UITableView
             let offset:CGFloat = 12
             let switchWidth:CGFloat = cellSwitch.frame.width
             let switchHeight:CGFloat = cellSwitch.frame.height

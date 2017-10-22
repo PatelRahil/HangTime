@@ -58,6 +58,11 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
 
         OpenSideBar.addTarget(self.revealViewController(), action: #selector(SWRevealViewController.revealToggle(_:)), for: .touchUpInside)
         
+        self.view.layoutIfNeeded()
+        print(OpenSideBar.frame.width)
+        let pos = OpenSideBar.frame.origin
+        OpenSideBar.frame = CGRect(origin: pos, size: CGSize(width: 44, height: 44))
+        
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -72,7 +77,13 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
             return cell
         }
         else if indexPath.row == 2 {
-            let cell = ProfileTableView.dequeueReusableCell(withIdentifier: "EmailCell", for: indexPath)
+            let cell = ProfileTableView.dequeueReusableCell(withIdentifier: "DetailsCell", for: indexPath) as! CustomProfileInfoCell
+            let email = FIRAuth.auth()?.currentUser?.email
+            cell.EditableInfoField.isEnabled = false
+            cell.EditableInfoField.textAlignment = .right
+            cell.EditableInfoField.text = email
+            cell.EditableInfoField.textColor = UIColor.lightGray
+            
             cell.accessoryType = .disclosureIndicator
             cell.textLabel?.text = "Email"
             return cell

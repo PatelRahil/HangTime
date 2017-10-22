@@ -36,6 +36,11 @@ class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         
         self.view.addGestureRecognizer(revealViewController().panGestureRecognizer())
         OpenSideBar.addTarget(self.revealViewController(), action: #selector(SWRevealViewController.revealToggle(_:)), for: .touchUpInside)
+        
+        self.view.layoutIfNeeded()
+        print(OpenSideBar.frame.width)
+        let pos = OpenSideBar.frame.origin
+        OpenSideBar.frame = CGRect(origin: pos, size: CGSize(width: 44, height: 44))
     }
     
     override func viewWillAppear(_ animated: Bool) {

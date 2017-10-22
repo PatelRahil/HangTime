@@ -840,7 +840,7 @@ class CustomEventCreatorProfilePicCell: UITableViewCell {
     @IBOutlet weak var ProfilePicture: UIImageView!
     override func layoutSubviews() {
         super.layoutSubviews()
-        let tableView:UITableView = superview?.superview as! UITableView
+        let tableView:UITableView = superview as! UITableView
         let xPos: CGFloat = tableView.frame.width/2 - ProfilePicture.frame.width/2
         let yPos: CGFloat = self.frame.height/8
         
@@ -876,7 +876,7 @@ class CustomDateTimeDetailsCell: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        let tableView:UITableView = superview?.superview as! UITableView
+        let tableView:UITableView = superview as! UITableView
         let offset:CGFloat = 12
         let xPos:CGFloat = tableView.frame.width - offset - showDatePickerBtn.frame.width
         
@@ -890,14 +890,14 @@ class CustomPublicPrivateCell: UITableViewCell {
     @IBAction func changePublicPrivate(_ sender: Any) {
         EventVariables.isPublic = !publicPrivateSwitch.isOn
         //first superview is a tableviewwrapper class
-        let tableView:UITableView = superview?.superview as! UITableView
+        let tableView:UITableView = superview as! UITableView
         tableView.reloadData()
         EventVariables.updateEventWithCurrentVariables()
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        let tableView:UITableView = superview?.superview as! UITableView
+        let tableView:UITableView = superview as! UITableView
         let offset:CGFloat = 12
         let xPos:CGFloat = tableView.frame.width - offset - publicPrivateSwitch.frame.width
         publicPrivateSwitch.frame = CGRect(x: xPos, y: publicPrivateSwitch.frame.minY, width: publicPrivateSwitch.frame.width, height: publicPrivateSwitch.frame.height)
