@@ -69,7 +69,7 @@ class ResetPasswordVC:UIViewController {
                 print("\n\(error!.localizedDescription)")
                 
                 if error!.localizedDescription == "The email address is badly formatted." {
-                    self.instructionsLabel.text = "The email address not formatted properly."
+                    self.instructionsLabel.text = "The email address is not formatted properly."
                 }
                 else if error!.localizedDescription == "There is no user record corresponding to this identifier. The user may have been deleted." {
                     self.instructionsLabel.text = "We can't find an account associated with that email. Try again."

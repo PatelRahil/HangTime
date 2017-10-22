@@ -22,6 +22,8 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
     var userInfoArray = [" ", " "]
     var profilePic: UIImage? = #imageLiteral(resourceName: "DefaultProfileImg")
     
+    //to make sure tableview isn't reloaded extra times
+    var didLoadView = false
     
     @IBOutlet weak var OpenSideBar: UIButton!
     @IBOutlet weak var ProfileTableView: UITableView!
@@ -50,6 +52,7 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
     }
     override func viewDidLoad() {
         super.viewDidLoad()
+        didLoadView = true
         self.automaticallyAdjustsScrollViewInsets = false
         loadUser()
         ProfileTableView.dataSource = self
@@ -63,6 +66,15 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
         let pos = OpenSideBar.frame.origin
         OpenSideBar.frame = CGRect(origin: pos, size: CGSize(width: 44, height: 44))
         
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        if !didLoadView {
+            ProfileTableView.reloadData()
+        }
+        else {
+            didLoadView = false
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -100,6 +112,12 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
             return cell
         }
 
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.row == 2 {
+            performSegue(withIdentifier: "changeEmailSegue", sender: nil)
+        }
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {

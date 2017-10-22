@@ -470,7 +470,7 @@
                                 </constraints>
                             </view>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="cF2-Le-7mQ">
-                                <rect key="frame" x="188" y="28" width="0.0" height="0.0"/>
+                                <rect key="frame" x="188" y="72" width="0.0" height="0.0"/>
                                 <fontDescription key="fontDescription" name="Helvetica" family="Helvetica" pointSize="41"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -547,7 +547,7 @@
                                 <textInputTraits key="textInputTraits" keyboardType="emailAddress"/>
                             </textField>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Reset Password" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jOv-T6-ecW">
-                                <rect key="frame" x="16" y="52" width="343" height="171"/>
+                                <rect key="frame" x="16" y="96" width="343" height="127"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="37"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -1107,16 +1107,17 @@
                     <connections>
                         <outlet property="OpenSideBar" destination="3y0-h0-rll" id="nMT-ch-66z"/>
                         <outlet property="ProfileTableView" destination="BKI-f3-gPT" id="Gx0-8M-gQ7"/>
+                        <segue destination="B7U-2V-r17" kind="show" identifier="changeEmailSegue" id="T1v-ll-VH7"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EPy-KZ-C1y" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="6108" y="-3251"/>
         </scene>
-        <!--View Controller-->
+        <!--Email ChangeVC-->
         <scene sceneID="BTC-Bi-LNc">
             <objects>
-                <viewController id="B7U-2V-r17" sceneMemberID="viewController">
+                <viewController id="B7U-2V-r17" customClass="EmailChangeVC" customModule="LE" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="ewt-d2-bet"/>
                         <viewControllerLayoutGuide type="bottom" id="PeS-bY-juq"/>
@@ -1125,23 +1126,37 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Change Email" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oFO-S9-duJ">
-                                <rect key="frame" x="16" y="179" width="343" height="93"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="40"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="AYh-Mb-Wwk">
+                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" clearsOnBeginEditing="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="AYh-Mb-Wwk">
                                 <rect key="frame" x="16" y="280" width="343" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vCv-7g-pyd">
+                                <rect key="frame" x="94" y="318" width="188" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <state key="normal" title="Submit">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="To change your email please enter your password." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oFO-S9-duJ">
+                                <rect key="frame" x="16" y="179" width="343" height="93"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="26"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
+                    <connections>
+                        <outlet property="changeEmailBtn" destination="vCv-7g-pyd" id="efM-bt-HuK"/>
+                        <outlet property="emailTextField" destination="AYh-Mb-Wwk" id="NcL-lG-dc1"/>
+                        <outlet property="instructionsLbl" destination="oFO-S9-duJ" id="gDZ-SB-TNg"/>
+                        <segue destination="1of-qX-Ybl" kind="show" identifier="ResetPasswordSegue2" id="LkF-Ar-8e5"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bSE-xe-K8q" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -1833,7 +1848,7 @@
         <segue reference="81d-nb-Nx4"/>
         <segue reference="DLv-nX-Xau"/>
         <segue reference="8kf-ku-17t"/>
-        <segue reference="v4w-ye-VtY"/>
+        <segue reference="LkF-Ar-8e5"/>
         <segue reference="js1-nL-cis"/>
     </inferredMetricsTieBreakers>
 </document>
