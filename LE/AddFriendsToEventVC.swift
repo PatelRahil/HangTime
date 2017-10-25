@@ -215,7 +215,7 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        let tableViewIfButtonIsTapped = touch.view?.superview?.superview?.superview?.superview
+        let tableViewIfButtonIsTapped = touch.view?.superview?.superview?.superview
         if tableViewIfButtonIsTapped == AddFriendListTblView {
             print("Touch in tableview")
             let touchPosition = touch.location(in: AddFriendListTblView)

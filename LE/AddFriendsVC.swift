@@ -153,7 +153,7 @@ class AddFriendsVC: UIViewController , UITextFieldDelegate, UITableViewDelegate,
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        let tableViewIfButtonIsTapped = touch.view?.superview?.superview?.superview?.superview
+        let tableViewIfButtonIsTapped = touch.view?.superview?.superview?.superview
         if tableViewIfButtonIsTapped == AddFriendListTblView {
             let touchPosition = touch.location(in: AddFriendListTblView)
             let indexPath = AddFriendListTblView.indexPathForRow(at: touchPosition)

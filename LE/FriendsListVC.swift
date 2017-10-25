@@ -177,7 +177,7 @@ class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         if gestureRecognizer != revealViewController().panGestureRecognizer() {
 
-            let tableViewIfButtonIsTapped = touch.view?.superview?.superview?.superview?.superview
+            let tableViewIfButtonIsTapped = touch.view?.superview?.superview?.superview
             if tableViewIfButtonIsTapped == friendsListTableView {
                 print("Touch in tableview")
                 let touchPosition = touch.location(in: friendsListTableView)
