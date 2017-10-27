@@ -110,7 +110,7 @@ class CreateAccountVC:UIViewController {
         
         passwordInfoLbl.adjustsFontSizeToFitWidth = true
         usernameInfoLbl.adjustsFontSizeToFitWidth = true
-        passwordInfoLbl.text = "**Password must be more than 6 characters"
+        passwordInfoLbl.text = "**Password must be 6 or more characters"
         usernameInfoLbl.text = "*Username can only contain letters and numbers"
         passwordInfoLbl.textAlignment = .center
         usernameInfoLbl.textAlignment = .center

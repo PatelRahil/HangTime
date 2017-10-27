@@ -110,8 +110,9 @@ class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         var usernameDic:[String:String] = [String:String]()
         var username = ""
         
-        
+        print(addedYouUIDs)
         if indexPath.section == 0 {
+            print(addedYouUIDs.count)
             if addedYouUIDs.count == 0 {
                 cell.ProfilePic.isHidden = true
                 cell.FriendBtn.isHidden = true
@@ -121,6 +122,11 @@ class FriendsListVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
                 cell.tag = 0
             }
             else {
+                cell.ProfilePic.isHidden = false
+                cell.FriendBtn.isHidden = false
+                cell.UsernameLbl.textColor = UIColor.black
+                cell.UsernameLbl.textAlignment = .left
+                
                 print("-------------------------------------")
                 print(addedYouDic)
                 friendUID = addedYouUIDs[indexPath.row]

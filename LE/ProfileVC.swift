@@ -264,9 +264,10 @@ class ProfileVC: UIViewController, UITextFieldDelegate, UITableViewDataSource, U
                     let downloadURL = metaData!.downloadURL()!.absoluteString
                     //store downloadURL at database
                     self.rootRef.child("Users").child("User: \(self.currentUser!.getUserID())").updateChildValues(["profilePicture": downloadURL])
+                    UserData.profilePicDownloadLink = downloadURL
                 }
             }
-            
+            UserData.profilePic = profilePic
             self.profilePic = profilePic
             let cell = ProfileTableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! CustomProfilePicCell
             cell.ProfilePicture.image = profilePic

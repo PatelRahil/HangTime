@@ -211,6 +211,18 @@ struct UserData {
         pushTokens = user.pushTokens
     }
     
+    static func resetData() {
+        userID = nil
+        friends = nil
+        username = nil
+        createdEvents = nil
+        profilePicDownloadLink = nil
+        profilePic = #imageLiteral(resourceName: "DefaultProfileImg")
+        invitedEvents = nil
+        addedYouFriends = nil
+        pushTokens = nil
+    }
+    
     init() {
         _userID = UserData.userID
         _friends = UserData.friends

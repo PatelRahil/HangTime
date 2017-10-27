@@ -135,7 +135,7 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
     
     @objc func removeAllCells() {
         TableArray.removeAll()
-        TableArray.append("")
+        //TableArray.append("")
         allUserID.removeAll()
         AddFriendListTblView.reloadData()
         
@@ -146,7 +146,7 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
             self.navigationController?.navigationBar.isUserInteractionEnabled = true
         }
         currentUser = User(data: UserData())
-        return TableArray.count - 1
+        return TableArray.count
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -155,10 +155,12 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = AddFriendListTblView.dequeueReusableCell(withIdentifier: "eventFriendCell", for: indexPath) as! CustomAddFriendTableViewCell
+        print(profilePicArray)
         cell.ProfileImg.image = profilePicArray[indexPath.row]
-        cell.UsernameLbl.text = TableArray[indexPath.row + 1]
+        cell.UsernameLbl.text = TableArray[indexPath.row]
         index = indexPath.row
         cell.AddFriendBtn.alpha = 1
+        print(allUserID)
         if (isAlreadyAdded(userID: allUserID[indexPath.row])) {
             cell.AddFriendBtn.setTitle("Added", for: .normal)
             //cell.AddFriendBtn.setTitleColor(UIColor.darkGray, for: .normal)
@@ -244,9 +246,10 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
         
     }
     
+    /*
     private func doWhenTextFieldReturns() {
         _ = self.rootRef.child("Users").queryOrdered(byChild: "username").queryStarting(atValue:SearchBar.text!).queryEnding(atValue: "\(SearchBar.text!)~").observeSingleEvent(of: .value, with: { (snapshot) in
-            
+            print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\nSHOULD HAPPEN ONCE")
             //let databaseRefQuery = self.rootRef.child("Users").queryOrdered(byChild: "username").queryEqual(toValue:SearchBar.text!).observeSingleEvent(of: .value, with: { (snapshot) in
             if ( snapshot.value is NSNull ) {
                 
@@ -266,6 +269,8 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
                     
                     //dictionary of the user's information
                     let dataDic:Dictionary<String,Any> = data as! Dictionary<String,Any>
+                    print(dataDic)
+                    print("********************************************************")
                     for _ in uidStrArr {
                         self.profilePicArray.append(#imageLiteral(resourceName: "DefaultProfileImg"))
                     }
@@ -297,7 +302,8 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
                                     profilePic = #imageLiteral(resourceName: "DefaultProfileImg")
                                 }
                                 self.profilePicArray[photoIndex] = profilePic
-                                print("\(link)    array: \(self.profilePicArray)")
+                                //print("\(link)    array: \(self.profilePicArray)")
+                                print("\nLink inside .data: \n\(link)\n")
                                 self.AddFriendListTblView.reloadData()
                             })
                             
@@ -332,15 +338,94 @@ class AddFriendsToEventVC: UIViewController , UITextFieldDelegate, UITableViewDe
             // An error occurred
         })
     }
+    */
     
+    private func doWhenTextFieldReturns() {
+        TableArray.removeAll()
+        var dataDic:[String:UIImage] = [String:UIImage]()
+        var usernameDic:[String:String] = [String:String]()
+        guard let friends = currentUser?.friends else {
+            return
+        }
+        print(friends)
+        for friend in friends {
+            rootRef.child("Users/User: \(friend)").observe(.value, with: { (snapshot) in
+                let userInfo = snapshot.value as! [String:Any]
+                guard let username = userInfo["username"] as? String else {
+                    return
+                }
+                guard let uid = userInfo["UserID"] as? String else {
+                    return
+                }
+                guard let profilePicDownloadLink = userInfo["profilePicture"] as? String else {
+                    return
+                }
+                
+                if username.contains(self.SearchBar.text!) || self.SearchBar.text! == "" {
+                    print(username)
+                    self.TableArray.append(username)
+                    self.allUserID.append(uid)
+                    self.profilePicArray.append(#imageLiteral(resourceName: "DefaultProfileImg"))
+                    
+                    dataDic[uid] = #imageLiteral(resourceName: "DefaultProfileImg")
+                    usernameDic[username] = uid
+                    
+                    self.sortData(dataDic: dataDic, usernameDic)
+                    
+                    if profilePicDownloadLink != "" {
+                        FIRStorage.storage().reference(forURL: profilePicDownloadLink).data(withMaxSize: 10*1024*1024, completion: { [uid] (data, error) in
+                            if let error = error {
+                                print("Storage photo downlaod error:\n\(error)")
+                            }
+                            else {
+                                let userPhoto = UIImage(data: data!)
+                                dataDic[uid] = userPhoto
+                            }
+                        
+                            self.sortData(dataDic: dataDic, usernameDic)
+                            self.AddFriendListTblView.reloadData()
+                        })
+                    }
+                    
+                    self.AddFriendListTblView.reloadData()
+                }
+                
+            })
+        }
+        
+    }
+    
+    private func sortData(dataDic:[String:UIImage], _ usernameDic:[String:String]) {
+
+        TableArray = TableArray.sorted{$0.uppercased() < $1.uppercased()}
+
+        //print(profilePicArray)
+        //print(TableArray)
+        //print(usernameDic)
+        //print(dataDic)
+        profilePicArray.removeAll()
+        allUserID.removeAll()
+        for username in TableArray {
+            print(username)
+            guard let uid = usernameDic[username] else {
+                return
+            }
+            guard let profilePic = dataDic[uid] else {
+                return
+            }
+            //print(uid)
+            //print(profilePic)
+            allUserID.append(uid)
+            profilePicArray.append(profilePic)
+        }
+        //print(profilePicArray)
+    }
 }
 
 class CustomAddFriendTableViewCell: UITableViewCell {
     @IBOutlet weak var UsernameLbl: UILabel!
-    
     @IBOutlet weak var ProfileImg: UIImageView!
     @IBOutlet weak var AddFriendBtn: UIButton!
-    
     
     override func prepareForReuse() {
         AddFriendBtn.layer.borderWidth = 1
@@ -369,16 +454,13 @@ class CustomAddFriendTableViewCell: UITableViewCell {
         gradient.frame =  CGRect(origin: CGPoint.zero, size: cell.ProfileImg.frame.size)
         gradient.colors = [Colors.blueGreen.cgColor, Colors.yellow.cgColor]
         
-        
         let shape = CAShapeLayer()
         shape.lineWidth = 3
         shape.path = UIBezierPath(ovalIn: cell.ProfileImg.bounds).cgPath
         shape.strokeColor = UIColor.black.cgColor // causing lag when scrolling
         shape.fillColor = UIColor.clear.cgColor
         gradient.mask = shape
-        
-        
-        
+
         cell.ProfileImg.layoutIfNeeded()
         cell.ProfileImg.clipsToBounds = true
         cell.ProfileImg.layer.masksToBounds = true
