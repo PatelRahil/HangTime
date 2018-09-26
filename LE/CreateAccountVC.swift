@@ -267,31 +267,37 @@ class CreateAccountVC:UIViewController {
         
         guard case let _email = email, _email != "" else {
             print("Email is empty")
+            presentAlert(alert: "Invalid Email" , message: "Please enter and email.")
             completion(false)
             return
         }
         guard case let _username = username, _username != "" else {
             print("Username is empty")
+            presentAlert(alert: "Invalid Username", message: "Please enter a username.")
             completion(false)
             return
         }
         if username.rangeOfCharacter(from: CharacterSet.alphanumerics.inverted) != nil {
             print("Invalid username")
+            presentAlert(alert: "Invalid Username", message: "The username can only contain letters and numbers.")
             completion(false)
             return
         }
         guard case let tempPassword = password, tempPassword != "" else {
             print("Password is empty")
+            presentAlert(alert: "Invalid password", message: "Please enter a password.")
             completion(false)
             return
         }
         guard case let _confirmPassword = confirmPassword, _confirmPassword != "" else {
             print("confirm password is empty")
+            presentAlert(alert: "Please confirm your password", message: "")
             completion(false)
             return
         }
         guard case let _password = tempPassword, _password == _confirmPassword else {
             print("passwords don't match")
+            presentAlert(alert: "Password mismatch", message: "Your passwords do not match.")
             completion(false)
             return
         }
@@ -299,6 +305,7 @@ class CreateAccountVC:UIViewController {
         FIRDatabase.database().reference(withPath: "Users").queryOrdered(byChild: "username").queryEqual(toValue: username).observeSingleEvent(of: .value, with: { (snapshot) in
             if snapshot.exists() {
                 print("Username is taken :(")
+                self.presentAlert(alert: "Invalid Username", message: "This username is already in use.")
                 completion(false)
             }
             else {
@@ -319,8 +326,15 @@ class CreateAccountVC:UIViewController {
         
     }
     
-    private func handleError(error:Error) {
-        print(error)
+    private func handleError(error: Error) {
+        print(error.localizedDescription)
+        presentAlert(alert: "Weak password", message: error.localizedDescription)
+    }
+    
+    private func presentAlert(alert: String, message: String) {
+        let alertController = UIAlertController(title: alert, message: message, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "Okay", style: .cancel, handler: nil))
+        self.present(alertController, animated: true, completion: nil)
     }
     
     func showPicker(withType sourceType: UIImagePickerControllerSourceType) {
