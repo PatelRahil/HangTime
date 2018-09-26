@@ -2,6 +2,6 @@
 
 iOS Social map-based application for organizing events.
 
-![Screenshot of login page][logo]
+![Screenshot of login page][logingPage]
 
-[logo]: https://raw.githubusercontent.com/PatelRahil/HangTime/master/pics/loginss.png "Screenshot of login page"
+[loginPage]: https://raw.githubusercontent.com/PatelRahil/HangTime/master/pics/LoginPage.png "Screenshot of login page"
