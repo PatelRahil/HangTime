@@ -10,6 +10,7 @@
 		5A058A291F1BC31700ADC7D8 /* FriendsListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A058A281F1BC31600ADC7D8 /* FriendsListVC.swift */; };
 		5A157DE71F3525D8009D500B /* CreateAccountVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A157DE61F3525D7009D500B /* CreateAccountVC.swift */; };
 		5A30E6E11F27ED63002EF888 /* ProfileInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A30E6E01F27ED63002EF888 /* ProfileInfo.swift */; };
+		5A4FB425215C75C500874EBE /* keys.json in Resources */ = {isa = PBXBuildFile; fileRef = 5A4FB424215C75C500874EBE /* keys.json */; };
 		5A56671D1EC0C8C3001F5B55 /* SWRevealViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A56671C1EC0C8C3001F5B55 /* SWRevealViewController.m */; };
 		5A6E98531F1D6BF30034FBFD /* EventsListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A6E98521F1D6BF30034FBFD /* EventsListVC.swift */; };
 		5A705DA61ECA1374006E13E4 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A705DA51ECA1374006E13E4 /* User.swift */; };
@@ -66,6 +67,7 @@
 		5A058A281F1BC31600ADC7D8 /* FriendsListVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FriendsListVC.swift; sourceTree = "<group>"; };
 		5A157DE61F3525D7009D500B /* CreateAccountVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateAccountVC.swift; sourceTree = "<group>"; };
 		5A30E6E01F27ED63002EF888 /* ProfileInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileInfo.swift; sourceTree = "<group>"; };
+		5A4FB424215C75C500874EBE /* keys.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = keys.json; path = LE/keys.json; sourceTree = "<group>"; };
 		5A56671A1EC0C8C3001F5B55 /* LE-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LE-Bridging-Header.h"; sourceTree = "<group>"; };
 		5A56671B1EC0C8C3001F5B55 /* SWRevealViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWRevealViewController.h; sourceTree = "<group>"; };
 		5A56671C1EC0C8C3001F5B55 /* SWRevealViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWRevealViewController.m; sourceTree = "<group>"; };
@@ -141,6 +143,7 @@
 		5A7646871DD7B5F300503F07 = {
 			isa = PBXGroup;
 			children = (
+				5A4FB424215C75C500874EBE /* keys.json */,
 				5A7646921DD7B5F300503F07 /* LE */,
 				5A7646AB1DD7B5F300503F07 /* LETests */,
 				5A7646B61DD7B5F300503F07 /* LEUITests */,
@@ -368,6 +371,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5A4FB425215C75C500874EBE /* keys.json in Resources */,
 				5A7646A21DD7B5F300503F07 /* LaunchScreen.storyboard in Resources */,
 				5A9EDE131F48FBFC00378E68 /* GoogleService-Info.plist in Resources */,
 				5A76469F1DD7B5F300503F07 /* Assets.xcassets in Resources */,

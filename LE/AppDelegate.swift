@@ -19,13 +19,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
     var window: UIWindow?
     
-    var googleAPIKey = "AIzaSyB4pOS_SFVlZ78dl6rYDyzhkXWu7nrASk8"
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         FIRApp.configure()
-        GMSPlacesClient.provideAPIKey(googleAPIKey)
-        GMSServices.provideAPIKey(googleAPIKey)
+        configureAPIs()
         
         UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .alert, .sound]) { (granted, error) in
             
@@ -38,7 +35,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             AppData.token = token
         }
         clearBadgeNumber()
-        
+
         return true
     }
     
@@ -97,6 +94,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         else {
             //no device token for this device is registered
         }
+    }
+    
+    private func configureAPIs() {
+        let url = Bundle.main.url(forResource: "keys", withExtension: "json")
+        var data = Data()
+        var keys = [String:String]()
+        do { data = try Data(contentsOf: url!) }
+        catch let error { print("Error: \(error)") }
+        do { keys = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String:String] }
+        catch let error { print("Error: \(error)") }
+        
+        let googleAPIKey = keys["google"]!
+        print(googleAPIKey == "AIzaSyB4pOS_SFVlZ78dl6rYDyzhkXWu7nrASk8")
+        
+        GMSPlacesClient.provideAPIKey(googleAPIKey)
+        GMSServices.provideAPIKey(googleAPIKey)
     }
 }
 
