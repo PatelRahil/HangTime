@@ -43,4 +43,4 @@ _**Note:** API key in the AppDelegate.swift prior to commit d798655 is no longer
 --------------------
 
 ### _Event summary_
-<img src="https://raw.githubusercontent.com/PatelRahil/HangTime/master/pics/CreateEventView.png" alt="Screenshot of event summary UI" width="200"/>
+<img src="https://raw.githubusercontent.com/PatelRahil/HangTime/master/pics/EventSummaryView.png" alt="Screenshot of event summary UI" width="200"/>
