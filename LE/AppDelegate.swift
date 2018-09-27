@@ -102,11 +102,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         var keys = [String:String]()
         do { data = try Data(contentsOf: url!) }
         catch let error { print("Error: \(error)") }
-        do { keys = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String:String] }
+        do { keys = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String:String]}
         catch let error { print("Error: \(error)") }
-        
+
         let googleAPIKey = keys["google"]!
-        print(googleAPIKey == "AIzaSyB4pOS_SFVlZ78dl6rYDyzhkXWu7nrASk8")
         
         GMSPlacesClient.provideAPIKey(googleAPIKey)
         GMSServices.provideAPIKey(googleAPIKey)
