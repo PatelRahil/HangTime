@@ -2,6 +2,9 @@
 
 iOS Social map-based application for organizing events.
 
+
+_**Note:** API key in the AppDelegate.swift prior to commit d798655 is no longer functional. After that commit, the key is stored in a json file that is ignored by git, which is accessed by the AppDelegate.swift file. As a result, compiling a cloned version of this code will result in an app that does not have any of google's API's functional (e.g. A black screen directly after logging in)._
+
 ## Screenshots
 
 ### _Login page_
