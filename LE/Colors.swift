@@ -40,7 +40,3 @@ struct Colors {
     static let cinnabar = UIColor.init(r: 231, g: 76, b: 60, a: 1) //red
     static let royalBlue = UIColor.init(r: 65, g: 131, b: 215, a: 1) //blue
 }
-
-struct AppData {
-    static var token:String = ""
-}
